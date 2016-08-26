@@ -4,16 +4,16 @@ defmodule SpheriumWebService.Repo.Migrations.CreateUser do
   def change do
     create table(:users) do
       add :username, :string, null: false
-	  add :email, :string
-      add :password_digest, :string
+	    add :email, :string
+      add :password_digest, :string, null: false
       add :scope, {:array, :string}, default: []
-      add :activation_key, :uuid, default: fragment("uuid_generate_v4()")
-	  add :activation_date, :datetime, default: nil
+      add :activation_key, :uuid, default: fragment("uuid_generate_v4()"), null: false
+	    add :activation_date, :datetime, default: fragment("now()")
 
       timestamps
     end
 	
     create unique_index(:users, [:username])
-	create unique_index(:emails, [:email])
+	  create unique_index(:users, [:email])
   end
 end

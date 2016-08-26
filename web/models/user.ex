@@ -8,8 +8,8 @@ defmodule SpheriumWebService.User do
     field :email, :string
 	  field :password_digest, :string
     field :scope, {:array, :string}
-    field :activation_key, :uuid
-	  field :activation_date, :datetime
+    field :activation_key, Ecto.UUID
+	  field :activation_date, Ecto.DateTime
 	
 	  field :password, :string, virtual: true
 
@@ -17,7 +17,7 @@ defmodule SpheriumWebService.User do
   end
 
   @allowed_fields ~w(username email password scope)
-  @required_fields ~w(username email password)
+  @required_fields ~w(username email password)a
   @optional_fields ~w(scope)
 
   @doc """
@@ -29,7 +29,7 @@ defmodule SpheriumWebService.User do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @allowed_fields)						      # Cast with allowed fields to changeset
-	  |> validate_required(@required_fields)					  # Validate the required fields
+	  |> validate_required(@required_fields)	    		  # Validate the required fields
 	  |> validate_length(:username, min: 4, max: 16)		# Username should be 5-16 characters long
 	  |> hash_password
     |> unique_constraint(:username)							      # Username should be unique
