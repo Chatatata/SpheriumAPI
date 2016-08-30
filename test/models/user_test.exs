@@ -6,16 +6,10 @@ defmodule SpheriumWebService.UserTest do
   alias SpheriumWebService.User
 
   @valid_attrs %{username: "test", email: "test@mail.com", password: "123456", scope: []}
-  @invalid_attrs %{}
 
   test "changeset with valid attributes" do
     changeset = User.changeset(%User{}, @valid_attrs)
     assert changeset.valid?
-  end
-
-  test "changeset with activation date" do
-    changeset = User.changeset(%User{}, %{username: "test", email: "test@mail.com", password: "123456", scope: [], activation_date: Ecto.DateTime.utc()})
-    refute changeset.valid?
   end
   
   test "changeset with short name" do
@@ -35,7 +29,7 @@ defmodule SpheriumWebService.UserTest do
   
   test "password_digest gets set to hash" do
     changeset = User.changeset(%User{}, @valid_attrs)
-    assert checkpw(@valid_attrs.password, get_change(changeset, :password_digest))
+    assert checkpw(get_field(changeset, :password), get_change(changeset, :password_digest))
   end
   
   test "password_digest does not get set if password is nil" do

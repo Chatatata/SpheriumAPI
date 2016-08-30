@@ -1,16 +1,16 @@
-defmodule SpheriumWebService.Subscriber do
+defmodule SpheriumWebService.ProfileImage do
   use SpheriumWebService.Web, :model
 
-  schema "subscribers" do
-    field :address, :string
-
+  schema "profile_images" do
+    field :data, :binary
+    
     timestamps()
+    
+    belongs_to :user, SpheriumWebService.User
   end
   
-  @allowed_fields ~w(address)a
-  @required_fields ~w(address)a
-  
-  @email_regex ~r/(\w+)@([\w.]+)/
+  @allowed_fields ~w(data)a
+  @required_fields ~w(data)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -18,7 +18,7 @@ defmodule SpheriumWebService.Subscriber do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @allowed_fields)
+    |> cast_assoc(:user, required: true)
     |> validate_required(@required_fields)
-    |> validate_format(:address, @email_regex)          # Validate email
   end
 end

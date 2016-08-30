@@ -2,6 +2,7 @@ defmodule SpheriumWebService.User do
   use SpheriumWebService.Web, :model
   
   import Comeonin.Bcrypt, only: [hashpwsalt: 1]
+  
 
   schema "users" do
     field :username, :string
@@ -14,11 +15,15 @@ defmodule SpheriumWebService.User do
 	  field :password, :string, virtual: true
 
     timestamps
+    
+    has_one :image, SpheriumWebService.ProfileImage
+    has_many :publishers, SpheriumWebService.Publisher
   end
 
-  @allowed_fields ~w(username email password scope)
+  @allowed_fields ~w(username email password scope)a
   @required_fields ~w(username email password)a
-  @optional_fields ~w(scope)
+  
+  @email_regex ~r/(\w+)@([\w.]+)/
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -31,7 +36,8 @@ defmodule SpheriumWebService.User do
     |> cast(params, @allowed_fields)						      # Cast with allowed fields to changeset
 	  |> validate_required(@required_fields)	    		  # Validate the required fields
 	  |> validate_length(:username, min: 4, max: 16)		# Username should be 5-16 characters long
-	  |> hash_password
+    |> validate_format(:email, @email_regex)          # Validate email
+	  |> hash_password()                                # Hash password if changed
     |> unique_constraint(:username)							      # Username should be unique
 	  |> unique_constraint(:email)							        # Email should be unique
   end
@@ -39,7 +45,7 @@ defmodule SpheriumWebService.User do
   defp hash_password(changeset) do
     if password = get_change(changeset, :password) do
       changeset
-      |> put_change(:password, hashpwsalt(password))
+      |> put_change(:password_digest, hashpwsalt(password))
     else
       changeset
     end

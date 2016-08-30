@@ -9,3 +9,8 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias SpheriumWebService.Repo
+alias SpheriumWebService.User
+
+Repo.insert! %User{"username" => "test"}

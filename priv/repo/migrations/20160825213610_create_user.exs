@@ -2,6 +2,8 @@ defmodule SpheriumWebService.Repo.Migrations.CreateUser do
   use Ecto.Migration
 
   def change do
+    execute "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\""
+    
     create table(:users) do
       add :username, :string, null: false
 	    add :email, :string

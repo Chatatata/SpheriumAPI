@@ -26,8 +26,10 @@ defmodule SpheriumWebService.ModelCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SpheriumWebService.Repo)
+
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(SpheriumWebService.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, {:shared, self()})
     end
 
     :ok
