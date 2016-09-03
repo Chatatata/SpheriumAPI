@@ -38,7 +38,11 @@ defmodule SpheriumWebService.ConnCase do
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, {:shared, self()})
     end
+    
+    conn = 
+      Phoenix.ConnTest.build_conn()
+      |> Plug.Conn.put_req_header("accept", "application/json")
 
-    {:ok, conn: Phoenix.ConnTest.conn()}
+    {:ok, conn: conn}
   end
 end

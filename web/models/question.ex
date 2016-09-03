@@ -8,8 +8,8 @@ defmodule SpheriumWebService.Question do
     timestamps()
   end
   
-  @allowed_fields ~w()a
-  @required_fields ~w()a
+  @allowed_fields ~w(publisher_id user_id)a
+  @required_fields ~w(publisher_id user_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -17,8 +17,8 @@ defmodule SpheriumWebService.Question do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @allowed_fields)
-    |> cast_assoc(:publisher, required: true)
-    |> cast_assoc(:user, required: true)
     |> validate_required(@required_fields)
+    |> foreign_key_constraint(:publisher_id)
+    |> foreign_key_constraint(:user_id)
   end
 end

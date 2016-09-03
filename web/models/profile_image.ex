@@ -18,7 +18,6 @@ defmodule SpheriumWebService.ProfileImage do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @allowed_fields)
-    |> cast_assoc(:user, required: true)
     |> validate_required(@required_fields)
   end
 end

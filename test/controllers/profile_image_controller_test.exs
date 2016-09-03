@@ -2,6 +2,8 @@ defmodule SpheriumWebService.ProfileImageControllerTest do
   use SpheriumWebService.ConnCase
 
   alias SpheriumWebService.ProfileImage
+  alias SpheriumWebService.Factory
+  
   @valid_attrs %{data: "some binary data"}
   @invalid_attrs %{}
 
@@ -10,46 +12,51 @@ defmodule SpheriumWebService.ProfileImageControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    profile_image = Repo.insert! %ProfileImage{}
-    conn = get conn, user_profile_image_path(conn, :show, profile_image)
-    assert json_response(conn, 200)["data"] == %{"id" => profile_image.id,
-                                                 "user_id" => profile_image.user_id,
-                                                 "data" => profile_image.data}
-  end
+    image = Factory.insert(:profile_image)
+    conn = get conn, user_profile_image_path(conn, :show, image.user)
 
-  test "renders page not found when id is nonexistent", %{conn: conn} do
-    assert_error_sent 404, fn ->
-      get conn, user_profile_image_path(conn, :show, -1)
-    end
+    data = json_response(conn, 200)["data"]
+
+    assert data["data"]
+    
+    # WHAT TO DO NEXT?
+    #
+    # 1. The controllers should be tested and fully functional first.
+    # 2. Double authentication technique (JWT with HTTP Basic Auth bearer) or OAuth 2.0 framework.
+    # 3. Authorization with a granular, well-known library.
   end
 
   test "creates and renders resource when data is valid", %{conn: conn} do
-    conn = post conn, user_profile_image_path(conn, :create), profile_image: @valid_attrs
-    assert json_response(conn, 201)["data"]["id"]
+    user = Factory.insert(:user)
+    conn = post conn, user_profile_image_path(conn, :create, user), profile_image: @valid_attrs
+    
+    data = json_response(conn, 201)["data"]
+    
+    assert data["id"]
     assert Repo.get_by(ProfileImage, @valid_attrs)
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, user_profile_image_path(conn, :create), profile_image: @invalid_attrs
+    user = Factory.insert(:user)
+    conn = post conn, user_profile_image_path(conn, :create, user), profile_image: @invalid_attrs
+    
     assert json_response(conn, 422)["errors"] != %{}
   end
 
   test "updates and renders chosen resource when data is valid", %{conn: conn} do
-    profile_image = Repo.insert! %ProfileImage{}
-    conn = put conn, user_profile_image_path(conn, :update, profile_image), profile_image: @valid_attrs
-    assert json_response(conn, 200)["data"]["id"]
+    profile_image = Factory.insert(:profile_image)
+    conn = put conn, user_profile_image_path(conn, :update, profile_image.user), profile_image: Map.merge(@valid_attrs, %{user: Map.from_struct(profile_image.user)})
+    
+    data = json_response(conn, 200)["data"]
+    
+    assert data["id"]
     assert Repo.get_by(ProfileImage, @valid_attrs)
   end
-
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    profile_image = Repo.insert! %ProfileImage{}
-    conn = put conn, user_profile_image_path(conn, :update, profile_image), profile_image: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
-  end
-
+  
   test "deletes chosen resource", %{conn: conn} do
-    profile_image = Repo.insert! %ProfileImage{}
-    conn = delete conn, user_profile_image_path(conn, :delete, profile_image)
+    profile_image = Factory.insert(:profile_image)
+    conn = delete conn, user_profile_image_path(conn, :delete, profile_image.user)
+    
     assert response(conn, 204)
     refute Repo.get(ProfileImage, profile_image.id)
   end

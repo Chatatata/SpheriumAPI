@@ -2,6 +2,8 @@ defmodule SpheriumWebService.PublisherController do
   use SpheriumWebService.Web, :controller
 
   alias SpheriumWebService.Publisher
+  
+  plug :scrub_params, "publisher" when action in [:create, :update]
 
   def index(conn, _params) do
     publishers = Repo.all(Publisher)
@@ -30,8 +32,10 @@ defmodule SpheriumWebService.PublisherController do
   end
 
   def update(conn, %{"id" => id, "publisher" => publisher_params}) do
-    publisher = Repo.get!(Publisher, id)
-    changeset = Publisher.changeset(publisher, publisher_params)
+    changeset =
+      Repo.get!(Publisher, id)
+      |> Repo.preload(:user)
+      |> Publisher.changeset(publisher_params)
 
     case Repo.update(changeset) do
       {:ok, publisher} ->

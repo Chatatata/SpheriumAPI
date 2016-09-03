@@ -12,8 +12,8 @@ defmodule SpheriumWebService.Publisher do
     timestamps()
   end
   
-  @allowed_fields ~w(name image description)a
-  @required_fields ~w(name)a
+  @allowed_fields ~w(name image description user_id)a
+  @required_fields ~w(name user_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -21,7 +21,7 @@ defmodule SpheriumWebService.Publisher do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @allowed_fields)
-    |> cast_assoc(:user, required: true)
     |> validate_required(@required_fields)
+    |> foreign_key_constraint(:user_id)
   end
 end

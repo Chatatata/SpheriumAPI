@@ -9,10 +9,7 @@ defmodule SpheriumWebService.Router do
     pipe_through :api
     
     resources "/users", UserController, except: [:new, :edit] do
-      get "/image", ProfileImageController, :show
-      post "/image", ProfileImageController, :create
-      put "/image", ProfileImageController, :update
-      delete "/image", ProfileImageController, :delete
+      resources "/image", ProfileImageController, except: [:new, :edit], singleton: true
     end
     
     resources "/subscribers", SubscriberController, except: [:new, :edit]
@@ -21,6 +18,6 @@ defmodule SpheriumWebService.Router do
       resources "/questions", QuestionController, except: [:new, :edit, :show]
     end
     
-    get "/questions", QuestionController, :show
+    get "/questions/:id", QuestionController, :show
   end
 end

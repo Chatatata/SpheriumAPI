@@ -2,15 +2,20 @@ defmodule SpheriumWebService.ProfileImageController do
   use SpheriumWebService.Web, :controller
 
   alias SpheriumWebService.ProfileImage
-
+  alias SpheriumWebService.User
+  
   def create(conn, %{"user_id" => user_id, "profile_image" => profile_image_params}) do
-    changeset = ProfileImage.changeset(%ProfileImage{user_id: user_id}, profile_image_params)
+    changeset
+       = Repo.get!(User, user_id)
+       |> Repo.preload([:image])
+       |> build_assoc(:image)
+       |> ProfileImage.changeset(profile_image_params)
 
     case Repo.insert(changeset) do
       {:ok, profile_image} ->
         conn
         |> put_status(:created)
-        |> put_resp_header("location", user_profile_image_path(conn, :show, user_id, profile_image))
+        |> put_resp_header("location", user_profile_image_path(conn, :show, user_id))
         |> render("show.json", profile_image: profile_image)
       {:error, changeset} ->
         conn
@@ -25,8 +30,10 @@ defmodule SpheriumWebService.ProfileImageController do
   end
 
   def update(conn, %{"user_id" => user_id, "profile_image" => profile_image_params}) do
-     profile_image = Repo.one!(from image in ProfileImage, where: image.user_id == ^user_id)
-     changeset = ProfileImage.changeset(profile_image, profile_image_params)
+     changeset
+        = Repo.one!(from image in ProfileImage, where: image.user_id == ^user_id)
+        |> Repo.preload(:user)
+        |> ProfileImage.changeset(profile_image_params)
 
     case Repo.update(changeset) do
       {:ok, profile_image} ->
