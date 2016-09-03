@@ -8,7 +8,6 @@ defmodule SpheriumWebService.PublisherTest do
 
   test "changeset with valid attributes" do
     changeset = Publisher.changeset(%Publisher{}, @valid_attrs)
-    IO.inspect changeset.errors
     assert changeset.valid?
   end
   

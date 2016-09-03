@@ -14,10 +14,9 @@ defmodule SpheriumWebService.Router do
     
     resources "/subscribers", SubscriberController, except: [:new, :edit]
     
-    resources "/publishers", PublisherController, except: [:new, :edit] do
-      resources "/questions", QuestionController, except: [:new, :edit, :show]
-    end
+    resources "/publishers", PublisherController, except: [:new, :edit]
+    resources "/questions", QuestionController, except: [:new, :edit]
     
-    get "/questions/:id", QuestionController, :show
+    # get "/questions/:id", QuestionController, :show
   end
 end

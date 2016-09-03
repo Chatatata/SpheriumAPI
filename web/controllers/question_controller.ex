@@ -15,7 +15,7 @@ defmodule SpheriumWebService.QuestionController do
       {:ok, question} ->
         conn
         |> put_status(:created)
-        |> put_resp_header("location", publisher_question_path(conn, :show, question))
+        |> put_resp_header("location", question_path(conn, :show, question))
         |> render("show.json", question: question)
       {:error, changeset} ->
         conn

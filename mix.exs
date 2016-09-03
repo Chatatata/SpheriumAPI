@@ -19,8 +19,7 @@ defmodule SpheriumWebService.Mixfile do
   def application do
     [mod: {SpheriumWebService, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :comeonin,
-                    :ex_machina]]
+                    :phoenix_ecto, :postgrex, :comeonin]]
   end
 
   # Specifies which paths to compile per environment.
