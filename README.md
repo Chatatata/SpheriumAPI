@@ -1,4 +1,5 @@
 # SpheriumWebService
+[![Build Status](https://travis-ci.com/Chatatata/Spherium-Web-Service.svg?token=scnrz6pqxZjfwX9HXNTB&branch=master)](https://travis-ci.com/Chatatata/Spherium-Web-Service)
 
 To start your Phoenix app:
 
