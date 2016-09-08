@@ -9,13 +9,13 @@ services:
   - postgresql
 sudo: required
 before_script:
-  - psql -c 'create user main superuser password 'kuz60TOL12' login;' -U postgres
+  - MIX_ENV=test mix ecto.create
+  - MIX_ENV=test mix ecto.migrate
 install:
   - mix local.hex --force
   - mix local.rebar --force
   - mix deps.get
-  - MIX_ENV=test mix ecto.create
-  - MIX_ENV=test mix ecto.migrate
+  - psql -c 'create user main superuser password 'kuz60TOL12' login;' -U postgres
 script:
   - mix test
 notifications:
