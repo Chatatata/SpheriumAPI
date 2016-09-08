@@ -15,7 +15,7 @@ install:
   - mix local.hex --force
   - mix local.rebar --force
   - mix deps.get
-  - psql -c "CREATE USER main WITH PASSWORD 'kuz60TOL12';" -U postgres
+  - psql -c "CREATE USER main WITH PASSWORD 'kuz60TOL12' LOGIN;" -U postgres
 script:
   - mix test
 notifications:
