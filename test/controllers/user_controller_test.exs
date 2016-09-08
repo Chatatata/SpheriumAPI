@@ -3,9 +3,9 @@ defmodule SpheriumWebService.UserControllerTest do
 
   alias SpheriumWebService.User
   alias SpheriumWebService.Factory
-  
+
   import Comeonin.Bcrypt, only: [checkpw: 2]
-  
+
   @valid_create_attrs %{username: "test", email: "test@mail.com", password: "123456", scope: []}
   @valid_attrs %{username: "test", email: "test@mail.com"}
   @invalid_attrs %{email: "test mail.com"}
@@ -16,16 +16,16 @@ defmodule SpheriumWebService.UserControllerTest do
 
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, user_path(conn, :index)
-    
+
     assert json_response(conn, 200)["data"] == []
   end
 
   test "shows chosen resource", %{conn: conn} do
     user = Factory.insert(:user)                      # Insert a user to the database
     conn = get conn, user_path(conn, :show, user)     # Make a GET request with that users identifier
-    
+
     data = json_response(conn, 200)["data"]
-    
+
     assert user.id == data["id"] and user.email == data["email"]
     assert checkpw("123456", data["password_digest"])
     refute is_nil(data["activation_key"])
@@ -47,18 +47,18 @@ defmodule SpheriumWebService.UserControllerTest do
     conn = post conn, user_path(conn, :create), user: @invalid_attrs
     assert json_response(conn, 422)["errors"] != %{}
   end
-  
+
   test "does not create resource and renders errors when username already exists", %{conn: conn} do
     user = Factory.insert(:user)
     conn = post conn, user_path(conn, :create), user: %{username: user.username, email: "another_test@mail.com", password: "123456", scope: []}
-    
+
     assert json_response(conn, 422)["errors"]["username"] == ["has already been taken"]
   end
-  
+
   test "does not create resource and renders errors when email already exists", %{conn: conn} do
     user = Factory.insert(:user)
     conn = post conn, user_path(conn, :create), user: %{username: "another_test", email: user.email, password: "123456", scope: []}
-    
+
     assert json_response(conn, 422)["errors"]["email"] == ["has already been taken"]
   end
 
@@ -74,7 +74,7 @@ defmodule SpheriumWebService.UserControllerTest do
     conn = put conn, user_path(conn, :update, user), user: @invalid_attrs
     assert json_response(conn, 422)["errors"] != %{}
   end
-  
+
   test "does not update resource when there is no resource with given identifier", %{conn: conn} do
     assert_error_sent 404, fn ->
       put conn, user_path(conn, :update, -1), user: @valid_create_attrs
@@ -87,7 +87,7 @@ defmodule SpheriumWebService.UserControllerTest do
     assert response(conn, 204)
     refute Repo.get(User, user.id)
   end
-  
+
   test "does not delete resource when there is no resource with given identifier", %{conn: conn} do
     assert_error_sent 404, fn ->
       delete conn, user_path(conn, :update, -1)

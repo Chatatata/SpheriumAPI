@@ -3,6 +3,8 @@ defmodule SpheriumWebService.UserController do
 
   alias SpheriumWebService.User
 
+  # plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+  # plug Guardian.Plug.LoadResource
   plug :scrub_params, "user" when action in [:create, :update]
 
   def index(conn, _params) do

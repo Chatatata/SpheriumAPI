@@ -1,8 +1,8 @@
 defmodule SpheriumWebService.User do
   use SpheriumWebService.Web, :model
-  
+
   import Comeonin.Bcrypt, only: [hashpwsalt: 1]
-  
+
 
   schema "users" do
     field :username, :string
@@ -11,18 +11,18 @@ defmodule SpheriumWebService.User do
     field :scope, {:array, :string}
     field :activation_key, Ecto.UUID
 	  field :activation_date, Ecto.DateTime
-	
+
 	  field :password, :string, virtual: true
 
     timestamps
-    
+
     has_one :image, SpheriumWebService.ProfileImage
     has_many :publishers, SpheriumWebService.Publisher
   end
 
   @allowed_fields ~w(username email password_digest password scope)a
   @required_fields ~w(username email password_digest)a
-  
+
   @email_regex ~r/(\w+)@([\w.]+)/
 
   @doc """
@@ -41,7 +41,7 @@ defmodule SpheriumWebService.User do
     |> unique_constraint(:username)							      # Username should be unique
 	  |> unique_constraint(:email)							        # Email should be unique
   end
-  
+
   defp hash_password(changeset) do
     if password = get_change(changeset, :password) do
       changeset

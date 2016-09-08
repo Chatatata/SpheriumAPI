@@ -13,11 +13,10 @@ use Mix.Config
 # which you typically run after static files are built.
 config :spherium_web_service, SpheriumWebService.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/manifest.json"
+  url: [host: "example.com", port: 80]
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :error
 
 # Configure Bcrypt library
 config :comeonin,

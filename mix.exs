@@ -19,7 +19,8 @@ defmodule SpheriumWebService.Mixfile do
   def application do
     [mod: {SpheriumWebService, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :comeonin]]
+                    :phoenix_ecto, :postgrex, :comeonin,
+                    :guardian, :timex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,7 +37,10 @@ defmodule SpheriumWebService.Mixfile do
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:comeonin, "~> 2.5.2"},
-     {:ex_machina, "~> 1.0", only: :test}]
+     {:ex_machina, "~> 1.0", only: :test},
+     {:guardian, "~> 0.12.0"},
+     {:credo, "~> 0.4", only: [:dev, :test]},
+     {:timex, "~> 3.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

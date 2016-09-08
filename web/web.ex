@@ -69,6 +69,14 @@ defmodule SpheriumWebService.Web do
     end
   end
 
+  def service do
+    quote do
+      alias SpheriumWebService.Repo
+      import Ecto
+      import Ecto.Query, only: [from: 1, from: 2]
+    end
+  end
+
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
   """
