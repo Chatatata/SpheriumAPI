@@ -2,12 +2,11 @@ defmodule SpheriumWebService.UserControllerTest do
   use SpheriumWebService.ConnCase
 
   alias SpheriumWebService.User
+  alias SpheriumWebService.UserView
   alias SpheriumWebService.Factory
 
-  import Comeonin.Bcrypt, only: [checkpw: 2]
-
-  @valid_create_attrs %{username: "test", email: "test@mail.com", password: "123456", scope: []}
-  @valid_attrs %{username: "test", email: "test@mail.com"}
+  @valid_create_attrs %{username: "another_test", email: "another_test@mail.com", password: "123456", scope: []}
+  @valid_attrs %{username: "another_test", email: "another_test@mail.com"}
   @invalid_attrs %{email: "test mail.com"}
 
   setup %{conn: conn} do
@@ -17,7 +16,7 @@ defmodule SpheriumWebService.UserControllerTest do
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, user_path(conn, :index)
 
-    assert json_response(conn, 200)["data"] == []
+    assert for {key, val} <- json_response(conn, 200)["data"], into: %{}, do: {String.to_atom(key), val} == Phoenix.View.render_many(Repo.all(User), UserView, "user.json")
   end
 
   test "shows chosen resource", %{conn: conn} do
@@ -27,8 +26,7 @@ defmodule SpheriumWebService.UserControllerTest do
     data = json_response(conn, 200)["data"]
 
     assert user.id == data["id"] and user.email == data["email"]
-    assert checkpw("123456", data["password_digest"])
-    refute is_nil(data["activation_key"])
+    refute data["activation_key"]
   end
 
   test "does not show resource and instead throw error when id is nonexistent", %{conn: conn} do

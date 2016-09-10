@@ -3,8 +3,7 @@ defmodule SpheriumWebService.UserController do
 
   alias SpheriumWebService.User
 
-  # plug Guardian.Plug.VerifyHeader, realm: "Bearer"
-  # plug Guardian.Plug.LoadResource
+  plug :authenticate_user
   plug :scrub_params, "user" when action in [:create, :update]
 
   def index(conn, _params) do
@@ -30,6 +29,7 @@ defmodule SpheriumWebService.UserController do
 
   def show(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
+
     render(conn, "show.json", user: user)
   end
 

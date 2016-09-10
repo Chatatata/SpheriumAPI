@@ -6,16 +6,16 @@ defmodule SpheriumWebService.ErrorViewTest do
 
   test "renders 404.json" do
     assert render(SpheriumWebService.ErrorView, "404.json", []) ==
-           %{errors: %{detail: "Page not found"}}
+           %{errors: %{name: "Not Found", detail: "Requested property does not exist."}}
   end
 
   test "render 500.json" do
     assert render(SpheriumWebService.ErrorView, "500.json", []) ==
-           %{errors: %{detail: "Server internal error"}}
+           %{errors: %{name: "Internal Server Error", detail: "Somethings went wrong in the server, please contact with administrator."}}
   end
 
   test "render any other" do
     assert render(SpheriumWebService.ErrorView, "505.json", []) ==
-           %{errors: %{detail: "Server internal error"}}
+           %{errors: %{name: "Internal Server Error", detail: "Somethings went wrong in the server, please contact with administrator."}}
   end
 end

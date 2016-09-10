@@ -20,7 +20,7 @@ defmodule SpheriumWebService.Mixfile do
     [mod: {SpheriumWebService, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin,
-                    :guardian, :timex]]
+                    :jose, :timex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +38,7 @@ defmodule SpheriumWebService.Mixfile do
      {:cowboy, "~> 1.0"},
      {:comeonin, "~> 2.5.2"},
      {:ex_machina, "~> 1.0", only: :test},
-     {:guardian, "~> 0.12.0"},
+     {:jose, "~> 1.8"},
      {:credo, "~> 0.4", only: [:dev, :test]},
      {:timex, "~> 3.0"}]
   end

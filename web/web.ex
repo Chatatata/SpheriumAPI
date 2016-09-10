@@ -36,6 +36,7 @@ defmodule SpheriumWebService.Web do
 
       import SpheriumWebService.Router.Helpers
       import SpheriumWebService.Gettext
+      import SpheriumWebService.AuthenticationPlug
     end
   end
 
@@ -74,6 +75,12 @@ defmodule SpheriumWebService.Web do
       alias SpheriumWebService.Repo
       import Ecto
       import Ecto.Query, only: [from: 1, from: 2]
+    end
+  end
+
+  def plug do
+    quote do
+      import Plug.Conn
     end
   end
 

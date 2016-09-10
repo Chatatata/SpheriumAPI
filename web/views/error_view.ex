@@ -2,11 +2,11 @@ defmodule SpheriumWebService.ErrorView do
   use SpheriumWebService.Web, :view
 
   def render("404.json", _assigns) do
-    %{errors: %{detail: "Page not found"}}
+    %{errors: %{name: "Not Found", detail: "Requested property does not exist."}}
   end
 
   def render("500.json", _assigns) do
-    %{errors: %{detail: "Server internal error"}}
+    %{errors: %{name: "Internal Server Error", detail: "Somethings went wrong in the server, please contact with administrator."}}
   end
 
   # In case no render clause matches or no

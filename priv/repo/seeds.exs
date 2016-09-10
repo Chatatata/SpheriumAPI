@@ -13,4 +13,6 @@
 alias SpheriumWebService.Repo
 alias SpheriumWebService.User
 
-Repo.insert! %User{"username" => "test"}
+Repo.delete_all(User)
+User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"}) |> Repo.insert!()
+User.changeset(%User{}, %{username: "another_test", password: "test", email: "another_test@mail.com"}) |> Repo.insert!()

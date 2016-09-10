@@ -4,8 +4,11 @@ defmodule SpheriumWebService.AuthAttemptController do
   alias SpheriumWebService.AuthAttempt
   alias SpheriumWebService.Credentials
   alias SpheriumWebService.CredentialValidationService
+  alias SpheriumWebService.AuthenticationService
 
   import Ecto.Changeset, only: [put_change: 3, get_field: 2]
+
+  plug :authenticate_user when action in [:index, :show]
   plug :scrub_params, "credentials" when action in [:create]
 
   def index(conn, _params) do
@@ -17,8 +20,7 @@ defmodule SpheriumWebService.AuthAttemptController do
     credentials = Credentials.changeset(%Credentials{}, credentials)
 
     ip_addr =
-      conn.peer
-      |> elem(0)
+      conn.remote_ip
       |> Tuple.to_list()
       |> Enum.join(".")
 
@@ -31,17 +33,10 @@ defmodule SpheriumWebService.AuthAttemptController do
           |> put_change(:success, true)
           |> Repo.insert!()
 
-          conn = Guardian.Plug.api_sign_in conn, user
-          jwt = Guardian.Plug.current_token conn
+          conn = AuthenticationService.issue_token(conn, user)
 
-          case Guardian.Plug.claims conn do
-            {:ok, claims} ->
-
-              conn
-              |> put_resp_header("authorization", "Bearer #{jwt}")
-              |> put_resp_header("x-expires", Integer.to_string(claims["exp"]))
-              |> render("artifacts.json", %{artifacts: %{user: user, jwt: jwt, exp: claims["exp"]}})
-          end
+          conn
+          |> render("artifacts.json", %{artifacts: %{user: user, jwt: conn.assigns[:jwt], exp: conn.assigns[:exp]}})
         _ ->
           changeset
           |> Repo.insert!()

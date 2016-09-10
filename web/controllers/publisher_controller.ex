@@ -2,7 +2,8 @@ defmodule SpheriumWebService.PublisherController do
   use SpheriumWebService.Web, :controller
 
   alias SpheriumWebService.Publisher
-  
+
+  plug :authenticate_user
   plug :scrub_params, "publisher" when action in [:create, :update]
 
   def index(conn, _params) do

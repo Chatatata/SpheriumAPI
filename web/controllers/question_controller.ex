@@ -3,6 +3,9 @@ defmodule SpheriumWebService.QuestionController do
 
   alias SpheriumWebService.Question
 
+  plug :authenticate_user
+  plug :scrub_params, "question" when action in [:create, :update]
+
   def index(conn, _params) do
     questions = Repo.all(Question)
     render(conn, "index.json", questions: questions)

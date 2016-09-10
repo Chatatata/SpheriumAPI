@@ -3,7 +3,10 @@ defmodule SpheriumWebService.ProfileImageController do
 
   alias SpheriumWebService.ProfileImage
   alias SpheriumWebService.User
-  
+
+  plug :authenticate_user
+  plug :scrub_params, "profile_image" when action in [:create, :update]
+
   def create(conn, %{"user_id" => user_id, "profile_image" => profile_image_params}) do
     changeset
        = Repo.get!(User, user_id)
@@ -24,7 +27,7 @@ defmodule SpheriumWebService.ProfileImageController do
     end
   end
 
-  def show(conn, %{"user_id" => user_id}) do   
+  def show(conn, %{"user_id" => user_id}) do
     profile_image = Repo.one!(from image in ProfileImage, where: image.user_id == ^user_id)
     render(conn, "show.json", profile_image: profile_image)
   end

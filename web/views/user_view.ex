@@ -12,11 +12,9 @@ defmodule SpheriumWebService.UserView do
   def render("user.json", %{user: user}) do
     %{id: user.id,
       username: user.username,
-      password_digest: user.password_digest,
       email: user.email,
       scope: user.scope,
-      activation_key: user.activation_key,
-      inserted_at: Ecto.DateTime.to_iso8601(user.inserted_at)}
+      created_at: Ecto.DateTime.to_iso8601(user.inserted_at)}
   end
 
   def render_private("user.json", %{user: user}) do

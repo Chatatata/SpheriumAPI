@@ -40,15 +40,7 @@ defmodule SpheriumWebService.Factory do
       publisher: build(:publisher)
     }
   end
-
-  # def invalid_auth_attempt_factory do
-  #   %SpheriumWebService.AuthAttempt{
-  #     ip_addr: sequence(:ip_addr, &"#{&1}.#{&1}.#{&1}.#{&1}")
-  #     username: sequence(:username, &"nonexisting#{&1}"),
-  #     success: true
-  #   }
-  # end
-  #
+  
   def auth_attempt_factory do
     %SpheriumWebService.AuthAttempt{
       ip_addr: sequence(:ip_addr, &"#{&1}.#{&1}.#{&1}.#{&1}"),
