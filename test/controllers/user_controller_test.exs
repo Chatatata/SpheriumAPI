@@ -16,7 +16,11 @@ defmodule SpheriumWebService.UserControllerTest do
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, user_path(conn, :index)
 
-    assert for {key, val} <- json_response(conn, 200)["data"], into: %{}, do: {String.to_atom(key), val} == Phoenix.View.render_many(Repo.all(User), UserView, "user.json")
+    [users_with_string_keys | _] = json_response(conn, 200)["data"]
+    users = for {key, val} <- users_with_string_keys, into: %{}, do: {String.to_atom(key), val}
+    [rendered | _] = Phoenix.View.render_many(Repo.all(User), UserView, "user.json")
+
+    assert users == rendered
   end
 
   test "shows chosen resource", %{conn: conn} do

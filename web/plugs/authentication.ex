@@ -3,7 +3,7 @@ defmodule SpheriumWebService.AuthenticationPlug do
 
   alias SpheriumWebService.User
 
-  def authenticate_user(conn, opts) do
+  def authenticate_user(conn, _opts) do
     jwk = JOSE.JWK.from(%{
       "kty" => "oct",
       "k" => :base64url.encode("secret")
