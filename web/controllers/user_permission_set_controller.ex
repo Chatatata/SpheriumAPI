@@ -2,7 +2,6 @@ defmodule SpheriumWebService.UserPermissionSetController do
   use SpheriumWebService.Web, :controller
 
   alias SpheriumWebService.User
-  alias SpheriumWebService.PermissionSet
 
   plug :put_view, SpheriumWebService.PermissionSetView
 
