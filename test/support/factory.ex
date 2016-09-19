@@ -40,12 +40,29 @@ defmodule SpheriumWebService.Factory do
       publisher: build(:publisher)
     }
   end
-  
+
   def auth_attempt_factory do
     %SpheriumWebService.AuthAttempt{
       ip_addr: sequence(:ip_addr, &"#{&1}.#{&1}.#{&1}.#{&1}"),
       success: true,
       username: build(:user).username
+    }
+  end
+
+  def permission_factory do
+    %SpheriumWebService.Permission{
+      required_grant_power: 10,
+      controller_name: "Elixir.SpheriumWebService.ExampleController",
+      controller_action: "index",
+      type: "one"
+    }
+  end
+
+  def permission_set_factory do
+    %SpheriumWebService.PermissionSet{
+      name: sequence(:permission_set_name, &"permission_set_#{&1}"),
+      description: sequence(:permission_set_description, &"permission_set_desc#{&1}"),
+      grant_power: 500
     }
   end
 end

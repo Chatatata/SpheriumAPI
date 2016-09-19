@@ -37,6 +37,7 @@ defmodule SpheriumWebService.Web do
       import SpheriumWebService.Router.Helpers
       import SpheriumWebService.Gettext
       import SpheriumWebService.AuthenticationPlug
+      import SpheriumWebService.AuthorizationPlug
     end
   end
 

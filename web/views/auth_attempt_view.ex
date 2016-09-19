@@ -28,6 +28,5 @@ defmodule SpheriumWebService.AuthAttemptView do
         date: Timex.now
       }
     }
-
   end
 end
