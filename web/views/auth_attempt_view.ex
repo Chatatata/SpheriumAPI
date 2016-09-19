@@ -20,13 +20,9 @@ defmodule SpheriumWebService.AuthAttemptView do
   end
 
   def render("artifacts.json", %{artifacts: artifacts}) do
-    %{
-      data: %{
-        user: UserView.render_private("user.json", %{user: artifacts.user}),
-        jwt: artifacts.jwt,
-        exp: artifacts.exp,
-        date: Timex.now
-      }
-    }
+    %{data: %{user: UserView.render_private("user.json", %{user: artifacts.user}),
+              jwt: artifacts.jwt,
+              exp: artifacts.exp,
+              date: Timex.now}}
   end
 end

@@ -2,7 +2,6 @@ defmodule SpheriumWebService.UserPermissionSetControllerTest do
   use SpheriumWebService.ConnCase
 
   alias SpheriumWebService.User
-  alias SpheriumWebService.PermissionSet
   alias SpheriumWebService.Factory
 
   setup %{conn: conn} do

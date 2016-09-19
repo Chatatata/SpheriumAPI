@@ -43,7 +43,7 @@ defmodule SpheriumWebService.Factory do
 
   def auth_attempt_factory do
     %SpheriumWebService.AuthAttempt{
-      ip_addr: sequence(:ip_addr, &"#{&1}.#{&1}.#{&1}.#{&1}"),
+      ip_addr: "#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}",
       success: true,
       username: build(:user).username
     }
