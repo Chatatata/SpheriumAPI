@@ -97,14 +97,11 @@ defmodule SpheriumWebService.UserPermissionSetControllerTest do
     permission_set = Factory.insert(:permission_set, user_id: user.id)
     tight_user = Factory.insert(:user, permission_set_id: permission_set.id)
 
-    conn = delete conn, user_user_permission_set_path(conn, :delete, user)
+    conn = delete conn, user_user_permission_set_path(conn, :delete, tight_user)
 
-    query = from u in User,
-            where: u.id == ^tight_user.id,
-            select: u.permission_set_id
-
-    assert response(conn, 204)
-    refute Repo.one(query)
+    assert conn.status == 204
+    assert conn.resp_body == "Permission set successfully unassigned from user."
+    refute Repo.get(User, tight_user.id).permission_set_id
   end
 
   test "throws 404 when non-existing user's permission set is attempted to be deleted", %{conn: conn} do

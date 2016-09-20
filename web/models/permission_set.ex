@@ -44,6 +44,7 @@ defmodule SpheriumWebService.PermissionSet do
   end
 
   defp put_permission_assoc(changeset) do
+    # TODO: Get them all instead making each compr.
     if permission_ids = get_change(changeset, :permission_ids) do
       permissions = permission_ids
                     |> Enum.uniq()

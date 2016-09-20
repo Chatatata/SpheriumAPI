@@ -38,7 +38,7 @@ defmodule SpheriumWebService.UserPermissionSetController do
 
     # FIXME: Permission set identifier field of user not get set to NULL.
     case Repo.update_all(query, set: [permission_set_id: nil]) do
-      {1, _terms} -> send_resp(conn, :no_content, "")
+      {1, _terms} -> send_resp(conn, :no_content, "Permission set successfully unassigned from user.")
       {0, _terms} -> send_resp(conn, :not_found, "User not found.")
     end
   end
