@@ -19,6 +19,11 @@ defmodule SpheriumWebService.PermissionSet do
   """
   use SpheriumWebService.Web, :model
 
+  import Ecto.Query, only: [where: 3]
+
+  alias SpheriumWebService.Repo
+  alias SpheriumWebService.Permission
+
   schema "permission_sets" do
     field :name, :string
     field :description, :string
@@ -44,14 +49,14 @@ defmodule SpheriumWebService.PermissionSet do
   end
 
   defp put_permission_assoc(changeset) do
-    # TODO: Get them all instead making each compr.
     if permission_ids = get_change(changeset, :permission_ids) do
-      permissions = permission_ids
-                    |> Enum.uniq()
-                    |> Enum.map(&SpheriumWebService.Repo.get(SpheriumWebService.Permission, &1))
+      permissions = Permission
+                    |> where([p], p.id in ^Enum.uniq(permission_ids))
+                    |> Repo.all()
 
-      changeset
-      |> put_assoc(:permissions, permissions)
+      if Enum.count(permissions) == Enum.count(permission_ids),
+        do: put_assoc(changeset, :permissions, permissions),
+        else: add_error(changeset, :permissions, "is empty")
     else
       changeset
     end
