@@ -3,7 +3,9 @@ defmodule SpheriumWebService.UserPermissionSetController do
 
   alias SpheriumWebService.User
   alias SpheriumWebService.PermissionSet
+  alias SpheriumWebService.PermissionSetGrant
 
+  plug :authenticate_user
   plug :put_view, SpheriumWebService.PermissionSetView
 
   def show(conn, %{"user_id" => user_id}) do
@@ -23,9 +25,22 @@ defmodule SpheriumWebService.UserPermissionSetController do
       query = from u in User,
               where: u.id == ^user_id
 
-      case Repo.update_all(query, set: [permission_set_id: permission_set_id]) do
-        {1, _terms} -> render(conn, "show.json", permission_set: Repo.get!(PermissionSet, permission_set_id) |> Repo.preload(:permissions))
-        {0, _terms} -> send_resp(conn, :not_found, "User not found.")
+      case Repo.transaction(fn ->
+        case Repo.update_all(query, set: [permission_set_id: permission_set_id]) do
+          {1, _terms} ->
+            # Permission set of user is successfully updated.
+            changeset = PermissionSetGrant.changeset(%PermissionSetGrant{}, %{permission_set_id: permission_set_id,
+                                                                              user_id: conn.assigns[:user].id,
+                                                                              target_user_id: user_id})
+
+            Repo.insert!(changeset)
+          {0, _terms} ->
+            # No permission set of a user is updated.
+            Repo.rollback(:user_not_found)
+        end
+      end) do
+        {:ok, _permission_set_grant} -> render(conn, "show.json", permission_set: Repo.get!(PermissionSet, permission_set_id) |> Repo.preload(:permissions))
+        {:error, :user_not_found} -> send_resp(conn, :not_found, "User not found.")
       end
     rescue
       Postgrex.Error -> send_resp(conn, :not_found, "Permission set with given identifier not found.")

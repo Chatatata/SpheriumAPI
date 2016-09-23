@@ -19,7 +19,7 @@ defmodule SpheriumWebService.Router do
 
       resources "/permissions", PermissionController, only: [:index, :show, :update]
       resources "/permission_sets", PermissionSetController, except: [:new, :edit]
-      resources "/permission_set_grants", PermissionSetGrantController, except: [:new, :edit]
+      resources "/permission_set_grants", PermissionSetGrantController, only: [:index, :show]
     end
 
     resources "/subscribers", SubscriberController, except: [:new, :edit]

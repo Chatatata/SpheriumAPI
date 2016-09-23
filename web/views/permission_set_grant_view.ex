@@ -11,8 +11,9 @@ defmodule SpheriumWebService.PermissionSetGrantView do
 
   def render("permission_set_grant.json", %{permission_set_grant: permission_set_grant}) do
     %{id: permission_set_grant.id,
-      controller_name: permission_set_grant.controller_name,
-      controller_action: permission_set_grant.controller_action,
-      type: permission_set_grant.type}
+      permission_set_id: permission_set_grant.permission_set_id,
+      authority_id: permission_set_grant.user_id,
+      grant_target_id: permission_set_grant.target_user_id,
+      timestamp: permission_set_grant.inserted_at}
   end
 end

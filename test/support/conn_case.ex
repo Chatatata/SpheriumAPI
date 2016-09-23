@@ -43,7 +43,7 @@ defmodule SpheriumWebService.ConnCase do
     end
 
     Repo.delete_all(User)
-    
+
     user =
       User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"})
       |> Repo.insert!()
@@ -52,6 +52,7 @@ defmodule SpheriumWebService.ConnCase do
       Phoenix.ConnTest.build_conn()
       |> Plug.Conn.put_req_header("accept", "application/json")
       |> AuthHelper.issue_token(user)
+      |> Plug.Conn.assign(:setup_user, user)
 
     {:ok, conn: conn}
   end

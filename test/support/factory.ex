@@ -65,4 +65,9 @@ defmodule SpheriumWebService.Factory do
       grant_power: 500
     }
   end
+
+  def permission_set_grant_factory do
+    %SpheriumWebService.PermissionSetGrant{
+    }
+  end
 end

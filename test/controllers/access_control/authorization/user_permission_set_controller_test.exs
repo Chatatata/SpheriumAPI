@@ -2,6 +2,7 @@ defmodule SpheriumWebService.UserPermissionSetControllerTest do
   use SpheriumWebService.ConnCase
 
   alias SpheriumWebService.User
+  alias SpheriumWebService.PermissionSetGrant
   alias SpheriumWebService.Factory
 
   setup %{conn: conn} do
@@ -45,7 +46,7 @@ defmodule SpheriumWebService.UserPermissionSetControllerTest do
     end
   end
 
-  test "updates and renders chosen resource when data is valid", %{conn: conn} do
+  test "assigns a permission set to a user and creates a new permission set grant", %{conn: conn} do
     user = Factory.insert(:user)
     permission = Factory.insert(:permission)
     permission_set = Factory.insert(:permission_set, user_id: user.id, permissions: [permission])
@@ -68,6 +69,7 @@ defmodule SpheriumWebService.UserPermissionSetControllerTest do
                                                  }
 
     assert Repo.get_by(User, %{permission_set_id: permission_set.id, id: tight_user.id})
+    assert Repo.get_by(PermissionSetGrant, %{target_user_id: tight_user.id, user_id: conn.assigns[:setup_user].id, permission_set_id: permission_set.id})
   end
 
   test "throws 404 when non-existing permission set is given to be assigned", %{conn: conn} do
@@ -80,6 +82,7 @@ defmodule SpheriumWebService.UserPermissionSetControllerTest do
 
     assert conn.status == 404
     assert conn.resp_body =~ "Permission set with given identifier not found."
+    refute Repo.get_by(PermissionSetGrant, %{target_user_id: tight_user.id, user_id: user.id, permission_set_id: permission_set.id})
   end
 
   test "throws 404 when non-existing user is given to update", %{conn: conn} do
