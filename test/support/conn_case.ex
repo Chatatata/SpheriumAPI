@@ -43,7 +43,10 @@ defmodule SpheriumWebService.ConnCase do
     end
 
     Repo.delete_all(User)
-    user = User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"}) |> Repo.insert!()
+    
+    user =
+      User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"})
+      |> Repo.insert!()
 
     conn =
       Phoenix.ConnTest.build_conn()

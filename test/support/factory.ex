@@ -52,7 +52,7 @@ defmodule SpheriumWebService.Factory do
   def permission_factory do
     %SpheriumWebService.Permission{
       required_grant_power: 10,
-      controller_name: "Elixir.SpheriumWebService.ExampleController",
+      controller_name: sequence(:name, &"Elixir.SpheriumWebService.ExampleController#{&1}"),
       controller_action: "index",
       type: "one"
     }

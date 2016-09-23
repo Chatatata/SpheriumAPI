@@ -54,9 +54,10 @@ defmodule SpheriumWebService.PermissionSet do
                     |> where([p], p.id in ^Enum.uniq(permission_ids))
                     |> Repo.all()
 
-      if Enum.count(permissions) == Enum.count(permission_ids),
+      if Enum.count(permissions) == Enum.count(permission_ids) and
+         Enum.count(permissions) != 0,
         do: put_assoc(changeset, :permissions, permissions),
-        else: add_error(changeset, :permissions, "is empty")
+        else: add_error(changeset, :permission_ids, "is empty or not sparse")
     else
       changeset
     end
