@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.PermissionSetTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.PermissionSetTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.PermissionSet
-  alias SpheriumWebService.Factory
+  alias Spherium.PermissionSet
+  alias Spherium.Factory
 
   test "changeset with permission identifiers" do
     user = Factory.insert(:user)

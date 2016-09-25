@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.ProfileImageTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.ProfileImageTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.ProfileImage
+  alias Spherium.ProfileImage
 
   @valid_attrs %{user: %{id: 5, username: "test", email: "test@mail.com", password: "123456", scope: []}, data: "some content"}
   @invalid_attrs %{}

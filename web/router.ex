@@ -1,11 +1,11 @@
-defmodule SpheriumWebService.Router do
-  use SpheriumWebService.Web, :router
+defmodule Spherium.Router do
+  use Spherium.Web, :router
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/api", SpheriumWebService do
+  scope "/api", Spherium do
     pipe_through :api
 
     scope "/access_control" do

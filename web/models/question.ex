@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.Question do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.Question do
+  use Spherium.Web, :model
 
   schema "questions" do
-    belongs_to :publisher, SpheriumWebService.Publisher
-    belongs_to :user, SpheriumWebService.User
+    belongs_to :publisher, Spherium.Publisher
+    belongs_to :user, Spherium.User
 
     timestamps()
   end

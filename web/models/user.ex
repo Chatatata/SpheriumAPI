@@ -1,5 +1,5 @@
-defmodule SpheriumWebService.User do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.User do
+  use Spherium.Web, :model
 
   import Comeonin.Bcrypt, only: [hashpwsalt: 1]
 
@@ -15,9 +15,9 @@ defmodule SpheriumWebService.User do
 
     timestamps
 
-    has_one :image, SpheriumWebService.ProfileImage
-    has_many :publishers, SpheriumWebService.Publisher
-    belongs_to :permission_set, SpheriumWebService.PermissionSet
+    has_one :image, Spherium.ProfileImage
+    has_many :publishers, Spherium.Publisher
+    belongs_to :permission_set, Spherium.PermissionSet
   end
 
   @email_regex ~r/(\w+)@([\w.]+)/

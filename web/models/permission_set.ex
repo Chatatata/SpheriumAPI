@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.PermissionSet do
+defmodule Spherium.PermissionSet do
   @moduledoc """
   Defines a permission set.
 
@@ -14,25 +14,25 @@ defmodule SpheriumWebService.PermissionSet do
   permission set may grant new permissions to other users as long as
   that permissions' required grant powers are lower than the one in the user.
 
-  See `SpheriumWebService.Permission` for more information about permission
+  See `Spherium.Permission` for more information about permission
   granting.
   """
-  use SpheriumWebService.Web, :model
+  use Spherium.Web, :model
 
   import Ecto.Query, only: [where: 3]
 
-  alias SpheriumWebService.Repo
-  alias SpheriumWebService.Permission
+  alias Spherium.Repo
+  alias Spherium.Permission
 
   schema "permission_sets" do
     field :name, :string
     field :description, :string
     field :grant_power, :integer
-    belongs_to :user, SpheriumWebService.User
+    belongs_to :user, Spherium.User
     field :inserted_at, Ecto.DateTime
 
-    has_many :users, SpheriumWebService.User
-    many_to_many :permissions, SpheriumWebService.Permission, join_through: "permission_set_permissions"
+    has_many :users, Spherium.User
+    many_to_many :permissions, Spherium.Permission, join_through: "permission_set_permissions"
     field :permission_ids, {:array, :integer}, virtual: true
   end
 

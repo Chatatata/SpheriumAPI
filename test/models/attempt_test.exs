@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.AttemptTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.AttemptTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.Attempt
+  alias Spherium.Attempt
 
   test "changeset with valid attributes" do
     changeset = Attempt.changeset(%Attempt{}, %{success: true, username: "some content", ip_addr: "152.168.7.3"})

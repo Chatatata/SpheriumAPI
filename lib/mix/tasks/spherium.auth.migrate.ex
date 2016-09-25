@@ -1,10 +1,10 @@
 defmodule Mix.Tasks.Spherium.Auth.Migrate do
   use Mix.Task
 
-  alias SpheriumWebService.Repo
-  alias SpheriumWebService.User
-  alias SpheriumWebService.Permission
-  alias SpheriumWebService.PermissionSet
+  alias Spherium.Repo
+  alias Spherium.User
+  alias Spherium.Permission
+  alias Spherium.PermissionSet
 
   import Ecto.Query
   import Mix.Ecto

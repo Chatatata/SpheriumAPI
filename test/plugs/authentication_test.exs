@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.AuthenticationTest do
-  use SpheriumWebService.PlugCase
+defmodule Spherium.AuthenticationTest do
+  use Spherium.PlugCase
 
-  alias SpheriumWebService.AuthenticationPlug
-  alias SpheriumWebService.AuthHelper
-  alias SpheriumWebService.User
+  alias Spherium.AuthenticationPlug
+  alias Spherium.AuthHelper
+  alias Spherium.User
 
   test "authenticates user with valid token" do
     user = User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"}) |> Repo.insert!()

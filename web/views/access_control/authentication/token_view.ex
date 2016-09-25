@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.TokenView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.TokenView do
+  use Spherium.Web, :view
 
   def render("show.json", %{token: token}) do
-    %{data: render_one(token, SpheriumWebService.TokenView, "token.json")}
+    %{data: render_one(token, Spherium.TokenView, "token.json")}
   end
 
   def render("token.json", %{token: token}) do

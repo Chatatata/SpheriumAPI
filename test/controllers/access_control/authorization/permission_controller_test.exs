@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.PermissionControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.PermissionControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.Permission
+  alias Spherium.Permission
 
   setup %{conn: conn} do
     {:ok, conn: conn}

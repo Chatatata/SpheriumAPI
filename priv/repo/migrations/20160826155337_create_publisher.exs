@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.Repo.Migrations.CreatePublisher do
+defmodule Spherium.Repo.Migrations.CreatePublisher do
   use Ecto.Migration
 
   def change do

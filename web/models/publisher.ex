@@ -1,13 +1,13 @@
-defmodule SpheriumWebService.Publisher do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.Publisher do
+  use Spherium.Web, :model
 
   schema "publishers" do
     field :name, :string
     field :image, :binary
     field :description, :string
     
-    belongs_to :user, SpheriumWebService.User
-    has_many :questions, SpheriumWebService.Question
+    belongs_to :user, Spherium.User
+    has_many :questions, Spherium.Question
 
     timestamps()
   end

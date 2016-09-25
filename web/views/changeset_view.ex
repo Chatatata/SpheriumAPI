@@ -1,11 +1,11 @@
-defmodule SpheriumWebService.ChangesetView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.ChangesetView do
+  use Spherium.Web, :view
 
   @doc """
   Traverses and translates changeset errors.
 
   See `Ecto.Changeset.traverse_errors/2` and
-  `SpheriumWebService.ErrorHelpers.translate_error/1` for more details.
+  `Spherium.ErrorHelpers.translate_error/1` for more details.
   """
   def translate_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, &translate_error/1)

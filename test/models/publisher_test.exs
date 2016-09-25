@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.PublisherTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.PublisherTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.Publisher
+  alias Spherium.Publisher
 
   @user %{id: 5, username: "test", email: "test@mail.com", password: "123456", scope: []}
   @valid_attrs %{user_id: @user.id, description: "some content", image: "some content", name: "some content"}

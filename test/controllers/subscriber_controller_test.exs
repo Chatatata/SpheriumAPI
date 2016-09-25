@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.SubscriberControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.SubscriberControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.Subscriber
-  alias SpheriumWebService.Factory
+  alias Spherium.Subscriber
+  alias Spherium.Factory
   
   @valid_attrs %{address: "some@content.com"}
   @invalid_attrs %{address: "some content"}

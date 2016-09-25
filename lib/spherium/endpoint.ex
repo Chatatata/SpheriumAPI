@@ -1,14 +1,14 @@
-defmodule SpheriumWebService.Endpoint do
-  use Phoenix.Endpoint, otp_app: :spherium_web_service
+defmodule Spherium.Endpoint do
+  use Phoenix.Endpoint, otp_app: :spherium
 
-  socket "/socket", SpheriumWebService.UserSocket
+  socket "/socket", Spherium.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug Plug.Static,
-    at: "/", from: :spherium_web_service, gzip: false,
+    at: "/", from: :spherium, gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
@@ -30,8 +30,8 @@ defmodule SpheriumWebService.Endpoint do
 
   plug Plug.Session,
     store: :cookie,
-    key: "_spherium_web_service_key",
+    key: "_spherium_key",
     signing_salt: "ku8kC4lJ"
 
-  plug SpheriumWebService.Router
+  plug Spherium.Router
 end

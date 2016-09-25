@@ -1,13 +1,13 @@
-defmodule SpheriumWebService.AttemptView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.AttemptView do
+  use Spherium.Web, :view
   use Timex
 
   def render("index.json", %{attempts: attempts}) do
-    %{data: render_many(attempts, SpheriumWebService.AttemptView, "attempt.json")}
+    %{data: render_many(attempts, Spherium.AttemptView, "attempt.json")}
   end
 
   def render("show.json", %{attempt: attempt}) do
-    %{data: render_one(attempt, SpheriumWebService.AttemptView, "attempt.json")}
+    %{data: render_one(attempt, Spherium.AttemptView, "attempt.json")}
   end
 
   def render("attempt.json", %{attempt: attempt}) do

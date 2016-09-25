@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.UserTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.UserTest do
+  use Spherium.ModelCase
   
   import Comeonin.Bcrypt, only: [checkpw: 2]
 
-  alias SpheriumWebService.User
+  alias Spherium.User
 
   @valid_attrs %{username: "test", email: "test@mail.com", password: "123456", scope: []}
 

@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.PermissionSetGrant do
+defmodule Spherium.PermissionSetGrant do
   @moduledoc """
   Defines a permission set grant applied on a user.
 
@@ -24,12 +24,12 @@ defmodule SpheriumWebService.PermissionSetGrant do
   who is insufficient to grant subject permission) without visible effect on
   target user's permission set is not get persisted.
   """
-  use SpheriumWebService.Web, :model
+  use Spherium.Web, :model
 
   schema "permission_set_grants" do
-    belongs_to :permission_set, SpheriumWebService.PermissionSet
-    belongs_to :user, SpheriumWebService.User
-    belongs_to :target_user, SpheriumWebService.User
+    belongs_to :permission_set, Spherium.PermissionSet
+    belongs_to :user, Spherium.User
+    belongs_to :target_user, Spherium.User
     field :inserted_at, Ecto.DateTime
   end
 

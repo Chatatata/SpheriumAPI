@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.Repo.Migrations.CreateQuestion do
+defmodule Spherium.Repo.Migrations.CreateQuestion do
   use Ecto.Migration
 
   def change do

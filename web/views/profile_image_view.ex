@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.ProfileImageView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.ProfileImageView do
+  use Spherium.Web, :view
 
   def render("show.json", %{profile_image: profile_image}) do
-    %{data: render_one(profile_image, SpheriumWebService.ProfileImageView, "profile_image.json")}
+    %{data: render_one(profile_image, Spherium.ProfileImageView, "profile_image.json")}
   end
 
   def render("profile_image.json", %{profile_image: profile_image}) do

@@ -1,5 +1,5 @@
-defmodule SpheriumWebService.Attempt do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.Attempt do
+  use Spherium.Web, :model
 
   schema "attempts" do
     field :ip_addr, :string

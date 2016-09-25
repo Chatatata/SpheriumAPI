@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.UserController do
-  use SpheriumWebService.Web, :controller
-  import SpheriumWebService.AuthenticationPlug
-  import SpheriumWebService.AuthorizationPlug
+defmodule Spherium.UserController do
+  use Spherium.Web, :controller
+  import Spherium.AuthenticationPlug
+  import Spherium.AuthorizationPlug
 
-  alias SpheriumWebService.User
+  alias Spherium.User
 
   plug :authenticate_user
   plug :authorize_user
@@ -26,7 +26,7 @@ defmodule SpheriumWebService.UserController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -46,7 +46,7 @@ defmodule SpheriumWebService.UserController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 

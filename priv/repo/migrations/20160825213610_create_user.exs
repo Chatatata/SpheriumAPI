@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.Repo.Migrations.CreateUser do
+defmodule Spherium.Repo.Migrations.CreateUser do
   use Ecto.Migration
 
   def change do

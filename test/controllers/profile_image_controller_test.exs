@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.ProfileImageControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.ProfileImageControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.ProfileImage
-  alias SpheriumWebService.Factory
+  alias Spherium.ProfileImage
+  alias Spherium.Factory
 
   @valid_attrs %{data: "some binary data"}
   @invalid_attrs %{}

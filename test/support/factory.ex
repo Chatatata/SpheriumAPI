@@ -1,10 +1,10 @@
-defmodule SpheriumWebService.Factory do
-  use ExMachina.Ecto, repo: SpheriumWebService.Repo
+defmodule Spherium.Factory do
+  use ExMachina.Ecto, repo: Spherium.Repo
 
   import Comeonin.Bcrypt, only: [hashpwsalt: 1]
 
   def user_factory do
-    %SpheriumWebService.User{
+    %Spherium.User{
       username: sequence(:username, &"user#{&1}"),
       email: sequence(:email, &"email-#{&1}@example.com"),
       password_digest: hashpwsalt("123456"),
@@ -13,20 +13,20 @@ defmodule SpheriumWebService.Factory do
   end
 
   def subscriber_factory do
-    %SpheriumWebService.Subscriber{
+    %Spherium.Subscriber{
       address: sequence(:email, &"email-#{&1}@example.com")
     }
   end
 
   def profile_image_factory do
-    %SpheriumWebService.ProfileImage{
+    %Spherium.ProfileImage{
       data: "some test data",
       user: build(:user)
     }
   end
 
   def publisher_factory do
-    %SpheriumWebService.Publisher{
+    %Spherium.Publisher{
       name: "Test publisher",
       image: "some test data",
       description: "Test publisher's description...",
@@ -35,14 +35,14 @@ defmodule SpheriumWebService.Factory do
   end
 
   def question_factory do
-    %SpheriumWebService.Question{
+    %Spherium.Question{
       user: build(:user),
       publisher: build(:publisher)
     }
   end
 
   def attempt_factory do
-    %SpheriumWebService.Attempt{
+    %Spherium.Attempt{
       ip_addr: "#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}",
       success: true,
       username: build(:user).username
@@ -50,16 +50,16 @@ defmodule SpheriumWebService.Factory do
   end
 
   def permission_factory do
-    %SpheriumWebService.Permission{
+    %Spherium.Permission{
       required_grant_power: 10,
-      controller_name: sequence(:name, &"Elixir.SpheriumWebService.ExampleController#{&1}"),
+      controller_name: sequence(:name, &"Elixir.Spherium.ExampleController#{&1}"),
       controller_action: "index",
       type: "one"
     }
   end
 
   def permission_set_factory do
-    %SpheriumWebService.PermissionSet{
+    %Spherium.PermissionSet{
       name: sequence(:permission_set_name, &"permission_set_#{&1}"),
       description: sequence(:permission_set_description, &"permission_set_desc#{&1}"),
       grant_power: 500
@@ -67,7 +67,7 @@ defmodule SpheriumWebService.Factory do
   end
 
   def permission_set_grant_factory do
-    %SpheriumWebService.PermissionSetGrant{
+    %Spherium.PermissionSetGrant{
     }
   end
 end

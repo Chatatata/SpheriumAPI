@@ -1,10 +1,10 @@
-defmodule SpheriumWebService.PermissionController do
+defmodule Spherium.PermissionController do
   @moduledoc """
   Handles permission endpoints.
   """
-  use SpheriumWebService.Web, :controller
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.Permission
+  alias Spherium.Permission
 
   plug :authenticate_user
   plug :authorize_user

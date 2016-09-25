@@ -1,12 +1,12 @@
-defmodule SpheriumWebService.UserPasswordController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.UserPasswordController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.User
+  alias Spherium.User
 
   plug :authenticate_user
   plug :authorize_user
   plug :scrub_params, "password" when action in [:update]
-  plug :put_view, SpheriumWebService.UserPasswordChangeView
+  plug :put_view, Spherium.UserPasswordChangeView
 
   # TODO: Forgot password
   # def create(conn, %{""})
@@ -22,7 +22,7 @@ defmodule SpheriumWebService.UserPasswordController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 end

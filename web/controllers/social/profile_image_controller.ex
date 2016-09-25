@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.ProfileImageController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.ProfileImageController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.ProfileImage
-  alias SpheriumWebService.User
+  alias Spherium.ProfileImage
+  alias Spherium.User
 
   plug :authenticate_user
   plug :authorize_user
@@ -24,7 +24,7 @@ defmodule SpheriumWebService.ProfileImageController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -45,7 +45,7 @@ defmodule SpheriumWebService.ProfileImageController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 

@@ -1,10 +1,10 @@
-defmodule SpheriumWebService.UserPasswordControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.UserPasswordControllerTest do
+  use Spherium.ConnCase
 
   import Comeonin.Bcrypt, only: [checkpw: 2]
 
-  alias SpheriumWebService.User
-  alias SpheriumWebService.Factory
+  alias Spherium.User
+  alias Spherium.Factory
 
   @fake_pw "456789"
 

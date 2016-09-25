@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.QuestionTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.QuestionTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.Question
+  alias Spherium.Question
 
   @user %{id: 5, username: "test", email: "test@mail.com", password: "123456", scope: []}
   @publisher %{id: 10, user_id: @user.id, description: "some content", image: "some content", name: "some content"}

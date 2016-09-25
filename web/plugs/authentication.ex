@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.AuthenticationPlug do
-  use SpheriumWebService.Web, :plug
+defmodule Spherium.AuthenticationPlug do
+  use Spherium.Web, :plug
 
-  alias SpheriumWebService.User
+  alias Spherium.User
 
   def authenticate_user(conn, _opts) do
     jwk = JOSE.JWK.from(%{

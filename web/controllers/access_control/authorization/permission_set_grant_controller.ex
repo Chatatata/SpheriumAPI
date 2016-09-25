@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.PermissionSetGrantController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.PermissionSetGrantController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.PermissionSetGrant
+  alias Spherium.PermissionSetGrant
 
   plug :authenticate_user
   plug :authorize_user

@@ -1,14 +1,14 @@
-defmodule SpheriumWebService.AttemptViewTest do
-  use SpheriumWebService.ConnCase, async: true
+defmodule Spherium.AttemptViewTest do
+  use Spherium.ConnCase, async: true
 
   import Phoenix.View
 
-  alias SpheriumWebService.Factory
+  alias Spherium.Factory
 
   test "renders auth attempt" do
     attempt = Factory.insert(:attempt)
 
-    assert render(SpheriumWebService.AttemptView,
+    assert render(Spherium.AttemptView,
                   "attempt.json",
                   %{attempt: attempt}) ==
                   %{id: attempt.id,

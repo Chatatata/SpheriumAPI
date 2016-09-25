@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.QuestionControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.QuestionControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.Question
-  alias SpheriumWebService.Factory
+  alias Spherium.Question
+  alias Spherium.Factory
 
   setup %{conn: conn} do
     {:ok, conn: conn}

@@ -1,5 +1,5 @@
 ExUnit.start
 
-Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(Spherium.Repo, :manual)
 
 {:ok, _} = Application.ensure_all_started(:ex_machina)

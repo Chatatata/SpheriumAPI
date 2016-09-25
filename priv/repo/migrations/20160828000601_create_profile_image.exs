@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.Repo.Migrations.CreateProfileImage do
+defmodule Spherium.Repo.Migrations.CreateProfileImage do
   use Ecto.Migration
 
   def change do

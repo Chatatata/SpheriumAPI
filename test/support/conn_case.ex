@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.ConnCase do
+defmodule Spherium.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -12,9 +12,9 @@ defmodule SpheriumWebService.ConnCase do
   inside a transaction which is reset at the beginning
   of the test unless the test case is marked as async.
   """
-  alias SpheriumWebService.Repo
-  alias SpheriumWebService.User
-  alias SpheriumWebService.AuthHelper
+  alias Spherium.Repo
+  alias Spherium.User
+  alias Spherium.AuthHelper
 
   use ExUnit.CaseTemplate
 
@@ -23,23 +23,23 @@ defmodule SpheriumWebService.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      alias SpheriumWebService.Repo
+      alias Spherium.Repo
       import Ecto
       import Ecto.Changeset
       import Ecto.Query, only: [from: 1, from: 2]
 
-      import SpheriumWebService.Router.Helpers
+      import Spherium.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint SpheriumWebService.Endpoint
+      @endpoint Spherium.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SpheriumWebService.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Spherium.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Spherium.Repo, {:shared, self()})
     end
 
     conn = Phoenix.ConnTest.build_conn()

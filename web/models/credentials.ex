@@ -1,5 +1,5 @@
-defmodule SpheriumWebService.Credentials do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.Credentials do
+  use Spherium.Web, :model
 
   schema "credentials" do
     field :username, :string

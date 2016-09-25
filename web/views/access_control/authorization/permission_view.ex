@@ -1,12 +1,12 @@
-defmodule SpheriumWebService.PermissionView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.PermissionView do
+  use Spherium.Web, :view
 
   def render("index.json", %{permissions: permissions}) do
-    %{data: render_many(permissions, SpheriumWebService.PermissionView, "permission.json")}
+    %{data: render_many(permissions, Spherium.PermissionView, "permission.json")}
   end
 
   def render("show.json", %{permission: permission}) do
-    %{data: render_one(permission, SpheriumWebService.PermissionView, "permission.json")}
+    %{data: render_one(permission, Spherium.PermissionView, "permission.json")}
   end
 
   def render("permission.json", %{permission: permission}) do

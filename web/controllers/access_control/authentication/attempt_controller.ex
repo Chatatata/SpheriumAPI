@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.AttemptController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.AttemptController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.Attempt
+  alias Spherium.Attempt
 
   plug :authenticate_user
   plug :authorize_user

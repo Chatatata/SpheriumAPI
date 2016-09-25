@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.ServiceCase do
+defmodule Spherium.ServiceCase do
   @moduledoc """
   This module defines the test case to be used by
   service tests.
@@ -15,19 +15,19 @@ defmodule SpheriumWebService.ServiceCase do
 
   using do
     quote do
-      alias SpheriumWebService.Repo
+      alias Spherium.Repo
       import Ecto
       import Ecto.Changeset
       import Ecto.Query, only: [from: 1, from: 2]
-      import SpheriumWebService.ServiceCase
+      import Spherium.ServiceCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SpheriumWebService.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Spherium.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Spherium.Repo, {:shared, self()})
     end
 
     :ok

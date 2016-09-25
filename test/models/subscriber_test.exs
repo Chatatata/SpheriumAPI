@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.SubscriberTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.SubscriberTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.Subscriber
+  alias Spherium.Subscriber
 
   @valid_attrs %{address: "test@mail.com"}
 

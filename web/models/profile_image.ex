@@ -1,12 +1,12 @@
-defmodule SpheriumWebService.ProfileImage do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.ProfileImage do
+  use Spherium.Web, :model
 
   schema "profile_images" do
     field :data, :binary
     
     timestamps()
     
-    belongs_to :user, SpheriumWebService.User
+    belongs_to :user, Spherium.User
   end
   
   @allowed_fields ~w(data)a

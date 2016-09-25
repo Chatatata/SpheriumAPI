@@ -1,12 +1,12 @@
-defmodule SpheriumWebService.QuestionView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.QuestionView do
+  use Spherium.Web, :view
 
   def render("index.json", %{questions: questions}) do
-    %{data: render_many(questions, SpheriumWebService.QuestionView, "question.json")}
+    %{data: render_many(questions, Spherium.QuestionView, "question.json")}
   end
 
   def render("show.json", %{question: question}) do
-    %{data: render_one(question, SpheriumWebService.QuestionView, "question.json")}
+    %{data: render_one(question, Spherium.QuestionView, "question.json")}
   end
 
   def render("question.json", %{question: question}) do

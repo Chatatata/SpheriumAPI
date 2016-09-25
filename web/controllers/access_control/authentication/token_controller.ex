@@ -1,13 +1,13 @@
-defmodule SpheriumWebService.TokenController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.TokenController do
+  use Spherium.Web, :controller
   use Timex
 
   import Ecto.Changeset, only: [put_change: 3, get_field: 2]
 
-  alias SpheriumWebService.Attempt
-  alias SpheriumWebService.Credentials
-  alias SpheriumWebService.CredentialValidationService
-  alias SpheriumWebService.AuthenticationService
+  alias Spherium.Attempt
+  alias Spherium.Credentials
+  alias Spherium.CredentialValidationService
+  alias Spherium.AuthenticationService
 
   def create(conn, %{"credentials" => credentials}) do
     credentials = Credentials.changeset(%Credentials{}, credentials)

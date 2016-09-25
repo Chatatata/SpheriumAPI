@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.Repo.Migrations.CreateAuthorizationTables do
+defmodule Spherium.Repo.Migrations.CreateAuthorizationTables do
   use Ecto.Migration
 
   def change do

@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.PermissionSetControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.PermissionSetControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.Permission
-  alias SpheriumWebService.PermissionSet
-  alias SpheriumWebService.Factory
+  alias Spherium.Permission
+  alias Spherium.PermissionSet
+  alias Spherium.Factory
 
   setup %{conn: conn} do
     {:ok, conn: conn}
@@ -39,7 +39,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
                                                  "description" => permission_set.description,
                                                  "grant_power" => permission_set.grant_power,
                                                  "user_id" => permission_set.user_id,
-                                                 "permissions" => Phoenix.View.render_many(permissions, SpheriumWebService.PermissionView, "permission.json")
+                                                 "permissions" => Phoenix.View.render_many(permissions, Spherium.PermissionView, "permission.json")
                                                                   |> Enum.map(&Enum.reduce(&1, %{}, fn {key, val}, acc ->
                                                                                                       Map.put(acc, Atom.to_string(key), val)
                                                                                                     end))}
@@ -68,7 +68,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
     assert data["name"] == "on_create"
     assert data["description"] == "on_create description"
     assert data["grant_power"] == 200
-    assert data["permissions"] == Phoenix.View.render_many(permissions, SpheriumWebService.PermissionView, "permission.json")
+    assert data["permissions"] == Phoenix.View.render_many(permissions, Spherium.PermissionView, "permission.json")
                                   |> Enum.map(&Enum.reduce(&1, %{}, fn {key, val}, acc ->
                                                                       Map.put(acc, Atom.to_string(key), val)
                                                                     end))

@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.AuthenticationService do
+defmodule Spherium.AuthenticationService do
   import Plug.Conn, only: [put_resp_header: 3, assign: 3]
 
-  alias SpheriumWebService.UserView
+  alias Spherium.UserView
 
   def issue_token(conn, user) do
     view = UserView.render_private("user.json", %{user: user})

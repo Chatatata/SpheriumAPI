@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.SubscriberController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.SubscriberController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.Subscriber
+  alias Spherium.Subscriber
 
   plug :authenticate_user
   plug :authorize_user
@@ -24,7 +24,7 @@ defmodule SpheriumWebService.SubscriberController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -43,7 +43,7 @@ defmodule SpheriumWebService.SubscriberController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 

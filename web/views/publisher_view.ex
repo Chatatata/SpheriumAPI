@@ -1,12 +1,12 @@
-defmodule SpheriumWebService.PublisherView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.PublisherView do
+  use Spherium.Web, :view
 
   def render("index.json", %{publishers: publishers}) do
-    %{data: render_many(publishers, SpheriumWebService.PublisherView, "publisher.json")}
+    %{data: render_many(publishers, Spherium.PublisherView, "publisher.json")}
   end
 
   def render("show.json", %{publisher: publisher}) do
-    %{data: render_one(publisher, SpheriumWebService.PublisherView, "publisher.json")}
+    %{data: render_one(publisher, Spherium.PublisherView, "publisher.json")}
   end
 
   def render("publisher.json", %{publisher: publisher}) do

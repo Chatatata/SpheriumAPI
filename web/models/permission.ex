@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.Permission do
+defmodule Spherium.Permission do
   @moduledoc """
   Defines a permission.
 
@@ -24,7 +24,7 @@ defmodule SpheriumWebService.Permission do
   Permissions could be nil-bound, however they are not garbage collected
   (i.e. vacuumed).
   """
-  use SpheriumWebService.Web, :model
+  use Spherium.Web, :model
 
   schema "permissions" do
     field :required_grant_power, :integer
@@ -32,7 +32,7 @@ defmodule SpheriumWebService.Permission do
     field :controller_action, :string
     field :type, :string
 
-    many_to_many :permission_sets, SpheriumWebService.PermissionSet, join_through: "permission_set_permissions"
+    many_to_many :permission_sets, Spherium.PermissionSet, join_through: "permission_set_permissions"
   end
 
   @doc """

@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.AttemptControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.AttemptControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.Factory
+  alias Spherium.Factory
 
   setup %{conn: conn} do
     {:ok, conn: conn}

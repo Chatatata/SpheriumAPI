@@ -1,11 +1,11 @@
-defmodule SpheriumWebService.PermissionTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.PermissionTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.Permission
+  alias Spherium.Permission
 
   test "changeset with valid attributes" do
     changeset = Permission.changeset(%Permission{}, %{required_grant_power: 500,
-                                                      controller_name: "Elixir.SpheriumWebService.RegularController",
+                                                      controller_name: "Elixir.Spherium.RegularController",
                                                       controller_action: "index",
                                                       type: "all"})
 
@@ -13,7 +13,7 @@ defmodule SpheriumWebService.PermissionTest do
   end
 
   test "changeset without grant power" do
-    changeset = Permission.changeset(%Permission{}, %{controller_name: "Elixir.SpheriumWebService.RegularController",
+    changeset = Permission.changeset(%Permission{}, %{controller_name: "Elixir.Spherium.RegularController",
                                                       controller_action: "index",
                                                       type: "all"})
 
@@ -22,7 +22,7 @@ defmodule SpheriumWebService.PermissionTest do
 
   test "changeset with exceeding grant power" do
     changeset = Permission.changeset(%Permission{}, %{required_grant_power: 1001,
-                                                      controller_name: "Elixir.SpheriumWebService.RegularController",
+                                                      controller_name: "Elixir.Spherium.RegularController",
                                                       controller_action: "index",
                                                       type: "all"})
 
@@ -31,7 +31,7 @@ defmodule SpheriumWebService.PermissionTest do
 
   test "changeset with negative grant power" do
     changeset = Permission.changeset(%Permission{}, %{required_grant_power: -500,
-                                                      controller_name: "Elixir.SpheriumWebService.RegularController",
+                                                      controller_name: "Elixir.Spherium.RegularController",
                                                       controller_action: "index",
                                                       type: "all"})
 
@@ -48,7 +48,7 @@ defmodule SpheriumWebService.PermissionTest do
 
   test "changeset without controller action" do
     changeset = Permission.changeset(%Permission{}, %{required_grant_power: 500,
-                                                      controller_name: "Elixir.SpheriumWebService.RegularController",
+                                                      controller_name: "Elixir.Spherium.RegularController",
                                                       type: "all"})
 
     refute changeset.valid?
@@ -56,7 +56,7 @@ defmodule SpheriumWebService.PermissionTest do
 
   test "changeset without type" do
     changeset = Permission.changeset(%Permission{}, %{required_grant_power: 500,
-                                                      controller_name: "Elixir.SpheriumWebService.RegularController",
+                                                      controller_name: "Elixir.Spherium.RegularController",
                                                       controller_action: "index"})
 
     refute changeset.valid?

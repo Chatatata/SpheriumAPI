@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.PermissionSetGrantTest do
-  use SpheriumWebService.ModelCase
+defmodule Spherium.PermissionSetGrantTest do
+  use Spherium.ModelCase
 
-  alias SpheriumWebService.PermissionSetGrant
-  alias SpheriumWebService.Factory
+  alias Spherium.PermissionSetGrant
+  alias Spherium.Factory
 
   test "changeset with valid attributes" do
     permission_set_owner = Factory.insert(:user)

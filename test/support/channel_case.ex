@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.ChannelCase do
+defmodule Spherium.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -20,22 +20,22 @@ defmodule SpheriumWebService.ChannelCase do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
 
-      alias SpheriumWebService.Repo
+      alias Spherium.Repo
       import Ecto
       import Ecto.Changeset
       import Ecto.Query, only: [from: 1, from: 2]
 
 
       # The default endpoint for testing
-      @endpoint SpheriumWebService.Endpoint
+      @endpoint Spherium.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SpheriumWebService.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Spherium.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Spherium.Repo, {:shared, self()})
     end
 
     :ok

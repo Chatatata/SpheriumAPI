@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.PublisherControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.PublisherControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.Publisher
-  alias SpheriumWebService.Factory
+  alias Spherium.Publisher
+  alias Spherium.Factory
   
   @valid_attrs %{description: "some content", image: "some content", name: "some content"}
   @invalid_attrs %{}

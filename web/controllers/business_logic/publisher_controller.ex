@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.PublisherController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.PublisherController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.Publisher
+  alias Spherium.Publisher
 
   plug :authenticate_user
   plug :authorize_user
@@ -24,7 +24,7 @@ defmodule SpheriumWebService.PublisherController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -45,7 +45,7 @@ defmodule SpheriumWebService.PublisherController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
     end
   end
 

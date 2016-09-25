@@ -1,10 +1,10 @@
-defmodule SpheriumWebService.AuthorizationPlug do
-  use SpheriumWebService.Web, :plug
+defmodule Spherium.AuthorizationPlug do
+  use Spherium.Web, :plug
 
-  alias SpheriumWebService.User
-  alias SpheriumWebService.PermissionSet
-  alias SpheriumWebService.Permission
-  alias SpheriumWebService.Repo
+  alias Spherium.User
+  alias Spherium.PermissionSet
+  alias Spherium.Permission
+  alias Spherium.Repo
 
   import Ecto.Query
 

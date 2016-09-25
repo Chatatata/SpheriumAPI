@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.Mixfile do
+defmodule Spherium.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :spherium_web_service,
+    [app: :spherium,
      version: "0.0.1",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
@@ -17,7 +17,7 @@ defmodule SpheriumWebService.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {SpheriumWebService, []},
+    [mod: {Spherium, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin,
                     :jose, :timex]]

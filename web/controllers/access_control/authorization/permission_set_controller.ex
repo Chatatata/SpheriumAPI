@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.PermissionSetController do
-  use SpheriumWebService.Web, :controller
+defmodule Spherium.PermissionSetController do
+  use Spherium.Web, :controller
 
-  alias SpheriumWebService.PermissionSet
+  alias Spherium.PermissionSet
 
   plug :authenticate_user
   plug :authorize_user
@@ -26,7 +26,7 @@ defmodule SpheriumWebService.PermissionSetController do
         {:error, changeset} ->
           conn
           |> put_status(:unprocessable_entity)
-          |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+          |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
       end
     else
       conn
@@ -54,7 +54,7 @@ defmodule SpheriumWebService.PermissionSetController do
         {:error, changeset} ->
           conn
           |> put_status(:unprocessable_entity)
-          |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
+          |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
       end
     else
       conn

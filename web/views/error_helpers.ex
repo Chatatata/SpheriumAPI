@@ -1,4 +1,4 @@
-defmodule SpheriumWebService.ErrorHelpers do
+defmodule Spherium.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -21,9 +21,9 @@ defmodule SpheriumWebService.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(SpheriumWebService.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(Spherium.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(SpheriumWebService.Gettext, "errors", msg, opts)
+      Gettext.dgettext(Spherium.Gettext, "errors", msg, opts)
     end
   end
 end

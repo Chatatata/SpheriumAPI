@@ -1,5 +1,5 @@
-defmodule SpheriumWebService.ErrorView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.ErrorView do
+  use Spherium.Web, :view
 
   def render("404.json", _assigns) do
     %{errors: %{name: "Not Found", detail: "Requested property does not exist."}}

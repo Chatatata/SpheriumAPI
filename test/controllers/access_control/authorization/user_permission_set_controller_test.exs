@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.UserPermissionSetControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.UserPermissionSetControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.User
-  alias SpheriumWebService.PermissionSetGrant
-  alias SpheriumWebService.Factory
+  alias Spherium.User
+  alias Spherium.PermissionSetGrant
+  alias Spherium.Factory
 
   setup %{conn: conn} do
     {:ok, conn: conn}

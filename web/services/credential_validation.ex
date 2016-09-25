@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.CredentialValidationService do
-  use SpheriumWebService.Web, :service
+defmodule Spherium.CredentialValidationService do
+  use Spherium.Web, :service
 
-  alias SpheriumWebService.User
-  alias SpheriumWebService.CredentialValidationService.UserNotFound
+  alias Spherium.User
+  alias Spherium.CredentialValidationService.UserNotFound
 
   import Comeonin.Bcrypt, only: [checkpw: 2]
 
@@ -32,7 +32,7 @@ defmodule SpheriumWebService.CredentialValidationService do
   end
 end
 
-defmodule SpheriumWebService.CredentialValidationService.UserNotFound do
+defmodule Spherium.CredentialValidationService.UserNotFound do
   defexception [:message]
 
   def exception(username) do

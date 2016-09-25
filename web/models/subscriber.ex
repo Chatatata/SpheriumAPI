@@ -1,5 +1,5 @@
-defmodule SpheriumWebService.Subscriber do
-  use SpheriumWebService.Web, :model
+defmodule Spherium.Subscriber do
+  use Spherium.Web, :model
 
   schema "subscribers" do
     field :address, :string

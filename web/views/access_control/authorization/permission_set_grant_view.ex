@@ -1,12 +1,12 @@
-defmodule SpheriumWebService.PermissionSetGrantView do
-  use SpheriumWebService.Web, :view
+defmodule Spherium.PermissionSetGrantView do
+  use Spherium.Web, :view
 
   def render("index.json", %{permission_set_grants: permission_set_grants}) do
-    %{data: render_many(permission_set_grants, SpheriumWebService.PermissionSetGrantView, "permission_set_grant.json")}
+    %{data: render_many(permission_set_grants, Spherium.PermissionSetGrantView, "permission_set_grant.json")}
   end
 
   def render("show.json", %{permission_set_grant: permission_set_grant}) do
-    %{data: render_one(permission_set_grant, SpheriumWebService.PermissionSetGrantView, "permission_set_grant.json")}
+    %{data: render_one(permission_set_grant, Spherium.PermissionSetGrantView, "permission_set_grant.json")}
   end
 
   def render("permission_set_grant.json", %{permission_set_grant: permission_set_grant}) do

@@ -1,9 +1,9 @@
-defmodule SpheriumWebService.UserControllerTest do
-  use SpheriumWebService.ConnCase
+defmodule Spherium.UserControllerTest do
+  use Spherium.ConnCase
 
-  alias SpheriumWebService.User
-  alias SpheriumWebService.UserView
-  alias SpheriumWebService.Factory
+  alias Spherium.User
+  alias Spherium.UserView
+  alias Spherium.Factory
 
   @valid_create_attrs %{username: "another_test", email: "another_test@mail.com", password: "123456", scope: []}
   @valid_attrs %{username: "another_test", email: "another_test@mail.com"}

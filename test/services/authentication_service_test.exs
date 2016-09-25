@@ -1,10 +1,10 @@
-defmodule SpheriumWebService.AuthenticationServiceTest do
-  use SpheriumWebService.ServiceCase
+defmodule Spherium.AuthenticationServiceTest do
+  use Spherium.ServiceCase
 
   import Plug.Conn, only: [get_resp_header: 2]
 
-  alias SpheriumWebService.AuthenticationService
-  alias SpheriumWebService.User
+  alias Spherium.AuthenticationService
+  alias Spherium.User
 
   test "issues token" do
     user = User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"}) |> Repo.insert!()
