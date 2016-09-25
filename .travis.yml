@@ -11,6 +11,7 @@ sudo: required
 before_script:
   - MIX_ENV=test mix ecto.create
   - MIX_ENV=test mix ecto.migrate
+  - MIX_ENV=test mix spherium.auth.migrate
 install:
   - mix local.hex --force
   - mix local.rebar --force
