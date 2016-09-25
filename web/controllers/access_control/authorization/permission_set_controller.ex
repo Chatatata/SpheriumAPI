@@ -4,6 +4,8 @@ defmodule SpheriumWebService.PermissionSetController do
   alias SpheriumWebService.PermissionSet
 
   plug :authenticate_user
+  plug :authorize_user
+  plug :scrub_params, "permission_set" when action in [:create, :update]
 
   def index(conn, _params) do
     permission_sets = Repo.all(PermissionSet) |> Repo.preload(:permissions)

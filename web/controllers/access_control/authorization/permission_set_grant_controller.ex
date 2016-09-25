@@ -4,6 +4,7 @@ defmodule SpheriumWebService.PermissionSetGrantController do
   alias SpheriumWebService.PermissionSetGrant
 
   plug :authenticate_user
+  plug :authorize_user
 
   def index(conn, _params) do
     permission_set_grants = Repo.all(PermissionSetGrant)
@@ -13,7 +14,7 @@ defmodule SpheriumWebService.PermissionSetGrantController do
 
   def show(conn, %{"id" => id}) do
     permission_set_grant = Repo.get!(PermissionSetGrant, id)
-    
+
     render(conn, "show.json", permission_set_grant: permission_set_grant)
   end
 end

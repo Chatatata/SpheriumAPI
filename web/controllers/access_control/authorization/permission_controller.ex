@@ -6,6 +6,9 @@ defmodule SpheriumWebService.PermissionController do
 
   alias SpheriumWebService.Permission
 
+  plug :authenticate_user
+  plug :authorize_user
+
   def index(conn, _params) do
     permissions = Repo.all(Permission)
 
@@ -16,19 +19,5 @@ defmodule SpheriumWebService.PermissionController do
     permission = Repo.get!(Permission, id)
 
     render(conn, "show.json", permission: permission)
-  end
-
-  def update(conn, %{"id" => id, "permission" => permission_params}) do
-    permission = Repo.get!(Permission, id)
-    changeset = Permission.changeset(permission, permission_params)
-
-    case Repo.update(changeset) do
-      {:ok, permission} ->
-        conn
-        |> render("show.json", permission: permission)
-      {:error, changeset} ->
-        conn
-        |> render(SpheriumWebService.ChangesetView, "error.json", changeset: changeset)
-    end
   end
 end

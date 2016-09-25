@@ -1,20 +1,13 @@
-defmodule SpheriumWebService.AuthAttemptController do
+defmodule SpheriumWebService.TokenController do
   use SpheriumWebService.Web, :controller
-
-  alias SpheriumWebService.AuthAttempt
-  alias SpheriumWebService.Credentials
-  alias SpheriumWebService.CredentialValidationService
-  alias SpheriumWebService.AuthenticationService
+  use Timex
 
   import Ecto.Changeset, only: [put_change: 3, get_field: 2]
 
-  plug :authenticate_user when action in [:index, :show]
-  plug :scrub_params, "credentials" when action in [:create]
-
-  def index(conn, _params) do
-    auth_attempts = Repo.all(AuthAttempt)
-    render(conn, "index.json", auth_attempts: auth_attempts)
-  end
+  alias SpheriumWebService.Attempt
+  alias SpheriumWebService.Credentials
+  alias SpheriumWebService.CredentialValidationService
+  alias SpheriumWebService.AuthenticationService
 
   def create(conn, %{"credentials" => credentials}) do
     credentials = Credentials.changeset(%Credentials{}, credentials)
@@ -25,7 +18,7 @@ defmodule SpheriumWebService.AuthAttemptController do
       |> Enum.join(".")
 
     if credentials.valid? do
-      changeset = AuthAttempt.changeset(%AuthAttempt{}, %{username: get_field(credentials, :username), ip_addr: ip_addr})
+      changeset = Attempt.changeset(%Attempt{}, %{username: get_field(credentials, :username), ip_addr: ip_addr})
 
       case CredentialValidationService.check_credentials(get_field(credentials, :username), get_field(credentials, :password)) do
         {:accepted, user} ->
@@ -33,10 +26,9 @@ defmodule SpheriumWebService.AuthAttemptController do
           |> put_change(:success, true)
           |> Repo.insert!()
 
-          conn = AuthenticationService.issue_token(conn, user)
-
           conn
-          |> render("artifacts.json", %{artifacts: %{user: user, jwt: conn.assigns[:jwt], exp: conn.assigns[:exp]}})
+          |> AuthenticationService.issue_token(user)
+          |> render("show.json", token: %{jwt: conn.assigns[:jwt], exp: conn.assigns[:exp], timestamp: Timex.now})
         _ ->
           changeset
           |> Repo.insert!()
@@ -48,10 +40,5 @@ defmodule SpheriumWebService.AuthAttemptController do
       conn
       |> send_resp(:bad_request, "Invalid parameters.")
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    auth_attempt = Repo.get!(AuthAttempt, id)
-    render(conn, "show.json", auth_attempt: auth_attempt)
   end
 end

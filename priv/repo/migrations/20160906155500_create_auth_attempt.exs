@@ -1,8 +1,8 @@
-defmodule SpheriumWebService.Repo.Migrations.CreateAuthAttempt do
+defmodule SpheriumWebService.Repo.Migrations.CreateAttempt do
   use Ecto.Migration
 
   def change do
-    create table(:auth_attempts) do
+    create table(:attempts) do
       add :ip_addr, :string, null: false
       add :username, :string, null: false
       add :success, :boolean, default: false
@@ -10,6 +10,6 @@ defmodule SpheriumWebService.Repo.Migrations.CreateAuthAttempt do
       timestamps()
     end
 
-    create index(:auth_attempts, [:username])
+    create index(:attempts, [:username])
   end
 end

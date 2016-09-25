@@ -6,6 +6,7 @@ defmodule SpheriumWebService.UserPermissionSetController do
   alias SpheriumWebService.PermissionSetGrant
 
   plug :authenticate_user
+  plug :authorize_user
   plug :put_view, SpheriumWebService.PermissionSetView
 
   def show(conn, %{"user_id" => user_id}) do

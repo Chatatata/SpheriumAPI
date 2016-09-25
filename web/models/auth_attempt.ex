@@ -1,7 +1,7 @@
-defmodule SpheriumWebService.AuthAttempt do
+defmodule SpheriumWebService.Attempt do
   use SpheriumWebService.Web, :model
 
-  schema "auth_attempts" do
+  schema "attempts" do
     field :ip_addr, :string
     field :username, :string
     field :success, :boolean, default: false

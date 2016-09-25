@@ -1,6 +1,7 @@
 defmodule SpheriumWebService.PermissionSetControllerTest do
   use SpheriumWebService.ConnCase
 
+  alias SpheriumWebService.Permission
   alias SpheriumWebService.PermissionSet
   alias SpheriumWebService.Factory
 
@@ -11,7 +12,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, permission_set_path(conn, :index)
 
-    assert json_response(conn, 200)["data"] == []
+    assert is_list(json_response(conn, 200)["data"])
   end
 
   test "shows permission set without any permission", %{conn: conn} do
@@ -29,7 +30,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
 
   test "shows permission set with permissions", %{conn: conn} do
     user = Factory.insert(:user)
-    permissions = Factory.insert_list(25, :permission)
+    permissions = Repo.all(Permission)
     permission_set = Factory.insert(:permission_set, permissions: permissions, user_id: user.id)
     conn = get conn, permission_set_path(conn, :show, permission_set)
 
@@ -53,7 +54,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
   end
 
   test "creates and renders resource when data is valid", %{conn: conn} do
-    permissions = Factory.insert_list(12, :permission)
+    permissions = Repo.all(Permission)
     permission_ids = Enum.map(permissions, &(&1.id))
 
     conn = post conn, permission_set_path(conn, :create), permission_set: %{name: "on_create",
@@ -102,7 +103,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
 
   test "updates and renders chosen resource when data is valid", %{conn: conn} do
     user = Factory.insert(:user)
-    permissions = Factory.insert_list(20, :permission)
+    permissions = Repo.all(Permission)
     permission_set = Factory.insert(:permission_set, user_id: user.id)
 
     conn = put conn, permission_set_path(conn, :update, permission_set), permission_set: %{name: "default",
@@ -119,7 +120,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
 
   test "returns 422 when user identifier field is given", %{conn: conn} do
     user = Factory.insert(:user)
-    permissions = Factory.insert_list(20, :permission)
+    permissions = Repo.all(Permission)
     permission_set = Factory.insert(:permission_set, user_id: user.id)
     second_user = Factory.insert(:user)
 
@@ -134,7 +135,7 @@ defmodule SpheriumWebService.PermissionSetControllerTest do
 
   test "throws 404 when non-existing identifier is given to update", %{conn: conn} do
     assert_error_sent 404, fn ->
-      permissions = Factory.insert_list(20, :permission)
+      permissions = Repo.all(Permission)
       put conn, permission_set_path(conn, :update, -1), permission_set: %{name: "default",
                                                                           description: "default description",
                                                                           grant_power: 900,

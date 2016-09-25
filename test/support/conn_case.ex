@@ -42,18 +42,20 @@ defmodule SpheriumWebService.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(SpheriumWebService.Repo, {:shared, self()})
     end
 
-    Repo.delete_all(User)
+    conn = Phoenix.ConnTest.build_conn()
 
-    user =
-      User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"})
-      |> Repo.insert!()
+    unless (tags[:super_cow_powers] == false) do
+      user = Repo.get_by!(User, username: "superadmin")
 
-    conn =
-      Phoenix.ConnTest.build_conn()
-      |> Plug.Conn.put_req_header("accept", "application/json")
-      |> AuthHelper.issue_token(user)
-      |> Plug.Conn.assign(:setup_user, user)
+      conn =
+        conn
+        |> Plug.Conn.put_req_header("accept", "application/json")
+        |> AuthHelper.issue_token(user)
+        |> Plug.Conn.assign(:setup_user, user)
 
-    {:ok, conn: conn}
+      {:ok, conn: conn}
+    else
+      {:ok, conn: conn}
+    end
   end
 end

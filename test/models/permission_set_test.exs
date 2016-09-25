@@ -69,7 +69,7 @@ defmodule SpheriumWebService.PermissionSetTest do
                                                             description: "Nice permission set.",
                                                             grant_power: 500,
                                                             user_id: user.id,
-                                                            permission_ids: [57]})
+                                                            permission_ids: [-1]})
 
     refute changeset.valid?
   end

@@ -1,7 +1,7 @@
 defmodule SpheriumWebService.PermissionControllerTest do
   use SpheriumWebService.ConnCase
 
-  alias SpheriumWebService.Factory
+  alias SpheriumWebService.Permission
 
   setup %{conn: conn} do
     {:ok, conn: conn}
@@ -10,12 +10,17 @@ defmodule SpheriumWebService.PermissionControllerTest do
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, permission_path(conn, :index)
 
-    assert json_response(conn, 200)["data"] == []
+    assert is_list(json_response(conn, 200)["data"])
   end
 
   test "shows an entry", %{conn: conn} do
-    permission = Factory.insert(:permission)
-    conn = get conn, permission_path(conn, :show, permission)
+    query = from p in Permission,
+            order_by: fragment("random()"),
+            limit: 1
+
+    [permission | _] = Repo.all(query)
+
+    conn = get conn, permission_path(conn, :show, permission.id)
 
     assert json_response(conn, 200)["data"] == %{"id" => permission.id,
                                                  "required_grant_power" => permission.required_grant_power,
@@ -23,12 +28,4 @@ defmodule SpheriumWebService.PermissionControllerTest do
                                                  "controller_action" => permission.controller_action,
                                                  "type" => permission.type}
   end
-
-  # test "updates and renders chosen resource when data is valid", %{conn: conn} do
-  #   permission = Factory.insert(:permission)
-  #   conn = put conn, permission_path(conn, :update, permission), permission: %{required_grant_power: 300, }
-  #
-  #   assert json_response(conn, 200)["data"]["id"]
-  #   assert Repo.get_by(permission, %{publisher_id: permission.publisher_id, user_id: permission.user_id})
-  # end
 end
