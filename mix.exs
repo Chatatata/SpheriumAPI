@@ -10,6 +10,7 @@ defmodule Spherium.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
+     test_coverage: [tool: Coverex.Task, console_log: false],
      deps: deps]
   end
 
@@ -40,7 +41,8 @@ defmodule Spherium.Mixfile do
      {:ex_machina, "~> 1.0", only: :test},
      {:jose, "~> 1.8"},
      {:credo, "~> 0.4", only: [:dev, :test]},
-     {:timex, "~> 3.0"}]
+     {:timex, "~> 3.0"},
+     {:coverex, "~> 1.4.10", only: :test}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
