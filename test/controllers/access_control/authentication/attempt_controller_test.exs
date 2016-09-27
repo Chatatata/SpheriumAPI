@@ -28,31 +28,4 @@ defmodule Spherium.AttemptControllerTest do
       get conn, attempt_path(conn, :show, -1)
     end
   end
-
-# TODO: Authentication check on TokenControllerTest
-#   test "logs in user if credentials match", %{conn: conn} do
-#     user = Factory.insert(:user)
-#     conn = post conn, attempt_path(conn, :create), credentials: %{username: user.username, password: "123456"}
-#
-#     data = json_response(conn, 200)["data"]
-#
-#     assert data["user"]
-#     assert data["jwt"]
-#     assert data["exp"]
-#     assert data["date"]
-#   end
-#
-#   test "does not log in user if credentials don't match", %{conn: conn} do
-#     user = Factory.insert(:user)
-#
-#     conn = post conn, attempt_path(conn, :create), credentials: %{username: user.username, password: "1234567"}
-#
-#     assert response(conn, 401) =~ "Invalid username/password combination."
-#   end
-#
-#   test "does not log in user if username does not exist", %{conn: conn} do
-#     conn = post conn, attempt_path(conn, :create), credentials: %{username: "nonexisting", password: "1234567"}
-#
-#     assert response(conn, 401) =~ "Invalid username/password combination."
-#   end
 end
