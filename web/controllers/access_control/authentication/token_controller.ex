@@ -6,6 +6,7 @@ defmodule Spherium.TokenController do
 
   alias Spherium.Attempt
   alias Spherium.Credentials
+  alias Spherium.Passphrase
   alias Spherium.CredentialValidationService
   alias Spherium.AuthenticationService
 
@@ -40,5 +41,9 @@ defmodule Spherium.TokenController do
       conn
       |> send_resp(:bad_request, "Invalid parameters.")
     end
+  end
+
+  def create(conn, %{"passphrase" => passphrase}) do
+
   end
 end
