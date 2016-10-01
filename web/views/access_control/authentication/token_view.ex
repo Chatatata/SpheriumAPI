@@ -8,6 +8,7 @@ defmodule Spherium.TokenView do
   def render("token.json", %{token: token}) do
     %{jwt: token.jwt,
       exp: token.exp,
+      user_id: token.user_id,
       timestamp: token.timestamp}
   end
 end

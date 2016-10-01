@@ -70,4 +70,12 @@ defmodule Spherium.Factory do
     %Spherium.PermissionSetGrant{
     }
   end
+
+  def passphrase_factory do
+    %Spherium.Passphrase{
+      device: Ecto.UUID.generate(),
+      user_agent: "Some user agent.",
+      valid?: true
+    }
+  end
 end

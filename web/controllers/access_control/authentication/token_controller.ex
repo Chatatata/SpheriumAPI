@@ -2,48 +2,25 @@ defmodule Spherium.TokenController do
   use Spherium.Web, :controller
   use Timex
 
-  import Ecto.Changeset, only: [put_change: 3, get_field: 2]
+  import Spherium.AuthenticationService
 
-  alias Spherium.Attempt
-  alias Spherium.Credentials
   alias Spherium.Passphrase
-  alias Spherium.CredentialValidationService
-  alias Spherium.AuthenticationService
+  alias Spherium.User
 
-  def create(conn, %{"credentials" => credentials}) do
-    credentials = Credentials.changeset(%Credentials{}, credentials)
+  def create(conn, %{"passkey" => passkey}) do
+    query = from p in Passphrase,
+            join: u in User, on: u.id == p.user_id,
+            where: p.passkey == ^passkey and p.valid?,
+            select: u
 
-    ip_addr =
-      conn.remote_ip
-      |> Tuple.to_list()
-      |> Enum.join(".")
+    user = Repo.one!(query)
 
-    if credentials.valid? do
-      changeset = Attempt.changeset(%Attempt{}, %{username: get_field(credentials, :username), ip_addr: ip_addr})
-
-      case CredentialValidationService.check_credentials(get_field(credentials, :username), get_field(credentials, :password)) do
-        {:accepted, user} ->
-          changeset
-          |> put_change(:success, true)
-          |> Repo.insert!()
-
-          conn
-          |> AuthenticationService.issue_token(user)
-          |> render("show.json", token: %{jwt: conn.assigns[:jwt], exp: conn.assigns[:exp], timestamp: Timex.now})
-        _ ->
-          changeset
-          |> Repo.insert!()
-
-          conn
-          |> send_resp(:unauthorized, "Invalid username/password combination.")
-      end
-    else
+    conn =
       conn
-      |> send_resp(:bad_request, "Invalid parameters.")
-    end
-  end
+      |> issue_token(user)
 
-  def create(conn, %{"passphrase" => passphrase}) do
-
+    conn
+    |> put_status(:created)
+    |> render("show.json", token: %{jwt: conn.assigns[:jwt], exp: conn.assigns[:exp], user_id: user.id, timestamp: Timex.now})
   end
 end

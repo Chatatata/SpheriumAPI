@@ -3,28 +3,25 @@ defmodule Spherium.TokenControllerTest do
 
   alias Spherium.Factory
 
-  test "logs in user if credentials match", %{conn: conn} do
-    user = Factory.insert(:user)
-    conn = post conn, token_path(conn, :create), credentials: %{username: user.username, password: "123456"}
+  @tag super_cow_powers: false
 
-    data = json_response(conn, 200)["data"]
+  test "generates token if passkey exists", %{conn: conn} do
+    user = Factory.insert(:user)
+    passphrase = Factory.insert(:passphrase, user: user)
+
+    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+
+    data = json_response(conn, 201)["data"]
 
     assert data["jwt"]
     assert data["exp"]
+    assert data["user_id"]
     assert data["timestamp"]
   end
 
-  test "does not log in user if credentials don't match", %{conn: conn} do
-    user = Factory.insert(:user)
-
-    conn = post conn, token_path(conn, :create), credentials: %{username: user.username, password: "1234567"}
-
-    assert response(conn, 401) =~ "Invalid username/password combination."
-  end
-
-  test "does not log in user if username does not exist", %{conn: conn} do
-    conn = post conn, token_path(conn, :create), credentials: %{username: "nonexisting", password: "1234567"}
-
-    assert response(conn, 401) =~ "Invalid username/password combination."
+  test "throws 404 if passkey does not exist", %{conn: conn} do
+    assert_error_sent 404, fn ->
+      post conn, token_path(conn, :create), passkey: Ecto.UUID.generate()
+    end
   end
 end

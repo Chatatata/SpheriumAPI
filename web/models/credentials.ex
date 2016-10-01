@@ -1,9 +1,13 @@
 defmodule Spherium.Credentials do
   use Spherium.Web, :model
 
+  @uuid_regex ~r([0-9,a-z,A-Z]{8}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{12})
+
   schema "credentials" do
     field :username, :string
     field :password, :string
+    field :device, :string
+    field :user_agent, :string
   end
 
   @doc """
@@ -11,7 +15,8 @@ defmodule Spherium.Credentials do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:username, :password])   # Fetch with allowed params
-    |> validate_required([:username, :password])     # Validate required parameters
+    |> cast(params, [:username, :password, :device, :user_agent])          # Fetch with allowed params
+    |> validate_required([:username, :password, :device, :user_agent])     # Validate required parameters
+    |> validate_format(:device, @uuid_regex)
   end
 end
