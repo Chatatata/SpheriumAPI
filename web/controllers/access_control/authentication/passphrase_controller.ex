@@ -11,32 +11,46 @@ defmodule Spherium.PassphraseController do
   plug :scrub_params, "credentials" when action in [:create]
 
   def create(conn, %{"credentials" => credentials}) do
-    credentials = Credentials.changeset(%Credentials{}, credentials)
+    credentials_changeset = Credentials.changeset(%Credentials{}, credentials)
 
     ip_addr =
       conn.remote_ip
       |> Tuple.to_list()
       |> Enum.join(".")
 
-    if credentials.valid? do
-      attempt_changeset = Attempt.changeset(%Attempt{}, %{username: get_field(credentials, :username), ip_addr: ip_addr})
+    if credentials_changeset.valid? do
+      username = get_field(credentials_changeset, :username)
+      password = get_field(credentials_changeset, :password)
 
-      case check_credentials(get_field(credentials, :username), get_field(credentials, :password)) do
+      attempt_changeset = Attempt.changeset(%Attempt{}, %{username: username, ip_addr: ip_addr})
+
+      case check_credentials(username, password) do
         {:accepted, user} ->
-          attempt_changeset
-          |> put_change(:success, true)
-          |> Repo.insert!()
+          case Repo.transaction(fn ->
+            query = from p in Passphrase,
+                    where: p.user_id == ^user.id and p.valid?
 
-          passphrase_changeset = Passphrase.changeset(%Passphrase{}, %{user_id: user.id,
-                                                                       device: get_field(credentials, :device),
-                                                                       user_agent: get_field(credentials, :user_agent),
-                                                                       valid?: true})
+            if Repo.aggregate(query, :count, :passkey) == 5, do: Repo.rollback(:max_passphrases_reached)
 
-          passphrase = Repo.insert!(passphrase_changeset)
+            attempt_changeset
+            |> put_change(:success, true)
+            |> Repo.insert!()
 
-          conn
-          |> put_status(:created)
-          |> render("show.json", passphrase: passphrase)
+            passphrase_changeset = Passphrase.changeset(%Passphrase{}, %{user_id: user.id,
+                                                                         device: get_field(credentials_changeset, :device),
+                                                                         user_agent: get_field(credentials_changeset, :user_agent),
+                                                                         valid?: true})
+
+            Repo.insert!(passphrase_changeset)
+          end) do
+            {:ok, passphrase} ->
+              conn
+              |> put_status(:created)
+              |> render("show.json", passphrase: passphrase)
+            {:error, :max_passphrases_reached} ->
+              conn
+              |> send_resp(:unauthorized, "Maximum number of passphrases available is reached (5).")
+          end
         _ ->
           attempt_changeset
           |> Repo.insert!()
@@ -46,7 +60,8 @@ defmodule Spherium.PassphraseController do
       end
     else
       conn
-      |> send_resp(:bad_request, "Invalid parameters.")
+      |> put_status(:unprocessable_entity)
+      |> render(Spherium.ChangesetView, "error.json", changeset: credentials_changeset)
     end
   end
 end

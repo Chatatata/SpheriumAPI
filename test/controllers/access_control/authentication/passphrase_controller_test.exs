@@ -21,6 +21,25 @@ defmodule Spherium.PassphraseControllerTest do
     assert data["user_agent"] =~ "Testing user agent, ExUnit rulz!."
   end
 
+  test "log in user if user has 5 passphrases but 3 of them is valid", %{conn: conn} do
+    user = Factory.insert(:user)
+
+    Factory.insert_list(3, :passphrase, user_id: user.id, valid?: true)
+    Factory.insert_list(2, :passphrase, user_id: user.id, valid?: false)
+
+    conn = post conn, passphrase_path(conn, :create), credentials: %{username: user.username,
+                                                                     password: "123456",
+                                                                     device: Ecto.UUID.generate(),
+                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
+
+    data = json_response(conn, 201)["data"]
+
+    assert data
+    assert data["passkey"]
+    assert data["device"]
+    assert data["user_agent"] =~ "Testing user agent, ExUnit rulz!."
+  end
+
   test "does not log in user if credentials don't match", %{conn: conn} do
     user = Factory.insert(:user)
 
@@ -39,5 +58,18 @@ defmodule Spherium.PassphraseControllerTest do
                                                                      user_agent: "Testing user agent, ExUnit rulz!."}
 
     assert response(conn, 401) =~ "Invalid username/password combination."
+  end
+
+  test "does not log in user if user already has 5 passphrases", %{conn: conn} do
+    user = Factory.insert(:user)
+
+    Factory.insert_list(5, :passphrase, user_id: user.id, valid?: true)
+
+    conn = post conn, passphrase_path(conn, :create), credentials: %{username: user.username,
+                                                                     password: "123456",
+                                                                     device: Ecto.UUID.generate(),
+                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
+
+    assert response(conn, 401) =~ "Maximum number of passphrases available is reached (5)."
   end
 end

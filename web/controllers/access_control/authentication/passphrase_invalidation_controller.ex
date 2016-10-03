@@ -13,10 +13,10 @@ defmodule Spherium.PassphraseInvalidationController do
     case Repo.update_all(query, set: [valid?: false]) do
       {1, nil} ->
         conn
-        |> send_resp(201, "Passphrase invalidated successfully.")
+        |> send_resp(:created, "Passphrase invalidated successfully.")
       {0, nil} ->
         conn
-        |> send_resp(404, "Passphrase not found.")
+        |> send_resp(:not_found, "Passphrase not found.")
     end
   end
 end
