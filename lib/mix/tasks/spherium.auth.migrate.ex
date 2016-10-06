@@ -5,6 +5,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
   alias Spherium.User
   alias Spherium.Permission
   alias Spherium.PermissionSet
+  alias Spherium.Passphrase
 
   import Ecto.Query
   import Mix.Ecto
@@ -96,6 +97,13 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
                                             email: "ekuklu@icloud.com"})
 
       user = Repo.insert!(changeset, log: false)
+
+      changeset = Passphrase.changeset(%Passphrase{}, %{passkey: Spherium.Passkey.generate(),
+                                                        user_id: user.id,
+                                                        device: Ecto.UUID.generate(),
+                                                        user_agent: "Migration service"})
+
+      passphrase = Repo.insert!(changeset, log: false)
 
       permission_set_params = %{name: "superadmin",
                                 description: "This permission set has Super Cow Powers!",

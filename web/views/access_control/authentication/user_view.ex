@@ -17,7 +17,7 @@ defmodule Spherium.UserView do
       created_at: Ecto.DateTime.to_iso8601(user.inserted_at)}
   end
 
-  def render_private("user.json", %{user: user}) do
+  def render("user.private.json", %{user: user}) do
     %{id: user.id,
       username: user.username,
       email: user.email,

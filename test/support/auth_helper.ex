@@ -2,9 +2,11 @@ defmodule Spherium.AuthHelper do
   import Plug.Conn, only: [put_req_header: 3, assign: 3]
 
   alias Spherium.UserView
+  alias Spherium.PassphraseView
 
-  def issue_token(conn, user) do
-    view = UserView.render_private("user.json", %{user: user})
+  def issue_token(conn, user, passphrase) do
+    user_view = UserView.render("user.private.json", user: user)
+    passphrase_view = PassphraseView.render("passphrase.min.json", passphrase: passphrase) |> Map.drop([:inserted_at])
 
     jwk = %{
       "kty" => "oct",
@@ -16,11 +18,14 @@ defmodule Spherium.AuthHelper do
       "typ" => "JWT"
     }
 
-    jwt = Map.merge(%{
-      "iss" => "spherium",
-      "exp" => :os.system_time(:seconds) + (60 * 60),   # TODO: Configurable property
-      "sub" => "access"
-    }, view)
+    payload = %{"iss" => "spherium",
+                "exp" => :os.system_time(:seconds) + (60 * 60),   # TODO: Configurable property
+                "sub" => "access"}
+
+    jwt =
+      payload
+      |> Map.merge(user_view)
+      |> Map.merge(passphrase_view)
 
     {_, token} = JOSE.JWT.sign(jwk, jws, jwt)
                  |> JOSE.JWS.compact()

@@ -18,6 +18,7 @@ config :spherium, Spherium.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-# Configure Bcrypt library
-config :comeonin,
-  bcrpyt_log_rounds: 4
+  # Comeonin hashing algorithms round quantities
+  config :comeonin,
+    bcrypt_log_rounds: 4,
+    pbkdf2_rounds: 1_000

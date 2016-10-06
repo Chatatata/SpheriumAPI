@@ -75,7 +75,13 @@ defmodule Spherium.Factory do
     %Spherium.Passphrase{
       device: Ecto.UUID.generate(),
       user_agent: "Some user agent.",
-      valid?: true
+      passkey: Spherium.Passkey.generate()
+    }
+  end
+
+  def passphrase_invalidation_factory do
+    %Spherium.PassphraseInvalidation{
+      ip_addr: "#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}"
     }
   end
 end

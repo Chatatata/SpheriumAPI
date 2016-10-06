@@ -14,6 +14,7 @@ defmodule Spherium.ConnCase do
   """
   alias Spherium.Repo
   alias Spherium.User
+  alias Spherium.Passphrase
   alias Spherium.AuthHelper
 
   use ExUnit.CaseTemplate
@@ -46,11 +47,12 @@ defmodule Spherium.ConnCase do
 
     unless (tags[:super_cow_powers] == false) do
       user = Repo.get_by!(User, username: "superadmin")
+      passphrase = Repo.get_by!(Passphrase, user_id: user.id)
 
       conn =
         conn
         |> Plug.Conn.put_req_header("accept", "application/json")
-        |> AuthHelper.issue_token(user)
+        |> AuthHelper.issue_token(user, passphrase)
         |> Plug.Conn.assign(:setup_user, user)
 
       {:ok, conn: conn}

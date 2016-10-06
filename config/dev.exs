@@ -21,6 +21,11 @@ config :logger, :console, format: "[$level] $message\n"
 # and calculating stacktraces is usually expensive.
 config :phoenix, :stacktrace_depth, 20
 
+# Comeonin hashing algorithms round quantities
+config :comeonin,
+  bcrypt_log_rounds: 4,
+  pbkdf2_rounds: 1_000
+
 # Configure your database
 config :spherium, Spherium.Repo,
   adapter: Ecto.Adapters.Postgres,

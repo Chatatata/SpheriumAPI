@@ -21,15 +21,17 @@ defmodule Spherium.AuthenticationPlug do
                                              email: opts["email"],
                                              scope: opts["scope"],
                                              inserted_at: Ecto.DateTime.cast!(opts["created_at"])})
+            |> Plug.Conn.assign(:passkey, opts["passkey"])
+            |> Plug.Conn.assign(:passphrase_id, opts["passphrase_id"])
           _ ->
             conn
             |> Plug.Conn.halt()
-            |> Plug.Conn.send_resp(401, "Invalid token.")
+            |> Plug.Conn.send_resp(:forbidden, "Invalid token.")
         end
       _ ->
         conn
         |> Plug.Conn.halt()
-        |> Plug.Conn.send_resp(401, "No token found.")
+        |> Plug.Conn.send_resp(:forbidden, "No token found.")
     end
   end
 end

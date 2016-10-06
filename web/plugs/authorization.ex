@@ -14,28 +14,28 @@ defmodule Spherium.AuthorizationPlug do
     controller_name = Atom.to_string conn.private.phoenix_controller
     controller_action = Atom.to_string conn.private.phoenix_action
 
-    if check_for_controller_action_permission(user, controller_name, controller_action) do
+    if permission_type = check_for_controller_action_permission(user, controller_name, controller_action) do
       conn
+      |> assign(:permission_type, String.to_atom(permission_type))
     else
       conn
-      |> halt()
-      |> send_resp(403, "You are unauthorized to see this entity.")
+      |> halt
+      |> put_status(:unauthorized)
+      |> Phoenix.Controller.render(Spherium.PermissionErrorView, "unauthorized.json")
     end
   end
 
   # TODO: Check permission type
   defp check_for_controller_action_permission(user, controller_name, controller_action) do
-    query = from result in subquery(
-              from u in User,
-              join: ps in PermissionSet, on: u.permission_set_id == ps.id,
-              join: psp in "permission_set_permissions", on: psp.permission_set_id == ps.id,
-              join: p in Permission, on: psp.permission_id == p.id,
-              where: u.id == ^user.id and p.controller_name == ^controller_name and p.controller_action == ^controller_action,
-              select: {u.id, p.controller_name, p.controller_action, p.type},
-              limit: 1
-            ),
-            select: fragment("count(*)")
+    query = from u in User,
+            join: ps in PermissionSet, on: u.permission_set_id == ps.id,
+            join: psp in "permission_set_permissions", on: psp.permission_set_id == ps.id,
+            join: p in Permission, on: psp.permission_id == p.id,
+            where: u.id == ^user.id and p.controller_name == ^controller_name and p.controller_action == ^controller_action,
+            select: p.type,
+            order_by: p.type,
+            limit: 1
 
-     Repo.all(query) == [1]
+     Repo.one(query)
   end
 end

@@ -20,7 +20,8 @@ config :logger, level: :error
 
 # Configure Bcrypt library
 config :comeonin,
-  bcrpyt_log_rounds: 14
+  bcrypt_log_rounds: 14,
+  pbkdf2_rounds: 120_000
 
 # ## SSL Support
 #
