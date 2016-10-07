@@ -13,6 +13,18 @@ defmodule Spherium.PassphraseController do
 
   plug :scrub_params, "credentials" when action in [:create]
 
+  def index(conn, _params) do
+    passphrases = Repo.all(Passphrase)
+
+    render conn, "index.json", passphrases: passphrases
+  end
+
+  def show(conn, %{"id" => id}) do
+    passphrase = Repo.get!(Passphrase, id)
+
+    render conn, "show.json", passphrase: passphrase
+  end
+
   def create(conn, %{"credentials" => credentials}) do
     credentials_changeset = Credentials.changeset(%Credentials{}, credentials)
 
@@ -61,7 +73,7 @@ defmodule Spherium.PassphraseController do
 
           conn
           |> put_status(:created)
-          |> render("show.json", passphrase: passphrase)
+          |> render("show.private.json", passphrase: passphrase)
         {:error, :max_passphrases_reached} ->
           conn
           |> send_resp(:conflict, "Maximum number of passphrases available is reached (5).")

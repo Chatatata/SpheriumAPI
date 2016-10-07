@@ -1,6 +1,7 @@
 defmodule Spherium.PassphraseControllerTest do
   use Spherium.ConnCase
 
+  alias Spherium.Passphrase
   alias Spherium.Factory
 
   @tag super_cow_powers: false
@@ -21,7 +22,7 @@ defmodule Spherium.PassphraseControllerTest do
     assert data["user_agent"] =~ "Testing user agent, ExUnit rulz!."
   end
 
-  test "log in user if user has 5 passphrases but 3 of them is valid", %{conn: conn} do
+  test "logs in user if user has 5 passphrases but 3 of them is valid", %{conn: conn} do
     user = Factory.insert(:user)
 
     passphrases = Factory.insert_list(3, :passphrase, user_id: user.id)
@@ -52,6 +53,7 @@ defmodule Spherium.PassphraseControllerTest do
                                                                      user_agent: "Testing user agent, ExUnit rulz!."}
 
     assert response(conn, 403) =~ "Invalid username/password combination."
+    refute Repo.get_by(Passphrase, %{user_id: user.id})
   end
 
   test "does not log in user if username does not exist", %{conn: conn} do

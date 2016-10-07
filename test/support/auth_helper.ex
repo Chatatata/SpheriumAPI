@@ -6,7 +6,7 @@ defmodule Spherium.AuthHelper do
 
   def issue_token(conn, user, passphrase) do
     user_view = UserView.render("user.private.json", user: user)
-    passphrase_view = PassphraseView.render("passphrase.min.json", passphrase: passphrase) |> Map.drop([:inserted_at])
+    passphrase_view = PassphraseView.render("passphrase.json", passphrase: passphrase) |> Map.drop([:inserted_at])
 
     jwk = %{
       "kty" => "oct",

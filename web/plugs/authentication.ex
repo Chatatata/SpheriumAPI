@@ -21,7 +21,6 @@ defmodule Spherium.AuthenticationPlug do
                                              email: opts["email"],
                                              scope: opts["scope"],
                                              inserted_at: Ecto.DateTime.cast!(opts["created_at"])})
-            |> Plug.Conn.assign(:passkey, opts["passkey"])
             |> Plug.Conn.assign(:passphrase_id, opts["passphrase_id"])
           _ ->
             conn

@@ -32,6 +32,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
     |> format_result()
 
     update_superadmin_permission_set()
+    update_onesadmin_permission_set()
 
     sandbox? && Ecto.Adapters.SQL.Sandbox.checkin(Repo)
 
@@ -42,7 +43,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
     cap = [permission_from_router_with_type(router, "all")]
 
     case router.opts do
-      :index -> cap
+      # :index -> cap
       _ -> [permission_from_router_with_type(router, "one") | cap]
     end
   end
@@ -107,6 +108,48 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
       permission_set_params = %{name: "superadmin",
                                 description: "This permission set has Super Cow Powers!",
+                                grant_power: 999,
+                                permission_ids: permission_ids,
+                                user_id: user.id}
+
+      changeset = PermissionSet.changeset(%PermissionSet{}, permission_set_params)
+
+      permission_set = Repo.insert!(changeset, log: false)
+
+      changeset = User.changeset(user, %{})
+                  |> Ecto.Changeset.put_change(:permission_set_id, permission_set.id)
+
+      Repo.update!(changeset, log: false)
+    end
+  end
+
+  defp update_onesadmin_permission_set() do
+    query = from p in Permission,
+            where: p.type == "one",
+            select: p.id
+
+    permission_ids = Repo.all(query, log: false)
+
+    if permission_set = Repo.get_by(PermissionSet, %{name: "onesadmin"}, log: false) do
+      changeset = PermissionSet.changeset(permission_set, permission_ids: permission_ids)
+
+      Repo.update!(changeset, log: false)
+    else
+      changeset = User.changeset(%User{}, %{username: "onesadmin",
+                                            password: "super_cow_powers",
+                                            email: "onesadmin@test.com"})
+
+      user = Repo.insert!(changeset, log: false)
+
+      changeset = Passphrase.changeset(%Passphrase{}, %{passkey: Spherium.Passkey.generate(),
+                                                        user_id: user.id,
+                                                        device: Ecto.UUID.generate(),
+                                                        user_agent: "Migration service"})
+
+      passphrase = Repo.insert!(changeset, log: false)
+
+      permission_set_params = %{name: "onesadmin",
+                                description: "This permission set has Super Cow Powers with 'one' permissions!",
                                 grant_power: 999,
                                 permission_ids: permission_ids,
                                 user_id: user.id}
