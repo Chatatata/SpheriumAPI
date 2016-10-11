@@ -35,12 +35,13 @@ defmodule Spherium.UserPermissionSetController do
                                                                               target_user_id: user_id})
 
             Repo.insert!(changeset)
+            Repo.get!(PermissionSet, permission_set_id) |> Repo.preload(:permissions)
           {0, _terms} ->
             # No permission set of a user is updated.
             Repo.rollback(:user_not_found)
         end
       end) do
-        {:ok, _permission_set_grant} -> render(conn, "show.json", permission_set: Repo.get!(PermissionSet, permission_set_id) |> Repo.preload(:permissions))
+        {:ok, permission_set} -> render(conn, "show.json", permission_set: permission_set)
         {:error, :user_not_found} -> send_resp(conn, :not_found, "User not found.")
       end
     rescue

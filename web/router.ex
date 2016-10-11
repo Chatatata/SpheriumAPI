@@ -34,8 +34,6 @@ defmodule Spherium.Router do
     scope "/data" do
       resources "/publishers", PublisherController, except: [:new, :edit]
       resources "/questions", QuestionController, except: [:new, :edit]
-
-      # get "/questions/:id", QuestionController, :show
     end
   end
 end

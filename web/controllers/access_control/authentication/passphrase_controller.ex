@@ -11,6 +11,8 @@ defmodule Spherium.PassphraseController do
   alias Spherium.Attempt
   alias Spherium.User
 
+  plug :authenticate_user when action in [:index, :show]
+  plug :authorize_user when action in [:index, :show]
   plug :scrub_params, "credentials" when action in [:create]
 
   def index(conn, _params) do
@@ -21,6 +23,9 @@ defmodule Spherium.PassphraseController do
 
   def show(conn, %{"id" => id}) do
     passphrase = Repo.get!(Passphrase, id)
+
+    unless conn.assigns[:permission_type] == :one and
+           passphrase.user_id == conn.assigns[:user].id, do: raise InsufficientScopeError
 
     render conn, "show.json", passphrase: passphrase
   end

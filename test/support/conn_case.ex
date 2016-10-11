@@ -45,19 +45,31 @@ defmodule Spherium.ConnCase do
 
     conn = Phoenix.ConnTest.build_conn()
 
-    unless (tags[:super_cow_powers] == false) do
-      user = Repo.get_by!(User, username: "superadmin")
-      passphrase = Repo.get_by!(Passphrase, user_id: user.id)
+    cond do
+      tags[:attach_to_one_permissions] == true ->
+        user = Repo.get_by!(User, username: "onesadmin")
+        passphrase = Repo.get_by!(Passphrase, user_id: user.id)
 
-      conn =
-        conn
-        |> Plug.Conn.put_req_header("accept", "application/json")
-        |> AuthHelper.issue_token(user, passphrase)
-        |> Plug.Conn.assign(:setup_user, user)
+        conn =
+          conn
+          |> Plug.Conn.put_req_header("accept", "application/json")
+          |> AuthHelper.issue_token(user, passphrase)
+          |> Plug.Conn.assign(:setup_user, user)
 
-      {:ok, conn: conn}
-    else
-      {:ok, conn: conn}
+        {:ok, conn: conn}
+      tags[:super_cow_powers] != false ->
+        user = Repo.get_by!(User, username: "superadmin")
+        passphrase = Repo.get_by!(Passphrase, user_id: user.id)
+
+        conn =
+          conn
+          |> Plug.Conn.put_req_header("accept", "application/json")
+          |> AuthHelper.issue_token(user, passphrase)
+          |> Plug.Conn.assign(:setup_user, user)
+
+        {:ok, conn: conn}
+      true ->
+        {:ok, conn: conn}
     end
   end
 end

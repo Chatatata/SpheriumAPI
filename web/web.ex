@@ -34,6 +34,8 @@ defmodule Spherium.Web do
       import Ecto
       import Ecto.Query, only: [from: 1, from: 2]
 
+      alias Spherium.InsufficientScopeError
+
       import Spherium.Router.Helpers
       import Spherium.Gettext
       import Spherium.AuthenticationPlug

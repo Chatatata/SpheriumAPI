@@ -1,5 +1,7 @@
 defmodule Spherium.UserController do
   use Spherium.Web, :controller
+
+  import Ecto.Query, only: [where: 2]
   import Spherium.AuthenticationPlug
   import Spherium.AuthorizationPlug
 
@@ -10,7 +12,17 @@ defmodule Spherium.UserController do
   plug :scrub_params, "user" when action in [:create, :update]
 
   def index(conn, _params) do
-    users = Repo.all(User)
+    filters =
+      Ecto.Changeset.cast(%User{}, conn.query_params, [], [:username, :email])
+      |> Map.fetch(:changes)
+      |> Kernel.elem(1)
+      |> Map.to_list()
+
+    users =
+      User
+      |> where(^filters)
+      |> Repo.all()
+
     render(conn, "index.json", users: users)
   end
 

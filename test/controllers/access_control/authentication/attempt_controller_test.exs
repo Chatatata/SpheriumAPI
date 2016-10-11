@@ -13,7 +13,7 @@ defmodule Spherium.AttemptControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    user = Factory.insert(:user)
+    user = conn.assigns[:setup_user]
     attempt = Factory.insert(:attempt, username: user.username)
 
     conn = get conn, attempt_path(conn, :show, attempt)
