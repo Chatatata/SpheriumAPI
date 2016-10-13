@@ -6,12 +6,12 @@ defmodule Spherium.User do
   schema "users" do
     field :username, :string
     field :email, :string
-	  field :password_digest, :string
+    field :password_digest, :string
     field :scope, {:array, :string}
     field :activation_key, Ecto.UUID
-	  field :activation_date, Ecto.DateTime
+    field :activation_date, Ecto.DateTime
 
-	  field :password, :string, virtual: true
+    field :password, :string, virtual: true
 
     timestamps
 
@@ -30,13 +30,13 @@ defmodule Spherium.User do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, [:username, :email, :password_digest, :password])						                          # Cast with allowed fields to changeset
-    |> hash_password()                                                                                    # Hash password if changed
-	  |> validate_required([:username, :email, :password_digest])	    		                                  # Validate the required fields
-	  |> validate_length(:username, min: 4, max: 16)		                                                    # Username should be 5-16 characters long
-    |> validate_format(:email, @email_regex)                                                              # Validate email
-    |> unique_constraint(:username)							                                                          # Username should be unique
-	  |> unique_constraint(:email)							                                                            # Email should be unique
+    |> cast(params, [:username, :email, :password_digest, :password])   # Cast with allowed fields to changeset
+    |> hash_password()                                                  # Hash password if changed
+    |> validate_required([:username, :email, :password_digest])         # Validate the required fields
+    |> validate_length(:username, min: 4, max: 16)                      # Username should be 5-16 characters long
+    |> validate_format(:email, @email_regex)                            # Validate email
+    |> unique_constraint(:username)                                     # Username should be unique
+    |> unique_constraint(:email)                                        # Email should be unique
   end
 
   def permissions_set_changeset(model, params \\ %{}) do
