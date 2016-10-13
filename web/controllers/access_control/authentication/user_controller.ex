@@ -7,8 +7,11 @@ defmodule Spherium.UserController do
 
   alias Spherium.User
 
-  plug :authenticate_user
-  plug :authorize_user
+  plug :authenticate_user when action in [:index, :show, :update, :delete]
+  plug :authorize_user, [:all] when action in [:index, :delete]
+  plug :authorize_user, [:all, :self] when action in [:show, :update]
+  plug :apply_policy when not action in [:create]
+
   plug :scrub_params, "user" when action in [:create, :update]
 
   def index(conn, _params) do

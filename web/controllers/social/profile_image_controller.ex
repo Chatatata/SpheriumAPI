@@ -5,7 +5,7 @@ defmodule Spherium.ProfileImageController do
   alias Spherium.User
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all, :self]
   plug :scrub_params, "profile_image" when action in [:create, :update]
 
   def create(conn, %{"user_id" => user_id, "profile_image" => profile_image_params}) do

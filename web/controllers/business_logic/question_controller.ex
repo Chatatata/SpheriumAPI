@@ -4,7 +4,7 @@ defmodule Spherium.QuestionController do
   alias Spherium.Question
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all, :self]
   plug :scrub_params, "question" when action in [:create, :update]
 
   def index(conn, _params) do

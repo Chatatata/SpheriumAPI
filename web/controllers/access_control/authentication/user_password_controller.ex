@@ -4,8 +4,8 @@ defmodule Spherium.UserPasswordController do
   alias Spherium.User
 
   plug :authenticate_user
-  plug :authorize_user
-  plug :scrub_params, "password" when action in [:update]
+  plug :authorize_user, [:all]
+  plug :scrub_params, "password"
   plug :put_view, Spherium.UserPasswordChangeView
 
   # TODO: Forgot password

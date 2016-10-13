@@ -4,7 +4,7 @@ defmodule Spherium.SubscriberController do
   alias Spherium.Subscriber
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all]
   plug :scrub_params, "subscriber" when action in [:create, :update]
 
   def index(conn, _params) do

@@ -4,7 +4,7 @@ defmodule Spherium.PermissionSetController do
   alias Spherium.PermissionSet
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all]
   plug :scrub_params, "permission_set" when action in [:create, :update]
 
   def index(conn, _params) do

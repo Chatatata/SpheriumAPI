@@ -5,7 +5,7 @@ defmodule Spherium.PassphraseInvalidationController do
   alias Spherium.PassphraseInvalidation
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all, :self]
   plug :scrub_params, "passphrase_invalidation" when action in [:create]
 
   def create(conn, %{"passphrase_invalidation" => %{"target_passphrase_id" => target_passphrase_id}}) do

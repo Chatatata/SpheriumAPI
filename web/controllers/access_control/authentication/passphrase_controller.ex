@@ -12,7 +12,7 @@ defmodule Spherium.PassphraseController do
   alias Spherium.User
 
   plug :authenticate_user when action in [:index, :show]
-  plug :authorize_user when action in [:index, :show]
+  plug :authorize_user, [:all, :self] when action in [:index, :show]
   plug :scrub_params, "credentials" when action in [:create]
 
   def index(conn, _params) do

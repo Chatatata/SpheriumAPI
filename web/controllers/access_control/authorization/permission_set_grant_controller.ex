@@ -4,7 +4,7 @@ defmodule Spherium.PermissionSetGrantController do
   alias Spherium.PermissionSetGrant
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all, :self]
 
   def index(conn, _params) do
     permission_set_grants = Repo.all(PermissionSetGrant)

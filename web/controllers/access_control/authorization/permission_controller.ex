@@ -7,7 +7,7 @@ defmodule Spherium.PermissionController do
   alias Spherium.Permission
 
   plug :authenticate_user
-  plug :authorize_user
+  plug :authorize_user, [:all]
 
   def index(conn, _params) do
     permissions = Repo.all(Permission)
