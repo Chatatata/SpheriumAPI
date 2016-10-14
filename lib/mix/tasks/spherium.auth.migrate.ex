@@ -125,7 +125,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
   defp update_onesadmin_permission_set() do
     query = from p in Permission,
-            where: p.type == "one",
+            where: p.type == "self",
             select: p.id
 
     permission_ids = Repo.all(query, log: false)
@@ -149,7 +149,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
       passphrase = Repo.insert!(changeset, log: false)
 
       permission_set_params = %{name: "onesadmin",
-                                description: "This permission set has Super Cow Powers with 'one' permissions!",
+                                description: "This permission set has Super Cow Powers with 'self' permissions!",
                                 grant_power: 999,
                                 permission_ids: permission_ids,
                                 user_id: user.id}
