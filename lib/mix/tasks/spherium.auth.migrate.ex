@@ -44,7 +44,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
     case router.opts do
       # :index -> cap
-      _ -> [permission_from_router_with_type(router, "one") | cap]
+      _ -> [permission_from_router_with_type(router, "self") | cap]
     end
   end
 
