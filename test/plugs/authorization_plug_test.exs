@@ -47,4 +47,51 @@ defmodule Spherium.AuthorizationPlugTest do
     assert conn.halted
     assert conn.status == 401
   end
+
+  test "policy is not triggered in all permission" do
+    user = Repo.get_by!(User, username: "superadmin")
+
+    conn =
+      Phoenix.ConnTest.build_conn(:get, "/users/" <> Integer.to_string(user.id))
+      |> put_private(:phoenix_controller, :"Elixir.Spherium.UserController")
+      |> put_private(:phoenix_action, :show)
+      |> assign(:user, user)
+      |> fetch_query_params()
+      |> AuthorizationPlug.authorize_user([:all, :self])
+      |> AuthorizationPlug.apply_policy([])
+
+    refute conn.halted
+  end
+
+  test "policy is triggered and passes in self permission" do
+    user = Repo.get_by!(User, username: "onesadmin")
+
+    conn =
+      Phoenix.ConnTest.build_conn(:get, "/users?username=" <> user.username)
+      |> put_private(:phoenix_controller, :"Elixir.Spherium.AttemptController")
+      |> put_private(:phoenix_action, :index)
+      |> assign(:user, user)
+      |> fetch_query_params()
+      |> AuthorizationPlug.authorize_user([:all, :self])
+      |> AuthorizationPlug.apply_policy([])
+
+    refute conn.halted
+  end
+
+  test "policy is triggered and denies in self permission" do
+    user = Repo.get_by!(User, username: "onesadmin")
+    other_user = Factory.insert(:user)
+
+    conn =
+      Phoenix.ConnTest.build_conn(:get, "/users?username=" <> other_user.username)
+      |> put_private(:phoenix_controller, :"Elixir.Spherium.AttemptController")
+      |> put_private(:phoenix_action, :index)
+      |> assign(:user, user)
+      |> fetch_query_params()
+      |> AuthorizationPlug.authorize_user([:all, :self])
+      |> AuthorizationPlug.apply_policy([])
+
+    assert conn.halted
+    assert conn.status == 401
+  end
 end

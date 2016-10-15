@@ -55,11 +55,13 @@ defmodule Spherium.AuthorizationPlug do
 
   defp fetch_policy_module(conn, policy_name) do
     case policy_name do
-      [] ->
-        controller_name = Atom.to_string conn.private.phoenix_controller
-        policy_module = String.to_atom(controller_name <> "Policy")
       policy_module when is_atom(policy_name) ->
         policy_module
+      policy_module when is_binary(policy_name) ->
+        String.to_atom(policy_module)
+      _ ->
+        controller_name = Atom.to_string conn.private.phoenix_controller
+        String.to_atom(controller_name <> "Policy")
     end
   end
 end

@@ -7,6 +7,7 @@ defmodule Spherium.AttemptController do
 
   plug :authenticate_user
   plug :authorize_user, [:all, :self]
+  plug :apply_policy
 
   def index(conn, _params) do
     filters =
