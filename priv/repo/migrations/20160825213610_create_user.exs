@@ -3,7 +3,7 @@ defmodule Spherium.Repo.Migrations.CreateUser do
 
   def change do
     execute "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\""
-    
+
     create table(:users) do
       add :username, :string, null: false
 	    add :email, :string
@@ -11,10 +11,10 @@ defmodule Spherium.Repo.Migrations.CreateUser do
       add :scope, {:array, :string}, default: []
       add :activation_key, :uuid, default: fragment("uuid_generate_v4()"), null: false
 	    add :activation_date, :datetime, default: fragment("now()")
-
-      timestamps
+      add :inserted_at, :datetime, default: fragment("now()"), null: false
+      add :updated_at, :datetime
     end
-	
+
     create unique_index(:users, [:username])
 	  create unique_index(:users, [:email])
   end
