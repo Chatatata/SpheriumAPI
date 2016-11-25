@@ -7,7 +7,6 @@ defmodule Spherium.User do
     field :username, :string
     field :email, :string
     field :password_digest, :string
-    field :scope, {:array, :string}
     field :activation_key, Ecto.UUID
     field :activation_date, Ecto.DateTime
 

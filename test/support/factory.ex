@@ -7,8 +7,7 @@ defmodule Spherium.Factory do
     %Spherium.User{
       username: sequence(:username, &"user#{&1}"),
       email: sequence(:email, &"email-#{&1}@example.com"),
-      password_digest: hashpwsalt("123456"),
-      scope: ["admin"]
+      password_digest: hashpwsalt("123456")
     }
   end
 

@@ -13,7 +13,6 @@ defmodule Spherium.UserView do
     %{id: user.id,
       username: user.username,
       email: user.email,
-      scope: user.scope,
       created_at: Ecto.DateTime.to_iso8601(user.inserted_at)}
   end
 
@@ -21,7 +20,6 @@ defmodule Spherium.UserView do
     %{id: user.id,
       username: user.username,
       email: user.email,
-      scope: user.scope,
       created_at: Ecto.DateTime.to_iso8601(user.inserted_at)}
   end
 end
