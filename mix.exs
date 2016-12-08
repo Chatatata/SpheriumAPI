@@ -42,7 +42,8 @@ defmodule Spherium.Mixfile do
      {:jose, "~> 1.8"},
      {:credo, "~> 0.4", only: [:dev, :test]},
      {:timex, "~> 3.0"},
-     {:coverex, "~> 1.4.10", only: :test}]
+     {:coverex, "~> 1.4.10", only: :test},
+     {:cors_plug, "~> 1.1"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

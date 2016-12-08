@@ -33,5 +33,7 @@ defmodule Spherium.Endpoint do
     key: "_spherium_key",
     signing_salt: "ku8kC4lJ"
 
+  plug CORSPlug
+
   plug Spherium.Router
 end
