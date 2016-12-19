@@ -8,9 +8,6 @@ defmodule Spherium.UserPasswordController do
   plug :scrub_params, "password"
   plug :put_view, Spherium.UserPasswordChangeView
 
-  # TODO: Forgot password
-  # def create(conn, %{""})
-
   def update(conn, %{"user_id" => user_id, "password" => password}) do
     user = Repo.get!(User, user_id)
     changeset = User.changeset(user, %{password: password})
