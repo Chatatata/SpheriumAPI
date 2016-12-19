@@ -11,6 +11,6 @@ defmodule Spherium.PasswordResetView do
 
   def render("password_reset.json", %{password_reset: password_reset}) do
     %{id: password_reset.id,
-      user_id: password_reset.id}
+      user_id: password_reset.user_id}
   end
 end

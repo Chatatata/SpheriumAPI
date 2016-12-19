@@ -27,7 +27,6 @@ defmodule Spherium.PasswordResetController do
       {:ok, password_reset} ->
         conn
         |> put_status(:created)
-        |> put_resp_header("location", user_user_password_password_reset_path(conn, :show, user_id, password_reset.id))
         |> render("show.json", password_reset: password_reset)
       {:error, changeset} ->
         conn

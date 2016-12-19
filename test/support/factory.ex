@@ -83,4 +83,10 @@ defmodule Spherium.Factory do
       ip_addr: "#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}"
     }
   end
+
+  def password_reset_factory do
+    %Spherium.PasswordReset{
+      user_id: build(:user).id
+    }
+  end
 end
