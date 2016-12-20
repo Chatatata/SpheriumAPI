@@ -19,7 +19,7 @@ defmodule Spherium.AuthenticationPlug do
             |> Plug.Conn.assign(:user, %User{id: opts["id"],
                                              username: opts["username"],
                                              email: opts["email"],
-                                             inserted_at: Ecto.DateTime.cast!(opts["created_at"])})
+                                             inserted_at: NaiveDateTime.from_iso8601!(opts["created_at"])})
             |> Plug.Conn.assign(:passphrase_id, opts["passphrase_id"])
           _ ->
             conn

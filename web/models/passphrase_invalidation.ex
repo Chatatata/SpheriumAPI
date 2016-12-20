@@ -5,7 +5,7 @@ defmodule Spherium.PassphraseInvalidation do
     belongs_to :passphrase, Spherium.Passphrase
     belongs_to :target_passphrase, Spherium.Passphrase
     field :ip_addr, :string
-    field :inserted_at, Ecto.DateTime
+    field :inserted_at, :naive_datetime
   end
 
   def changeset(struct, params \\ %{}) do

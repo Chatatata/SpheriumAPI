@@ -8,7 +8,7 @@ defmodule Spherium.User do
     field :email, :string
     field :password_digest, :string
     field :activation_key, Ecto.UUID
-    field :activation_date, Ecto.DateTime
+    field :activation_date, :naive_datetime
 
     field :password, :string, virtual: true
 

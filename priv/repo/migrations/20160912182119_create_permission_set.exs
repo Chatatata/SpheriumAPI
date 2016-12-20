@@ -8,7 +8,7 @@ defmodule Spherium.Repo.Migrations.CreateAuthorizationTables do
       add :description, :string, null: false
       add :grant_power, :integer, null: false, default: 0
       add :user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
-      add :inserted_at, :timestamp, null: false, default: fragment("now()")
+      add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 
     # Each user should belong to one permission set.
@@ -35,7 +35,7 @@ defmodule Spherium.Repo.Migrations.CreateAuthorizationTables do
       add :permission_set_id, references(:permission_sets, on_delete: :delete_all, on_update: :update_all), null: false
       add :user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
       add :target_user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
-      add :inserted_at, :timestamp, null: false, default: fragment("now()")
+      add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 
     create unique_index(:permissions, [:controller_name, :controller_action, :type], name: :permissions_unique_coupling)

@@ -16,7 +16,7 @@ defmodule Spherium.UserController do
 
   def index(conn, _params) do
     filters =
-      Ecto.Changeset.cast(%User{}, conn.query_params, [], [:username, :email])
+      Ecto.Changeset.cast(%User{}, conn.query_params, [:username, :email])
       |> Map.fetch(:changes)
       |> Kernel.elem(1)
       |> Map.to_list()

@@ -29,7 +29,7 @@ defmodule Spherium.PermissionSet do
     field :description, :string
     field :grant_power, :integer
     belongs_to :user, Spherium.User
-    field :inserted_at, Ecto.DateTime
+    field :inserted_at, :naive_datetime
 
     has_many :users, Spherium.User
     many_to_many :permissions, Spherium.Permission, join_through: "permission_set_permissions"

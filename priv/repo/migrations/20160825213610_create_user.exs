@@ -10,9 +10,9 @@ defmodule Spherium.Repo.Migrations.CreateUser do
       add :password_digest, :string, null: false
       add :scope, {:array, :string}, default: []
       add :activation_key, :uuid, default: fragment("uuid_generate_v4()"), null: false
-	    add :activation_date, :datetime, default: fragment("now()")
-      add :inserted_at, :datetime, default: fragment("now()"), null: false
-      add :updated_at, :datetime
+	    add :activation_date, :naive_datetime, default: fragment("now()")
+      add :inserted_at, :naive_datetime, default: fragment("now()"), null: false
+      add :updated_at, :naive_datetime
     end
 
     create unique_index(:users, [:username])

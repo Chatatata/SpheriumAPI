@@ -8,7 +8,7 @@ defmodule Spherium.Passphrase do
     belongs_to :user, Spherium.User
     field :device, Ecto.UUID
     field :user_agent, :string
-    field :inserted_at, Ecto.DateTime
+    field :inserted_at, :naive_datetime
   end
 
   def changeset(struct, params \\ %{}) do

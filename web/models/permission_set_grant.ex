@@ -30,7 +30,7 @@ defmodule Spherium.PermissionSetGrant do
     belongs_to :permission_set, Spherium.PermissionSet
     belongs_to :user, Spherium.User
     belongs_to :target_user, Spherium.User
-    field :inserted_at, Ecto.DateTime
+    field :inserted_at, :naive_datetime
   end
 
   def changeset(struct, params \\ %{}) do

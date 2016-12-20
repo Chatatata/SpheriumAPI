@@ -7,13 +7,13 @@ defmodule Spherium.Repo.Migrations.AddPassphrasesTable do
       add :user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
       add :device, :uuid, null: false
       add :user_agent, :string, null: false
-      add :inserted_at, :timestamp, null: false, default: fragment("now()")
+      add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 
     create table(:passphrase_invalidations) do
       add :passphrase_id, references(:passphrases, on_delete: :delete_all, on_update: :update_all), null: false
       add :target_passphrase_id, references(:passphrases, on_delete: :delete_all, on_update: :update_all), null: false
-      add :inserted_at, :timestamp, null: false, default: fragment("now()")
+      add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
       add :ip_addr, :string, null: false
     end
 

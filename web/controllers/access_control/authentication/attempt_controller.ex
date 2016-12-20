@@ -11,7 +11,7 @@ defmodule Spherium.AttemptController do
 
   def index(conn, _params) do
     filters =
-      Ecto.Changeset.cast(%Attempt{}, conn.query_params, [], [:username, :success])
+      Ecto.Changeset.cast(%Attempt{}, conn.query_params, [:username, :success])
       |> Map.fetch(:changes)
       |> Kernel.elem(1)
       |> Map.to_list()

@@ -41,7 +41,7 @@ defmodule Spherium.TokenControllerTest do
 
   test "responds with 403 if underlying passphrase of passkey is expired", %{conn: conn} do
     user = Factory.insert(:user)
-    passphrase = Factory.insert(:passphrase, user: user, inserted_at: Ecto.DateTime.cast!("1970-01-01 00:00:00"))
+    passphrase = Factory.insert(:passphrase, user: user, inserted_at: NaiveDateTime.from_iso8601!("1970-01-01 00:00:00"))
 
     conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
 

@@ -3,7 +3,7 @@ defmodule Spherium.PasswordReset do
 
   schema "password_resets" do
     belongs_to :user, Spherium.User
-    field :inserted_at, Ecto.DateTime
+    field :inserted_at, :naive_datetime
   end
 
   def changeset(struct, params \\ %{}) do
