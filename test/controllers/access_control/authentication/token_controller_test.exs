@@ -62,8 +62,8 @@ defmodule Spherium.TokenControllerTest do
 
   test "generates token if the given passphrase is newer than last password reset", %{conn: conn} do
     user = Factory.insert(:user)
-    _password_reset = Factory.insert(:password_reset, user: user)
-    passphrase = Factory.insert(:passphrase, user: user)
+    _password_reset = Factory.insert(:password_reset, user: user, inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
+    passphrase = Factory.insert(:passphrase, user: user, inserted_at: NaiveDateTime.from_erl!(:calendar.universal_time()))
 
     conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
 

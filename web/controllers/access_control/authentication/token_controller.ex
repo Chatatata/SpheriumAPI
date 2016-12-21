@@ -7,7 +7,6 @@ defmodule Spherium.TokenController do
   alias Spherium.Passphrase
   alias Spherium.PassphraseInvalidation
   alias Spherium.User
-  alias Spherium.PasswordReset
 
   plug :scrub_params, "passkey" when action in [:create]
 
@@ -18,9 +17,15 @@ defmodule Spherium.TokenController do
             where: p.passkey == ^passkey and
                    is_nil(pi.inserted_at) and
                    p.inserted_at > ago(5, "month") and
-                   p.inserted_at > subquery(from pr in PasswordReset,
-                                            where: pr.user_id == ^u.id,
-                                            select: max(pr.inserted_at)),
+                   p.inserted_at > fragment("(SELECT
+                                                CASE
+                                                  WHEN max(pr.inserted_at) IS NOT NULL THEN
+                                                    max(pr.inserted_at)
+                                                  ELSE
+                                                    to_date('01.01.1970', 'DD.MM.YYYY')
+                                                END
+                                              FROM password_resets pr
+                                              WHERE pr.user_id = u2.id)"),
             select: {u, p}
 
     case Repo.one(query) do
