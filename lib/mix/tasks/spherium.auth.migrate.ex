@@ -104,7 +104,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
                                                         device: Ecto.UUID.generate(),
                                                         user_agent: "Migration service"})
 
-      passphrase = Repo.insert!(changeset, log: false)
+      _passphrase = Repo.insert!(changeset, log: false)
 
       permission_set_params = %{name: "superadmin",
                                 description: "This permission set has Super Cow Powers!",
@@ -146,7 +146,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
                                                         device: Ecto.UUID.generate(),
                                                         user_agent: "Migration service"})
 
-      passphrase = Repo.insert!(changeset, log: false)
+      _passphrase = Repo.insert!(changeset, log: false)
 
       permission_set_params = %{name: "onesadmin",
                                 description: "This permission set has Super Cow Powers with 'self' permissions!",
