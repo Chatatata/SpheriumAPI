@@ -48,4 +48,30 @@ defmodule Spherium.TokenControllerTest do
     data = response(conn, 403)
     assert data =~ "Authentication not available."
   end
+
+  test "responds with 403 if user has a newer password reset than recent passphrase", %{conn: conn} do
+    user = Factory.insert(:user)
+    passphrase = Factory.insert(:passphrase, user: user)
+    _password_reset = Factory.insert(:password_reset, user: user)
+
+    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+
+    data = response(conn, 403)
+    assert data =~ "Authentication not available."
+  end
+
+  test "generates token if the given passphrase is newer than last password reset", %{conn: conn} do
+    user = Factory.insert(:user)
+    _password_reset = Factory.insert(:password_reset, user: user)
+    passphrase = Factory.insert(:passphrase, user: user)
+
+    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+
+    data = json_response(conn, 201)["data"]
+
+    assert data["jwt"]
+    assert data["exp"]
+    assert data["user_id"]
+    assert data["timestamp"]
+  end
 end

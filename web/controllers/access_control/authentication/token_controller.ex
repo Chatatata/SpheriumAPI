@@ -7,6 +7,7 @@ defmodule Spherium.TokenController do
   alias Spherium.Passphrase
   alias Spherium.PassphraseInvalidation
   alias Spherium.User
+  alias Spherium.PasswordReset
 
   plug :scrub_params, "passkey" when action in [:create]
 
@@ -16,7 +17,10 @@ defmodule Spherium.TokenController do
             join: u in User, on: p.user_id == u.id,
             where: p.passkey == ^passkey and
                    is_nil(pi.inserted_at) and
-                   p.inserted_at > ago(5, "month"),
+                   p.inserted_at > ago(5, "month") and
+                   p.inserted_at > subquery(from pr in PasswordReset,
+                                            where: pr.user_id == ^u.id,
+                                            select: max(pr.inserted_at)),
             select: {u, p}
 
     case Repo.one(query) do
