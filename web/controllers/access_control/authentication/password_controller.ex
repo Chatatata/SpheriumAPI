@@ -1,4 +1,4 @@
-defmodule Spherium.UserPasswordController do
+defmodule Spherium.PasswordController do
   use Spherium.Web, :controller
 
   alias Spherium.User
@@ -6,7 +6,7 @@ defmodule Spherium.UserPasswordController do
   plug :authenticate_user
   plug :authorize_user, [:all]
   plug :scrub_params, "password"
-  plug :put_view, Spherium.UserPasswordChangeView
+  plug :put_view, Spherium.PasswordChangeView
 
   def update(conn, %{"user_id" => user_id, "password" => password}) do
     user = Repo.get!(User, user_id)
@@ -15,7 +15,7 @@ defmodule Spherium.UserPasswordController do
     case Repo.update(changeset) do
       {:ok, _user} ->
         conn
-        |> render("user_password_change.json", user_id: user_id)
+        |> render("password_change.json", user_id: user_id)
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)

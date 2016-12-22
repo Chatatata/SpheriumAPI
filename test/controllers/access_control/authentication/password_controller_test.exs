@@ -1,4 +1,4 @@
-defmodule Spherium.UserPasswordControllerTest do
+defmodule Spherium.PasswordControllerTest do
   use Spherium.ConnCase
 
   import Comeonin.Bcrypt, only: [checkpw: 2]
@@ -14,7 +14,7 @@ defmodule Spherium.UserPasswordControllerTest do
 
   test "updates and renders chosen resource when data is valid", %{conn: conn} do
     user = Factory.insert(:user)
-    conn = put conn, user_user_password_path(conn, :update, user), password: @fake_pw
+    conn = put conn, user_password_path(conn, :update, user), password: @fake_pw
 
     fetched_user = Repo.get!(User, user.id)
 
@@ -25,7 +25,7 @@ defmodule Spherium.UserPasswordControllerTest do
 
   test "throws 404 when non-existing identifier is given to update", %{conn: conn} do
     assert_error_sent 404, fn ->
-      put conn, user_user_password_path(conn, :update, -1), password: "456789"
+      put conn, user_password_path(conn, :update, -1), password: "456789"
     end
   end
 end

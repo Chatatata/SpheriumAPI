@@ -7,9 +7,8 @@ defmodule Spherium.PasswordResetControllerTest do
 
   test "lists zero entry on index", %{conn: conn} do
     user = Factory.insert(:user)
-    # password_resets = Factory.insert_list(2, :password_reset, user_id: user.id)
 
-    conn = get conn, user_user_password_password_reset_path(conn, :index, user.id)
+    conn = get conn, user_password_password_reset_path(conn, :index, user.id)
 
     assert json_response(conn, 200)["data"] == []
   end
@@ -18,7 +17,7 @@ defmodule Spherium.PasswordResetControllerTest do
     user = Factory.insert(:user)
     password_reset = Factory.insert(:password_reset, user_id: user.id)
 
-    conn = get conn, user_user_password_password_reset_path(conn, :index, user.id)
+    conn = get conn, user_password_password_reset_path(conn, :index, user.id)
 
     assert json_response(conn, 200)["data"] == [%{"user_id" => user.id, "id" => password_reset.id}]
   end
@@ -26,7 +25,7 @@ defmodule Spherium.PasswordResetControllerTest do
   test "creates and renders resource when data is valid", %{conn: conn} do
     user = Factory.insert(:user)
 
-    conn = post conn, user_user_password_password_reset_path(conn, :create, user.id)
+    conn = post conn, user_password_password_reset_path(conn, :create, user.id)
 
     data = json_response(conn, 201)["data"]
 
@@ -35,7 +34,7 @@ defmodule Spherium.PasswordResetControllerTest do
   end
 
   test "does not create resource and returns 422 when user with identifier does not exist", %{conn: conn} do
-    conn = post conn, user_user_password_password_reset_path(conn, :create, -1)
+    conn = post conn, user_password_password_reset_path(conn, :create, -1)
 
     assert conn.status == 422
   end

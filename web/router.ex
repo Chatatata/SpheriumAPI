@@ -12,7 +12,7 @@ defmodule Spherium.Router do
       resources "/users", UserController, except: [:new, :edit] do
         resources "/image", ProfileImageController, except: [:new, :edit], singleton: true
         resources "/permission_set", UserPermissionSetController, only: [:show, :update, :delete], singleton: true
-        resources "/password", UserPasswordController, only: [:update], singleton: true do
+        resources "/password", PasswordController, only: [:update], singleton: true do
           resources "/reset", PasswordResetController, only: [:index, :create]
         end
       end
