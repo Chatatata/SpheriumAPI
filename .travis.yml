@@ -1,10 +1,11 @@
+dist: trusty
 language: elixir
 elixir:
-  - 1.3.2
+  - 1.3.4
 otp_release:
   - 19.0
 addons:
-  postgresql: "9.4"
+  postgresql: "9.6"
 services:
   - postgresql
 sudo: required
@@ -16,7 +17,7 @@ install:
   - mix local.hex --force
   - mix local.rebar --force
   - mix deps.get
-  - mix deps
+  - MIX_ENV=test mix deps.compile
   - psql -c "CREATE USER main WITH PASSWORD 'kuz60TOL12' SUPERUSER LOGIN CREATEDB;" -U postgres
 script:
   - mix test
