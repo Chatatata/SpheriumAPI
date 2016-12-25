@@ -2,6 +2,9 @@
 
 > Written by **Buğra Ekuklu (Chatatata)**.
 
+#### Why authentication is required?
+Spherium is a personal learning platform, it uses usage related information in order to supply precise data to the customers. The data of the users and its availability matters. Therefore, in order to make some actions, Spherium needs to authenticate the user. Therefore, due to philosophical and technical reasons, it provides a layer of access control.
+
 The web service utilizes two-factor authentication (2FA) mechanism and it requires three steps of authentication to be successfully completed to authorize to the application.
 
 #### Artifacts of authentication
