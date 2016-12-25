@@ -24,6 +24,7 @@ There are three steps to perform the authentication successfully.
   * Passphrases are generated uniquely, they are not pooled: One invalidated/expelled could not refer an access to such user.
 3. Requesting a JSON Web Token *(JWT)* with a passphrase.
   * JWTs contain a payload, which carries the user information, providing a stateless authentication opportunity to the server. It could be decoded also in the client application, but not manipulated.
+  * As it is said, being provided by the response upon creation of the token, the default value of expiration of a JWT is **30 minutes**. It is not a good idea to rely on that specific amount of time, however, one should understand the expiration of the token will be the amount provided.
 
 #### Steps to authenticate to the web server
 1. The server is challenged with user credentials, since device (or particular front-end application) is
