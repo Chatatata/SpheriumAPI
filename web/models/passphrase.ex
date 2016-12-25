@@ -5,7 +5,7 @@ defmodule Spherium.Passphrase do
 
   schema "passphrases" do
     field :passkey, :string
-    belongs_to :user, Spherium.User
+    belongs_to :one_time_code, Spherium.OneTimeCode
     field :device, Ecto.UUID
     field :user_agent, :string
     field :inserted_at, :naive_datetime
@@ -13,10 +13,10 @@ defmodule Spherium.Passphrase do
 
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:passkey, :user_id, :device, :user_agent])
-    |> validate_required([:passkey, :user_id, :device, :user_agent])
+    |> cast(params, [:passkey, :one_time_code_id, :device, :user_agent])
+    |> validate_required([:passkey, :one_time_code_id, :device, :user_agent])
     |> validate_format(:device, @uuid_regex)
     |> unique_constraint(:passkey)
-    |> foreign_key_constraint(:user_id)
+    |> foreign_key_constraint(:one_time_code_id)
   end
 end

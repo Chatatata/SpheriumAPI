@@ -17,9 +17,16 @@ defmodule Spherium.Repo.Migrations.AddOneTimeCodesAndRelatedTables do
       add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 
-    create table(:user_authentication_unbans) do
+    create table(:unbans) do
       add :user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
       add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
+
+    alter table(:passphrases) do
+      remove :user_id
+      add :one_time_code_id, references(:one_time_codes, on_delete: :delete_all, on_update: :update_all), null: false
+    end
+
+    create index(:passphrases, [:one_time_code_id], unique: true)
   end
 end
