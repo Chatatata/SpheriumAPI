@@ -22,14 +22,15 @@ defmodule Spherium.OneTimeCodeController do
       |> Enum.join(".")
 
     if credentials_changeset.valid? do
-      username = get_field(credentials, :username)
-      password = get_field(credentials, :password)
+      username = get_field(credentials_changeset, :username)
+      password = get_field(credentials_changeset, :password)
 
       attempt_changeset = Attempt.changeset(%Attempt{}, %{username: username, ip_addr: ip_addr})
 
       case Repo.transaction(fn ->
         query = from u in User,
                 where: u.username == ^username
+                select: u
 
         case Repo.one(query) do
           nil ->
@@ -45,8 +46,13 @@ defmodule Spherium.OneTimeCodeController do
             if Repo.aggregate(query, :count, :id) == 5, do: Repo.rollback(:max_passphrases_reached)
 
             one_time_code_changeset =
-              OneTimeCode.changeset(%OneTimeCode{}, %{user_id: user.id,
-                                                      code: Code.generate()})
+              OneTimeCode.changeset(
+                %OneTimeCode{},
+                %{user_id: user.id,
+                  code: Code.generate(),
+                  device: get_field(credentials_changeset, :device),
+                  user_agent: get_field(credentials_changeset, :user_agent)}
+              )
 
             Repo.insert!(one_time_code_changeset)
         end

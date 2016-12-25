@@ -1,16 +1,19 @@
+### Spherium Web Service REST API Developer Documentation
+
+Lead maintainer: **Buğra Ekuklu (Chatatata)**.
+
 # Authentication
 
-> Written by **Buğra Ekuklu (Chatatata)**.
-
 #### Why authentication is required?
-Spherium is a personal learning platform, it uses usage related information in order to supply precise data to the customers. The data of the users and its availability matters. Therefore, in order to make some actions, Spherium needs to authenticate the user. Therefore, due to philosophical and technical reasons, it provides a layer of access control.
+Spherium is a personal learning platform, it uses usage related information in order to supply precise data to the customers. The data of the users and its availability matters. Therefore, in order to perform some actions, Spherium needs to authenticate the user due to philosophical and technical reasons, it provides a layer of access control.
 
 The web service utilizes two-factor authentication (2FA) mechanism and it requires three steps of authentication to be successfully completed to authorize to the application.
 
 #### Artifacts of authentication
 Several authentication artifacts are used during the process.
-* **Username/E-mail**: This artifact is a property of user. It uniquely identifies its owner. It may contain sensitive data.
-* **Password**: This artifact is a property of user. It should be used carefully since it will probably contain sensitive data of the user. It is persisted in back-end storage layer as hashed with either **bcrypt** or **pbkdf2** etc.
+* **Credentials**:
+  * **Username/E-mail**: This artifact is a property of user, may contain sensitive data. It uniquely identifies its owner.
+  * **Password**: This artifact is a property of user. It should be used carefully since it will probably contain sensitive data of the user. It is persisted in back-end storage layer as hashed with either **bcrypt** or **pbkdf2** etc.
 * **One-Time-Code**: This artifact is generated on the server dynamically and constitutes the second factor of authentication. It is an unsigned integer value between 100.000 and 1.000.000 inclusive from start, excluding the end.
 * **Passphrase**: This artifact provides an ability to grant access on the server. It has long expiration of time and it could be stored in a device. A valid passphrase will be adequate to grant access to a user.
 * **JSON Web Token**: This is a standardized artifact, according to **RFC 7519**. It contains user data, which provides stateless authentication. In many circumstances, the payload of this artifact could be read by client application, but not mutated. In case of mutation, it will invalidate itself.
@@ -40,7 +43,9 @@ There are three steps to perform the authentication successfully.
   {
     "credentials": {
       "username": "exampleaccount",
-      "password": "cleartext-password"
+      "password": "cleartext-password",
+      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
+      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
     }
   }
   ```
@@ -53,7 +58,10 @@ There are three steps to perform the authentication successfully.
   POST /api/access_control/authentication/passphrases
 
   {
-    "code": 422765
+    "one_time_code_pair": {
+      "code": 422765,
+      "user_id": 3
+    }
   }
   ```
 
@@ -80,3 +88,23 @@ There are three steps to perform the authentication successfully.
   ..
 
   ```
+
+#### Tracking malicious probing
+Some *3rd party authorities* might probe authentication mechanism in order to perform masquerade attack. *Rate limiting* is one of the good ways to prevent from these type of attacks since probing is often performed by brute-force denial-of-service attempts. The web service does not provide a layer of rate limiting due to technical concerns, however this could be easily achieved by running the application behind a all-purpose performant web server (i.e. Nginx, Apache). The master server could apply a rate limiting, though, with its supervision on request quota.
+
+While *rate limiting* performs prevention of incognito and malicious access, it does not store any further information. The web service provides authentication attempt listing. An authentication attempt could be gathered with API routes.
+
+`GET /api/access_control/authentication/attempts?username=some_username`
+
+```
+[
+...
+{
+  "id": 271,
+  "username": "some_username",
+  "ip_addr": "208.67.220.220",
+  "success": true
+}
+...
+]
+```
