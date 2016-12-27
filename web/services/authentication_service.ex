@@ -1,8 +1,14 @@
 defmodule Spherium.AuthenticationService do
   import Plug.Conn, only: [put_resp_header: 3, assign: 3]
+  import HTTPoison, only: [post!: 4]
 
   alias Spherium.UserView
   alias Spherium.PassphraseView
+  alias Spherium.Code
+
+  def send_one_time_code(phone_number) do
+    post!("http://localhost:3001/tasks")
+  end
 
   def issue_token(conn, user, passphrase) do
     user_view = UserView.render("user.private.json", user: user)

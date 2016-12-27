@@ -21,7 +21,7 @@ defmodule Spherium.Mixfile do
     [mod: {Spherium, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin,
-                    :jose, :timex, :crypto]]
+                    :jose, :timex, :crypto, :httpoison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -43,7 +43,8 @@ defmodule Spherium.Mixfile do
      {:credo, "~> 0.4", only: [:dev, :test]},
      {:timex, "~> 3.0"},
      {:coverex, "~> 1.4.10", only: :test},
-     {:cors_plug, "~> 1.1"}]
+     {:cors_plug, "~> 1.1"},
+     {:httpoison, "~> 0.10.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
