@@ -25,6 +25,8 @@ defmodule Spherium.Repo.Migrations.AddOneTimeCodesAndRelatedTables do
     alter table(:passphrases) do
       remove :user_id
       add :one_time_code_id, references(:one_time_codes, on_delete: :delete_all, on_update: :update_all), null: false
+      remove :device
+      remove :user_agent
     end
 
     create index(:passphrases, [:one_time_code_id], unique: true)
