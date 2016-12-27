@@ -46,7 +46,7 @@ defmodule Spherium.Mixfile do
      {:coverex, "~> 1.4.10", only: :test},
      {:cors_plug, "~> 1.1"},
      {:httpoison, "~> 0.10.0"},
-     {:poison, "~> 3.0"}]
+     {:poison, "~> 3.0", override: true}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
