@@ -10,6 +10,7 @@ defmodule Spherium.OneTimeCodeController do
   alias Spherium.User
   alias Spherium.Attempt
   alias Spherium.Passphrase
+  alias Spherium.OneTimeCodeInvalidation
 
   plug :scrub_params, "credentials" when action in [:create]
 
@@ -45,6 +46,24 @@ defmodule Spherium.OneTimeCodeController do
 
             if Repo.aggregate(query, :count, :id) == 5, do: Repo.rollback(:max_passphrases_reached)
 
+            query = from otc in OneTimeCode,
+                    left_join: otci in OneTimeCodeInvalidation, on: otci.one_time_code_id == otc.id,
+                    left_join: p in Passphrase, on: p.one_time_code_id == otc.id,
+                    where: otc.user_id == ^user.id and
+                           otc.inserted_at > ago(15, "minutes") and
+                           is_nil(otci.inserted_at) and
+                           is_nil(p.inserted_at)
+
+            if Repo.aggregate(query, :count, :id) == 2, do: Repo.rollback(:otc_quota_reached)
+
+            query = from otc in OneTimeCode,
+                    left_join: p in Passphrase, on: p.one_time_code_id == otc.id,
+                    where: otc.user_id == ^user.id and
+                           otc.inserted_at > ago(8, "hours") and
+                           is_nil(p.inserted_at)
+
+            if Repo.aggregate(query, :count, :id) == 4, do: Repo.rollback(:possible_auth_probing)
+
             one_time_code_changeset =
               OneTimeCode.changeset(
                 %OneTimeCode{},
@@ -67,6 +86,10 @@ defmodule Spherium.OneTimeCodeController do
           |> render("one_time_code.json", one_time_code: one_time_code)
         {:error, :max_passphrases_reached} ->
           send_resp(conn, :conflict, "Maximum number of passphrases available is reached (5).")
+        {:error, :otc_quota_reached} ->
+          send_resp(conn, :too_many_requests, "OTC quota per 15 minutes is reached (2).")
+        {:error, :possible_auth_probing} ->
+          send_resp(conn, :too_many_requests, "Authentication probing probability detected.")
         {:error, :invalid_password} ->
           attempt_changeset
           |> Repo.insert!()
