@@ -10,7 +10,7 @@ defmodule Spherium.AuthenticationService do
   def send_one_time_code(phone_number) do
     post!(
       "http://localhost:3001/tasks",
-      encode!(%{code: phone_number}),
+      encode!(%{code: Code.generate()}, []),
       [],
       []
     )
