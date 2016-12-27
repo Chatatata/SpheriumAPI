@@ -30,7 +30,7 @@ defmodule Spherium.OneTimeCodeController do
 
       case Repo.transaction(fn ->
         query = from u in User,
-                where: u.username == ^username
+                where: u.username == ^username,
                 select: u
 
         case Repo.one(query) do
@@ -50,7 +50,7 @@ defmodule Spherium.OneTimeCodeController do
                     left_join: otci in OneTimeCodeInvalidation, on: otci.one_time_code_id == otc.id,
                     left_join: p in Passphrase, on: p.one_time_code_id == otc.id,
                     where: otc.user_id == ^user.id and
-                           otc.inserted_at > ago(15, "minutes") and
+                           otc.inserted_at > ago(15, "minute") and
                            is_nil(otci.inserted_at) and
                            is_nil(p.inserted_at)
 
@@ -59,7 +59,7 @@ defmodule Spherium.OneTimeCodeController do
             query = from otc in OneTimeCode,
                     left_join: p in Passphrase, on: p.one_time_code_id == otc.id,
                     where: otc.user_id == ^user.id and
-                           otc.inserted_at > ago(8, "hours") and
+                           otc.inserted_at > ago(8, "hour") and
                            is_nil(p.inserted_at)
 
             if Repo.aggregate(query, :count, :id) == 4, do: Repo.rollback(:possible_auth_probing)

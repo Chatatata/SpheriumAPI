@@ -48,7 +48,7 @@ defmodule Spherium.PassphraseController do
                        otc.inserted_at > fragment("all(SELECT otc.inserted_at
                                                        FROM one_time_codes otc2
                                                        WHERE otc2.user_id = ?)", u.id) and
-                       otc.inserted_at > ago(3, "minutes"),
+                       otc.inserted_at > ago(3, "minute"),
                 select: otc
 
         case Repo.one(query) do
