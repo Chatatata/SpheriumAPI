@@ -21,7 +21,7 @@ defmodule Spherium.Mixfile do
     [mod: {Spherium, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin,
-                    :jose, :timex]]
+                    :jose, :timex, :crypto]]
   end
 
   # Specifies which paths to compile per environment.
