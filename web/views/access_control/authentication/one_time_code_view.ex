@@ -1,4 +1,4 @@
-defmodule Spherium.TemporaryPasskeyView do
+defmodule Spherium.OneTimeCodeView do
   use Spherium.Web, :view
 
   def render("one_time_code.json", %{one_time_code: one_time_code}) do
