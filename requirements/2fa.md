@@ -10,4 +10,3 @@
 * User is not able to make more than 2 OTC requests in *15 minutes*.
 * An incorrect challenging of OTC response will invalidate the OTC request immediately.
 * User may not have two OTC openings at the same time.
-* Two incorrect OTC response will make account inauthorizable for **X** hours. Subsequent responses after ban will make the account remain same without manual unban.
