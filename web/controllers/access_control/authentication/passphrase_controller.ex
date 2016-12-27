@@ -7,6 +7,7 @@ defmodule Spherium.PassphraseController do
   alias Spherium.PassphraseGenerationAttempt
   alias Spherium.User
   alias Spherium.OneTimeCode
+  alias Spherium.OneTimeCodeInvalidation
   alias Spherium.Passkey
 
   plug :authenticate_user when action in [:index, :show]
