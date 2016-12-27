@@ -36,7 +36,7 @@ defmodule Spherium.PassphraseController do
         passphrase_generation_attempt
       )
 
-    if changeset.valid? do
+    if passphrase_generation_attempt_changeset.valid? do
       user_id = get_field(passphrase_generation_attempt_changeset, :user_id)
       code = get_field(passphrase_generation_attempt_changeset, :code)
 
