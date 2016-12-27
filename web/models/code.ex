@@ -3,6 +3,6 @@ defmodule Spherium.Code do
   @upper_bound 1000000
 
   def generate() do
-    :crpyto.rand_uniform(@lower_bound, @upper_bound)
+    :crypto.rand_uniform(@lower_bound, @upper_bound)
   end
 end

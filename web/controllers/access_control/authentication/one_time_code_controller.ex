@@ -10,6 +10,7 @@ defmodule Spherium.OneTimeCodeController do
   alias Spherium.User
   alias Spherium.Attempt
   alias Spherium.Passphrase
+  alias Spherium.PassphraseInvalidation
   alias Spherium.OneTimeCodeInvalidation
 
   plug :scrub_params, "credentials" when action in [:create]
@@ -41,8 +42,9 @@ defmodule Spherium.OneTimeCodeController do
             unless checkpw(password, user.password_digest), do: Repo.rollback(:invalid_password)
 
             query = from p in Passphrase,
-                    left_join: pi in PassphraseInvalidation, on: pi.passphrase_id == p.id,
-                    where: p.user_id == ^user.id and is_nil(pi.id)
+                    left_join: pi in PassphraseInvalidation, on: pi.target_passphrase_id == p.id,
+                    join: otc in OneTimeCode, on: p.one_time_code_id == otc.id,
+                    where: otc.user_id == ^user.id and is_nil(pi.id)
 
             if Repo.aggregate(query, :count, :id) == 5, do: Repo.rollback(:max_passphrases_reached)
 

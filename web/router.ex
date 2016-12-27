@@ -15,12 +15,13 @@ defmodule Spherium.Router do
         resources "/password", PasswordController, only: [:update], singleton: true do
           resources "/reset", PasswordResetController, only: [:index, :create]
         end
-        resources "/passphrases", PassphraseController, only: [:create]
       end
 
       resources "/subscribers", SubscriberController, except: [:new, :edit]
 
       scope "/authentication" do
+        resources "/one_time_codes", OneTimeCodeController, only: [:create]
+        resources "/passphrases", PassphraseController, only: [:create]
         resources "/passphrase_invalidations", PassphraseInvalidationController, only: [:create]
         resources "/tokens", TokenController, only: [:create], singleton: true
         resources "/attempts", AttemptController, only: [:index, :show]
