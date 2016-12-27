@@ -5,6 +5,8 @@ defmodule Spherium.Repo.Migrations.AddOneTimeCodesAndRelatedTables do
     create table(:one_time_codes) do
       add :user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
       add :code, :integer, null: false
+      add :device, :uuid, null: false
+      add :user_agent, :string, null: false
       add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 
