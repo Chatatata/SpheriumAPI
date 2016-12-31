@@ -30,6 +30,7 @@ defmodule Spherium.PassphraseController do
   end
 
   def create(conn, %{"passphrase_generation_attempt" => passphrase_generation_attempt}) do
+
     passphrase_generation_attempt_changeset =
       PassphraseGenerationAttempt.changeset(
         %PassphraseGenerationAttempt{},
@@ -44,16 +45,18 @@ defmodule Spherium.PassphraseController do
         query = from u in User,
                 join: otc in OneTimeCode, on: otc.user_id == u.id,
                 left_join: otci in OneTimeCodeInvalidation, on: otc.id == otci.one_time_code_id,
+                left_join: p in Passphrase, on: otc.id == p.one_time_code_id,
                 where: u.id == ^user_id and
                        is_nil(otci.inserted_at) and
-                       otc.inserted_at > fragment("all(SELECT otc.inserted_at
-                                                       FROM one_time_codes otc2
-                                                       WHERE otc2.user_id = ?)", u.id) and
+                       is_nil(p.inserted_at) and
+                       otc.inserted_at == fragment("(SELECT max(inserted_at)
+                                                    FROM one_time_codes
+                                                    WHERE user_id = ?)", ^user_id) and
                        otc.inserted_at > ago(3, "minute"),
                 select: otc
 
         case Repo.one(query) do
-          nil -> Repo.rollback(:invalid_pair)
+          nil -> Repo.rollback(:not_found)
           otc ->
             if otc.code == code do
               passphrase_changeset =
@@ -63,7 +66,7 @@ defmodule Spherium.PassphraseController do
                     one_time_code_id: otc.id}
                 )
 
-              Repo.insert!(passphrase_changeset)
+              {:ok, Repo.insert!(passphrase_changeset)}
             else
               one_time_code_invalidation_changeset =
                 OneTimeCodeInvalidation.changeset(
@@ -71,18 +74,28 @@ defmodule Spherium.PassphraseController do
                   %{one_time_code_id: otc.id}
                 )
 
-              Repo.insert!(one_time_code_invalidation_changeset)
-
-              {:error, :invalid_pair}
+              {:error, Repo.insert!(one_time_code_invalidation_changeset)}
             end
         end
       end) do
-        {:ok, passphrase} ->
+        {:ok, {:ok, passphrase}} ->
           conn
           |> put_status(:created)
           |> render("show.private.json", passphrase: passphrase)
-        {:error, :invalid_pair} ->
-          send_resp(conn, :not_found, "Pair not found.")
+        {:ok, {:error, _one_time_code_invalidation}} ->
+          conn
+          |> put_resp_content_type("text/plain")
+          |> send_resp(:not_found, "Pair not found.")
+        {:error, :not_found} ->
+          conn
+          |> put_resp_content_type("text/plain")
+          |> send_resp(:not_found, "Pair not found.")
+        {:error, changeset} ->
+          conn
+          |> put_status(:unprocessable_entity)
+          |> render(Spherium.ChangesetView,
+                    "error.json",
+                    changeset: changeset)
       end
     else
       conn
