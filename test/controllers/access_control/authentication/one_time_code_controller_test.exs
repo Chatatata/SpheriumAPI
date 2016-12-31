@@ -44,8 +44,7 @@ defmodule Spherium.OneTimeCodeControllerTest do
                   user_agent: "Test user agent"
                 }
 
-    assert conn.status == 403
-    assert conn.resp_body =~ "Invalid username/password combination."
+    assert text_response(conn, :forbidden) =~ "Invalid username/password combination."
   end
 
   test "returns 409 when passphrase quota exceeded", %{conn: conn} do
@@ -63,8 +62,7 @@ defmodule Spherium.OneTimeCodeControllerTest do
                   user_agent: "Test user agent"
                 }
 
-    assert conn.status == 409
-    assert conn.resp_body =~ "Maximum number of passphrases available is reached (5)."
+    assert text_response(conn, :conflict) =~ "Maximum number of passphrases available is reached (5)."
   end
 
   test "returns 429 when OTC quota exceeded", %{conn: conn} do
@@ -81,7 +79,6 @@ defmodule Spherium.OneTimeCodeControllerTest do
                   user_agent: "Test user agent"
                 }
 
-    assert conn.status == 429
-    assert conn.resp_body =~ "OTC quota per 15 minutes is reached (2)."
+    assert text_response(conn, :too_many_requests) =~ "OTC quota per 15 minutes is reached (2)."
   end
 end
