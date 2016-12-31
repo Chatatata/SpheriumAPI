@@ -5,9 +5,13 @@ defmodule Spherium.PassphraseInvalidationControllerTest do
 
   test "invalidates passphrase", %{conn: conn} do
     user = conn.assigns[:setup_user]
-    passphrase = Factory.insert(:passphrase, user_id: user.id)
+    otc = Factory.insert(:one_time_code, user: user)
+    passphrase = Factory.insert(:passphrase, one_time_code: otc)
 
-    conn = post conn, passphrase_invalidation_path(conn, :create, passphrase_invalidation: %{target_passphrase_id: passphrase.id})
+    conn = post conn,
+                passphrase_invalidation_path(conn,
+                                             :create,
+                                             passphrase_invalidation: %{target_passphrase_id: passphrase.id})
 
     assert conn.status == 201
   end

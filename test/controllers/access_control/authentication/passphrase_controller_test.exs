@@ -1,80 +1,104 @@
 defmodule Spherium.PassphraseControllerTest do
   use Spherium.ConnCase
 
-  alias Spherium.Passphrase
   alias Spherium.Factory
 
   @tag super_cow_powers: false
 
-  test "creates a new passphrase with valid credentials", %{conn: conn} do
+  test "creates a new passphrase with valid one time code", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456")
+    otc = Factory.insert(:one_time_code, user: user)
+
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: otc.code,
+                                                 user_id: user.id}
+
+    data = json_response(conn, 201)["data"]
+
+    assert data
+    assert data["passkey"]
+    assert data["passphrase_id"]
+  end
+
+  test "does not create a passphrase with expired one time code", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456")
+    otc = Factory.insert(:one_time_code,
+                         user: user,
+                         inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
+
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: otc.code,
+                                                 user_id: user.id}
+
+    assert text_response(conn, 404) =~ "Pair not found."
+  end
+
+  test "does not create a passphrase with no one time code generated", %{conn: conn} do
     user = Factory.insert(:user, password: "123456")
 
-    conn = post conn, passphrase_path(conn, :create), credentials: %{username: user.username,
-                                                                     password: "123456",
-                                                                     device: Ecto.UUID.generate(),
-                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: 123456,
+                                                 user_id: user.id}
 
-    data = json_response(conn, 201)["data"]
-
-    assert data
-    assert data["passkey"]
-    assert data["device"]
-    assert data["user_agent"] =~ "Testing user agent, ExUnit rulz!."
+    assert text_response(conn, 404) =~ "Pair not found."
   end
 
-  test "logs in user if user has 5 passphrases but 3 of them is valid", %{conn: conn} do
-    user = Factory.insert(:user)
+  test "rejects request if given code is invalid", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456")
+    _otc = Factory.insert(:one_time_code,
+                          user: user,
+                          inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
 
-    passphrases = Factory.insert_list(3, :passphrase, user_id: user.id)
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: 1000000,
+                                                 user_id: user.id}
 
-    invalidated_passphrases = Factory.insert_list(2, :passphrase, user_id: user.id)
-    Factory.insert(:passphrase_invalidation, passphrase_id: Enum.at(passphrases, 0).id, target_passphrase_id: Enum.at(invalidated_passphrases, 0).id)
-    Factory.insert(:passphrase_invalidation, passphrase_id: Enum.at(passphrases, 0).id, target_passphrase_id: Enum.at(invalidated_passphrases, 1).id)
-
-    conn = post conn, passphrase_path(conn, :create), credentials: %{username: user.username,
-                                                                     password: "123456",
-                                                                     device: Ecto.UUID.generate(),
-                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
-
-    data = json_response(conn, 201)["data"]
-
-    assert data
-    assert data["passkey"]
-    assert data["device"]
-    assert data["user_agent"] =~ "Testing user agent, ExUnit rulz!."
+    assert conn.status == 422
   end
 
-  test "does not log in user if credentials don't match", %{conn: conn} do
-    user = Factory.insert(:user)
+  test "rejects request if given code does not match", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456")
+    _otc = Factory.insert(:one_time_code,
+                          user: user)
 
-    conn = post conn, passphrase_path(conn, :create), credentials: %{username: user.username,
-                                                                     password: "wrong_password",
-                                                                     device: Ecto.UUID.generate(),
-                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: 100001,
+                                                 user_id: user.id}
 
-    assert response(conn, 403) =~ "Invalid username/password combination."
-    refute Repo.get_by(Passphrase, %{user_id: user.id})
+    assert text_response(conn, 404) =~ "Pair not found."
   end
 
-  test "does not log in user if username does not exist", %{conn: conn} do
-    conn = post conn, passphrase_path(conn, :create), credentials: %{username: "test",
-                                                                     password: "some_password",
-                                                                     device: Ecto.UUID.generate(),
-                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
+  test "checks for already satisfied one time code", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456")
+    otc = Factory.insert(:one_time_code,
+                         user: user)
+    _passphrase = Factory.insert(:passphrase,
+                                 one_time_code: otc)
 
-    assert response(conn, 403) =~ "Invalid username/password combination."
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: otc.code,
+                                                 user_id: user.id}
+
+    assert text_response(conn, 404) =~ "Pair not found."
   end
 
-  test "does not log in user if user already has 5 passphrases", %{conn: conn} do
-    user = Factory.insert(:user)
+  test "checks for already invalidated one time code", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456")
+    otc = Factory.insert(:one_time_code,
+                         user: user)
+    Factory.insert(:one_time_code_invalidation, one_time_code_id: otc.id)
 
-    Factory.insert_list(5, :passphrase, user_id: user.id)
+    conn = post conn,
+                passphrase_path(conn, :create),
+                passphrase_generation_attempt: %{code: otc.code,
+                                                 user_id: user.id}
 
-    conn = post conn, passphrase_path(conn, :create), credentials: %{username: user.username,
-                                                                     password: "123456",
-                                                                     device: Ecto.UUID.generate(),
-                                                                     user_agent: "Testing user agent, ExUnit rulz!."}
-
-    assert response(conn, 409) =~ "Maximum number of passphrases available is reached (5)."
+    assert text_response(conn, 404) =~ "Pair not found."
   end
 end

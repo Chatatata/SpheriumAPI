@@ -72,8 +72,7 @@ defmodule Spherium.Factory do
 
   def passphrase_factory do
     %Spherium.Passphrase{
-      device: Ecto.UUID.generate(),
-      user_agent: "Some user agent.",
+      one_time_code_id: build(:one_time_code).id,
       passkey: Spherium.Passkey.generate()
     }
   end
@@ -87,6 +86,21 @@ defmodule Spherium.Factory do
   def password_reset_factory do
     %Spherium.PasswordReset{
       user_id: build(:user).id
+    }
+  end
+
+  def one_time_code_factory do
+    %Spherium.OneTimeCode{
+      user_id: build(:user).id,
+      code: Spherium.Code.generate(),
+      device: Ecto.UUID.generate(),
+      user_agent: "Some user agent.",
+    }
+  end
+
+  def one_time_code_invalidation_factory do
+    %Spherium.OneTimeCodeInvalidation{
+      one_time_code_id: build(:one_time_code).id
     }
   end
 end

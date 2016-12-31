@@ -3,7 +3,7 @@ defmodule Spherium.Repo.Migrations.AddPasswordResetsTable do
 
   def change do
     create table(:password_resets) do
-      add :user_id, references(:users, on_delete: :nothing), null: false
+      add :user_id, references(:users, on_delete: :delete_all, on_update: :update_all), null: false
       add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 

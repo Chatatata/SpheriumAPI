@@ -15,8 +15,8 @@ defmodule Spherium.Credentials do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:username, :password, :device, :user_agent])          # Fetch with allowed params
-    |> validate_required([:username, :password, :device, :user_agent])     # Validate required parameters
+    |> cast(params, [:username, :password, :device, :user_agent])
+    |> validate_required([:username, :password, :device, :user_agent])
     |> validate_format(:device, @uuid_regex)
   end
 end

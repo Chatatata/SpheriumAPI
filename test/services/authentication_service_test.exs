@@ -4,14 +4,14 @@ defmodule Spherium.AuthenticationServiceTest do
   import Plug.Conn, only: [get_resp_header: 2]
 
   alias Spherium.AuthenticationService
-  alias Spherium.User
   alias Spherium.Factory
 
   @tag super_cow_powers: false
 
   test "issues token" do
-    user = User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"}) |> Repo.insert!()
-    passphrase = Factory.insert(:passphrase, user_id: user.id)
+    user = Factory.insert(:user, username: "test", password: "123456")
+    otc = Factory.insert(:one_time_code, user_id: user.id)
+    passphrase = Factory.insert(:passphrase, one_time_code_id: otc.id)
 
     conn =
       Phoenix.ConnTest.build_conn()

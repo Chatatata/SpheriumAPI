@@ -5,8 +5,7 @@ defmodule Spherium.Attempt do
     field :ip_addr, :string
     field :username, :string
     field :success, :boolean, default: false
-
-    timestamps()
+    field :inserted_at, :naive_datetime
   end
 
   @doc """

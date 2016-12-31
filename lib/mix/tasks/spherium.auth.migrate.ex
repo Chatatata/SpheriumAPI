@@ -6,6 +6,8 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
   alias Spherium.Permission
   alias Spherium.PermissionSet
   alias Spherium.Passphrase
+  alias Spherium.OneTimeCode
+  alias Spherium.Code
 
   import Ecto.Query
   import Mix.Ecto
@@ -99,10 +101,23 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
       user = Repo.insert!(changeset, log: false)
 
-      changeset = Passphrase.changeset(%Passphrase{}, %{passkey: Spherium.Passkey.generate(),
-                                                        user_id: user.id,
-                                                        device: Ecto.UUID.generate(),
-                                                        user_agent: "Migration service"})
+      changeset =
+        OneTimeCode.changeset(
+          %OneTimeCode{},
+          %{code: Code.generate(),
+            user_id: user.id,
+            device: Ecto.UUID.generate(),
+            user_agent: "Migration service"}
+        )
+
+      otc = Repo.insert!(changeset, log: false)
+
+      changeset =
+        Passphrase.changeset(
+          %Passphrase{},
+          %{passkey: Spherium.Passkey.generate(),
+            one_time_code_id: otc.id}
+        )
 
       _passphrase = Repo.insert!(changeset, log: false)
 
@@ -141,10 +156,23 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
       user = Repo.insert!(changeset, log: false)
 
-      changeset = Passphrase.changeset(%Passphrase{}, %{passkey: Spherium.Passkey.generate(),
-                                                        user_id: user.id,
-                                                        device: Ecto.UUID.generate(),
-                                                        user_agent: "Migration service"})
+      changeset =
+        OneTimeCode.changeset(
+          %OneTimeCode{},
+          %{code: Code.generate(),
+            user_id: user.id,
+            device: Ecto.UUID.generate(),
+            user_agent: "Migration service"}
+        )
+
+      otc = Repo.insert!(changeset, log: false)
+
+      changeset =
+        Passphrase.changeset(
+          %Passphrase{},
+          %{passkey: Spherium.Passkey.generate(),
+            one_time_code_id: otc.id}
+        )
 
       _passphrase = Repo.insert!(changeset, log: false)
 
