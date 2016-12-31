@@ -5,6 +5,7 @@ defmodule Spherium.TokenController do
   import Spherium.AuthenticationService
 
   alias Spherium.Passphrase
+  alias Spherium.OneTimeCode
   alias Spherium.PassphraseInvalidation
   alias Spherium.User
 
@@ -13,7 +14,8 @@ defmodule Spherium.TokenController do
   def create(conn, %{"passkey" => passkey}) do
     query = from p in Passphrase,
             left_join: pi in PassphraseInvalidation, on: p.id == pi.target_passphrase_id,
-            join: u in User, on: p.user_id == u.id,
+            join: otc in OneTimeCode, on: otc.id == p.one_time_code_id,
+            join: u in User, on: otc.user_id == u.id,
             where: p.passkey == ^passkey and
                    is_nil(pi.inserted_at) and
                    p.inserted_at > ago(5, "month") and
@@ -25,7 +27,7 @@ defmodule Spherium.TokenController do
                                                     to_date('01.01.1970', 'DD.MM.YYYY')
                                                 END
                                               FROM password_resets pr
-                                              WHERE pr.user_id = u2.id)"),
+                                              WHERE pr.user_id = ?)", u.id),
             select: {u, p}
 
     case Repo.one(query) do

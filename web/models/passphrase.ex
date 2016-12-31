@@ -12,6 +12,7 @@ defmodule Spherium.Passphrase do
     |> cast(params, [:passkey, :one_time_code_id])
     |> validate_required([:passkey, :one_time_code_id])
     |> unique_constraint(:passkey)
+    |> unique_constraint(:one_time_code_id)
     |> foreign_key_constraint(:one_time_code_id)
   end
 end
