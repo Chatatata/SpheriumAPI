@@ -13,6 +13,6 @@ defmodule Spherium.PassphraseGenerationAttempt do
     struct
     |> cast(params, [:code, :user_id])
     |> validate_required([:code, :user_id])
-    |> validate_inclusion(:code, 100000..1000000)
+    |> validate_inclusion(:code, 100000..999999)
   end
 end
