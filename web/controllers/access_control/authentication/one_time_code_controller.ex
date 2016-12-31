@@ -78,22 +78,21 @@ defmodule Spherium.OneTimeCodeController do
 
           conn
           |> put_status(:created)
-          |> put_resp_content_type("application/json")
           |> render("one_time_code.json", one_time_code: one_time_code)
         {:error, :max_passphrases_reached} ->
           conn
-          |> put_resp_content_type("application/json")
+          |> put_resp_content_type("text/plain")
           |> send_resp(:conflict, "Maximum number of passphrases available is reached (5).")
         {:error, :otc_quota_reached} ->
           conn
-          |> put_resp_content_type("application/json")
+          |> put_resp_content_type("text/plain")
           |> send_resp(:too_many_requests, "OTC quota per 15 minutes is reached (2).")
         {:error, :invalid_password} ->
           attempt_changeset
           |> Repo.insert!()
 
           conn
-          |> put_resp_content_type("application/json")
+          |> put_resp_content_type("text/plain")
           |> send_resp(:forbidden, "Invalid username/password combination.")
       end
     else
