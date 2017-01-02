@@ -3,15 +3,23 @@ defmodule Spherium.Mixfile do
 
   def project do
     [app: :spherium,
-     version: "0.0.1",
-     elixir: "~> 1.0",
+     version: "0.0.9",
+     elixir: "~> 1.3",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
      test_coverage: [tool: Coverex.Task, console_log: false],
-     deps: deps]
+     deps: deps,
+
+     # Docs
+     name: "Spherium",
+     source_url: "https://github.com/Chatatata/Spherium-Web-Service",
+     homepage_url: "http://www.spherium.host",
+     docs: [main: "Spherium",
+            extras: ["README.md"]]
+   ]
   end
 
   # Configuration for the OTP application.
@@ -21,7 +29,8 @@ defmodule Spherium.Mixfile do
     [mod: {Spherium, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin,
-                    :jose, :timex]]
+                    :jose, :timex, :crypto, :httpoison,
+                    :poison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -43,7 +52,10 @@ defmodule Spherium.Mixfile do
      {:credo, "~> 0.4", only: [:dev, :test]},
      {:timex, "~> 3.0"},
      {:coverex, "~> 1.4.10", only: :test},
-     {:cors_plug, "~> 1.1"}]
+     {:cors_plug, "~> 1.1"},
+     {:httpoison, "~> 0.10.0"},
+     {:poison, "~> 3.0", override: true},
+     {:ex_doc, "~> 0.14.5"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

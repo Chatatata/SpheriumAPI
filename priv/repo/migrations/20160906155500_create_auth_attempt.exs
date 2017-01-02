@@ -6,8 +6,7 @@ defmodule Spherium.Repo.Migrations.CreateAttempt do
       add :ip_addr, :string, null: false
       add :username, :string, null: false
       add :success, :boolean, default: false
-
-      timestamps()
+      add :inserted_at, :naive_datetime, null: false, default: fragment("now()")
     end
 
     create index(:attempts, [:username])
