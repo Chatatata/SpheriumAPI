@@ -97,4 +97,10 @@ defmodule Spherium.Factory do
       user_agent: "Some user agent.",
     }
   end
+
+  def one_time_code_invalidation_factory do
+    %Spherium.OneTimeCodeInvalidation{
+      one_time_code_id: build(:one_time_code).id
+    }
+  end
 end

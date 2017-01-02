@@ -3,14 +3,14 @@ defmodule Spherium.AuthenticationTest do
 
   alias Spherium.AuthenticationPlug
   alias Spherium.AuthHelper
-  alias Spherium.User
   alias Spherium.Factory
 
   @tag super_cow_powers: false
 
   test "authenticates user with valid token" do
-    user = User.changeset(%User{}, %{username: "test", password: "test", email: "test@mail.com"}) |> Repo.insert!()
-    passphrase = Factory.insert(:passphrase, user: user)
+    user = Factory.insert(:user, username: "test", password: "123456")
+    otc = Factory.insert(:one_time_code, user_id: user.id)
+    passphrase = Factory.insert(:passphrase, one_time_code_id: otc.id)
 
     conn = Phoenix.ConnTest.build_conn()
            |> AuthHelper.issue_token(user, passphrase)
@@ -18,9 +18,9 @@ defmodule Spherium.AuthenticationTest do
 
     assigned = conn.assigns[:user]
 
-    assert assigned.username == "test"
-    refute assigned.password_digest == "test"
-    assert assigned.email == "test@mail.com"
+    assert assigned.username == user.username
+    refute assigned.password_digest == user.password_digest
+    assert assigned.email == user.email
     assert assigned.id
   end
 

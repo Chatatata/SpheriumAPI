@@ -1,6 +1,14 @@
-## Two-factor Authentication
+### Spherium Web Service REST API Feature Declaration
 
-### Use case scenario:
+Lead maintainer: **Buğra Ekuklu (Chatatata)**.
+
+# Preliminary two-factor authentication
+
+### Status
+  Merged: `0fab483`.
+  **Has no fix branch right now.**
+
+#### Use case scenario
 * User provides credential, web service makes an RPC call to remote embedded device.
 * User provides OTC, web service generates a unique passkey.
 
@@ -10,3 +18,6 @@
 * User is not able to make more than 2 OTC requests in *15 minutes*.
 * An incorrect challenging of OTC response will invalidate the OTC request immediately.
 * User may not have two OTC openings at the same time.
+
+#### Deployed to
+`master`, non-release
