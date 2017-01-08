@@ -207,7 +207,7 @@ Passphrase is an artifact of a successful authentication session. Normally, they
 *This operation needs user to be authenticated.*
 
 ##### Passphrase invalidation sample
-1. The server is requested to invalidated an existing and active passphrase.
+1. The server is requested to invalidate an existing and active passphrase.
 
   ```
   POST /api/access_control/authentication/passphrase_invalidations
@@ -220,6 +220,22 @@ Passphrase is an artifact of a successful authentication session. Normally, they
   ```
 
   This will return `201 Created` with passphrase invalidation details.
+
+#### Resetting user password
+*Password* is a static credential of the user, hence it could be forgotten by its owner. The API provides a special way to reset the credential in case of lose. *Password reset* is a special type of passphrase invalidation, it invalidates all existing passphrases immediately. User will not be able to use another authenticated (signed in) device after that operation.
+
+##### Password reset request sample
+1. The server is requested to create a password reset record.
+
+  ```
+  POST /api/access_control/authentication/password_resets
+
+  {
+    "user_id": 47
+  }
+  ```
+
+  This will return `201 Created` with password reset details.
 
 #### Tracking malicious probing
 Some *3rd party authorities* might probe authentication mechanism in order to perform masquerade attack. *Rate limiting* is one of the good ways to prevent from these type of attacks since probing is often performed by brute-force denial-of-service attempts. The web service does not provide a layer of rate limiting due to technical concerns, however this could be easily achieved by running the application behind a all-purpose performant web server (i.e. Nginx, Apache). The master server could apply a rate limiting, though, with its supervision on request quota.
