@@ -204,6 +204,8 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
 #### Invalidation of successful authentication
 Passphrase is an artifact of a successful authentication session. Normally, they have a valid duration of *5 months*, however they could also be invalidated manually, simulating a pseudo-*sign out* action. Invalidation is a destructive operation and cannot be undone, whereas such invalidated passkey could not be assigned to another user.
 
+*This operation needs user to be authenticated.*
+
 ##### Passphrase invalidation sample
 1. The server is requested to invalidated an existing and active passphrase.
 
