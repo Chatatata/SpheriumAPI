@@ -9,6 +9,7 @@ defmodule Spherium.User do
     field :password_digest, :string
     field :activation_key, Ecto.UUID
     field :activation_date, :naive_datetime
+    field :authentication_scheme, Spherium.AuthenticationScheme, default: :insecure
 
     field :password, :string, virtual: true
 
@@ -29,7 +30,7 @@ defmodule Spherium.User do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, [:username, :email, :password_digest, :password]) # Cast with allowed fields to changeset
+    |> cast(params, [:username, :email, :password_digest, :password, :authentication_scheme]) # Cast with allowed fields to changeset
     |> hash_password() # Hash password if changed
     |> validate_required([:username, :email, :password_digest]) # Validate the required fields
     |> validate_length(:username, min: 4, max: 16) # Username should be 5-16 characters long

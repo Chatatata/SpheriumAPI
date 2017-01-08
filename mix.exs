@@ -55,7 +55,8 @@ defmodule Spherium.Mixfile do
      {:cors_plug, "~> 1.1"},
      {:httpoison, "~> 0.10.0"},
      {:poison, "~> 3.0", override: true},
-     {:ex_doc, "~> 0.14.5"}]
+     {:ex_doc, "~> 0.14.5"},
+     {:ecto_enum, "~> 1.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
