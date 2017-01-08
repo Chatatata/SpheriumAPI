@@ -36,8 +36,10 @@ According to *OAuth 2.0 security guidelines*, generated tokens should be in a ra
 #### Steps of authentication
 ![Authentication Steps](https://s3.amazonaws.com/spherium-web-service-documentation/Authentication+Steps.png)
 Authentication stage is conducted by two steps:
+
 1. Concrete authentication:
   * User credentials are provided by the client, it reflects a polymorphic workflow depending on user's preference of authentication.
+
 2. Stealth authentication
   * Passphrase is provided by the client silently, in order to renew **JSON Web Token**.
 
