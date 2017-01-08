@@ -201,6 +201,24 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
 
   ```
 
+#### Invalidation of successful authentication
+Passphrase is an artifact of a successful authentication session. Normally, they have a valid duration of *5 months*, however they could also be invalidated manually, simulating a pseudo-*sign out* action. Invalidation is a destructive operation and cannot be undone, whereas such invalidated passkey could not be assigned to another user.
+
+##### Passphrase invalidation sample
+1. The server is requested to invalidated an existing and active passphrase.
+
+  ```
+  POST /api/access_control/authentication/passphrase_invalidations
+
+  {
+    "passphrase_invalidation": {
+      "target_passphrase_id": 542
+    }
+  }
+  ```
+
+  This will return `201 Created` with passphrase invalidation details.
+
 #### Tracking malicious probing
 Some *3rd party authorities* might probe authentication mechanism in order to perform masquerade attack. *Rate limiting* is one of the good ways to prevent from these type of attacks since probing is often performed by brute-force denial-of-service attempts. The web service does not provide a layer of rate limiting due to technical concerns, however this could be easily achieved by running the application behind a all-purpose performant web server (i.e. Nginx, Apache). The master server could apply a rate limiting, though, with its supervision on request quota.
 
