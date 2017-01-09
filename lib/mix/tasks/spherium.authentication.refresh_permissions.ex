@@ -36,7 +36,6 @@ defmodule Mix.Tasks.Spherium.Authentication.RefreshPermissions do
 
     Module.concat(Mix.Phoenix.base(), "Router").__routes__
     |> Enum.filter(&(Enum.member?(&1.pipe_through, :api)))
-    |> IO.inspect
     |> Enum.map(&permissions_from_router/1)
     |> List.flatten()
     |> Enum.uniq()
