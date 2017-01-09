@@ -12,9 +12,18 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
   import Ecto.Query
   import Mix.Ecto
 
+  require Logger
+
   @shortdoc "Refreshes authorization permissions"
 
   def run(_) do
+    Logger.configure(level: :info)
+
+    Logger.configure_backend(:console,
+                             format: "\n$time $metadata[$level] $levelpad$message\n")
+
+    Logger.info "== Running Spherium.Auth.Migrate.run/0 forward"
+
     {:ok, pid, _apps} = ensure_started(Repo, [])
     sandbox? = Repo.config[:pool] == Ecto.Adapters.SQL.Sandbox
 
@@ -39,6 +48,8 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
     sandbox? && Ecto.Adapters.SQL.Sandbox.checkin(Repo)
 
     pid && Repo.stop(pid)
+
+    Logger.info "== Authentication API migration completed"
   end
 
   defp permissions_from_router(router) do
@@ -63,8 +74,8 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
                    p.controller_action == ^permission.controller_action and
                    p.type == ^permission.type
 
-    case Repo.one(query, log: false) do
-      nil -> not is_nil(Repo.insert!(permission, log: false))
+    case Repo.one(query) do
+      nil -> not is_nil(Repo.insert!(permission))
       _ -> false
     end
   end
@@ -78,9 +89,9 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
   defp format_result({truthy, falsey}) do
     if truthy > 0 do
-      IO.puts "#{truthy + falsey} permissions at total, #{truthy} inserted."
+      Logger.info "#{truthy + falsey} permissions at total, #{truthy} inserted"
     else
-      IO.puts "#{truthy + falsey} permissions at total, all permissions up-to-date."
+      Logger.info "#{truthy + falsey} permissions at total, all permissions up-to-date"
     end
   end
 
@@ -88,18 +99,18 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
     query = from p in Permission,
             select: p.id
 
-    permission_ids = Repo.all(query, log: false)
+    permission_ids = Repo.all(query)
 
-    if permission_set = Repo.get_by(PermissionSet, %{name: "superadmin"}, log: false) do
+    if permission_set = Repo.get_by(PermissionSet, %{name: "superadmin"}) do
       changeset = PermissionSet.changeset(permission_set, permission_ids: permission_ids)
 
-      Repo.update!(changeset, log: false)
+      Repo.update!(changeset)
     else
       changeset = User.changeset(%User{}, %{username: "superadmin",
                                             password: "super_cow_powers",
                                             email: "ekuklu@icloud.com"})
 
-      user = Repo.insert!(changeset, log: false)
+      user = Repo.insert!(changeset)
 
       changeset =
         OneTimeCode.changeset(
@@ -110,7 +121,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
             user_agent: "Migration service"}
         )
 
-      otc = Repo.insert!(changeset, log: false)
+      otc = Repo.insert!(changeset)
 
       changeset =
         Passphrase.changeset(
@@ -119,7 +130,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
             one_time_code_id: otc.id}
         )
 
-      _passphrase = Repo.insert!(changeset, log: false)
+      _passphrase = Repo.insert!(changeset)
 
       permission_set_params = %{name: "superadmin",
                                 description: "This permission set has Super Cow Powers!",
@@ -129,12 +140,12 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
       changeset = PermissionSet.changeset(%PermissionSet{}, permission_set_params)
 
-      permission_set = Repo.insert!(changeset, log: false)
+      permission_set = Repo.insert!(changeset)
 
       changeset = User.changeset(user, %{})
                   |> Ecto.Changeset.put_change(:permission_set_id, permission_set.id)
 
-      Repo.update!(changeset, log: false)
+      Repo.update!(changeset)
     end
   end
 
@@ -143,18 +154,18 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
             where: p.type == "self",
             select: p.id
 
-    permission_ids = Repo.all(query, log: false)
+    permission_ids = Repo.all(query)
 
-    if permission_set = Repo.get_by(PermissionSet, %{name: "onesadmin"}, log: false) do
+    if permission_set = Repo.get_by(PermissionSet, %{name: "onesadmin"}) do
       changeset = PermissionSet.changeset(permission_set, permission_ids: permission_ids)
 
-      Repo.update!(changeset, log: false)
+      Repo.update!(changeset)
     else
       changeset = User.changeset(%User{}, %{username: "onesadmin",
                                             password: "super_cow_powers",
                                             email: "onesadmin@test.com"})
 
-      user = Repo.insert!(changeset, log: false)
+      user = Repo.insert!(changeset)
 
       changeset =
         OneTimeCode.changeset(
@@ -165,7 +176,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
             user_agent: "Migration service"}
         )
 
-      otc = Repo.insert!(changeset, log: false)
+      otc = Repo.insert!(changeset)
 
       changeset =
         Passphrase.changeset(
@@ -174,7 +185,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
             one_time_code_id: otc.id}
         )
 
-      _passphrase = Repo.insert!(changeset, log: false)
+      _passphrase = Repo.insert!(changeset)
 
       permission_set_params = %{name: "onesadmin",
                                 description: "This permission set has Super Cow Powers with 'self' permissions!",
@@ -184,12 +195,12 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
       changeset = PermissionSet.changeset(%PermissionSet{}, permission_set_params)
 
-      permission_set = Repo.insert!(changeset, log: false)
+      permission_set = Repo.insert!(changeset)
 
       changeset = User.changeset(user, %{})
                   |> Ecto.Changeset.put_change(:permission_set_id, permission_set.id)
 
-      Repo.update!(changeset, log: false)
+      Repo.update!(changeset)
     end
   end
 end
