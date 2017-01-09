@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Spherium.Auth.Migrate do
+defmodule Mix.Tasks.Spherium.Authentication.RefreshPermissions do
   use Mix.Task
 
   alias Spherium.Repo
@@ -22,7 +22,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
     Logger.configure_backend(:console,
                              format: "\n$time $metadata[$level] $levelpad$message\n")
 
-    Logger.info "== Running Spherium.Auth.Migrate.run/0 forward"
+    Logger.info "== Running Spherium.Authentication.RefreshPermissions.run/1 forward"
 
     {:ok, pid, _apps} = ensure_started(Repo, [])
     sandbox? = Repo.config[:pool] == Ecto.Adapters.SQL.Sandbox
@@ -36,6 +36,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
 
     Module.concat(Mix.Phoenix.base(), "Router").__routes__
     |> Enum.filter(&(Enum.member?(&1.pipe_through, :api)))
+    |> IO.inspect
     |> Enum.map(&permissions_from_router/1)
     |> List.flatten()
     |> Enum.uniq()
@@ -53,12 +54,7 @@ defmodule Mix.Tasks.Spherium.Auth.Migrate do
   end
 
   defp permissions_from_router(router) do
-    cap = [permission_from_router_with_type(router, "all")]
-
-    case router.opts do
-      # :index -> cap
-      _ -> [permission_from_router_with_type(router, "self") | cap]
-    end
+    Enum.map(["all", "self"], &[permission_from_router_with_type(router, &1)])
   end
 
   defp permission_from_router_with_type(router = %Phoenix.Router.Route{}, type) when is_binary(type) do
