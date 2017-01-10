@@ -7,7 +7,8 @@ defmodule Spherium.Factory do
     %Spherium.User{
       username: sequence(:username, &"user#{&1}"),
       email: sequence(:email, &"email-#{&1}@example.com"),
-      password_digest: hashpwsalt("123456")
+      password_digest: hashpwsalt("123456"),
+      authentication_scheme: :insecure
     }
   end
 
@@ -72,8 +73,10 @@ defmodule Spherium.Factory do
 
   def passphrase_factory do
     %Spherium.Passphrase{
-      one_time_code_id: build(:one_time_code).id,
-      passkey: Spherium.Passkey.generate()
+      user_id: build(:user).id,
+      passkey: Spherium.Passkey.generate(),
+      device: Ecto.UUID.generate(),
+      user_agent: "Some user agent.",
     }
   end
 
@@ -92,9 +95,7 @@ defmodule Spherium.Factory do
   def one_time_code_factory do
     %Spherium.OneTimeCode{
       user_id: build(:user).id,
-      code: Spherium.Code.generate(),
-      device: Ecto.UUID.generate(),
-      user_agent: "Some user agent.",
+      code: Spherium.Code.generate()
     }
   end
 
