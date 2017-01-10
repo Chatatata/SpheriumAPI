@@ -158,13 +158,6 @@ defmodule Spherium.AuthenticationController do
   end
 
   defp respond(conn, {:ok, element}) do
-    params =
-      element
-      |> Tuple.to_list()
-      |> Enum.reverse()
-      |> Kernel.++([conn])
-      |> Enum.reverse()
-      
     respond_with_success(conn, elem(element, 0), elem(element, 1))
   end
 
