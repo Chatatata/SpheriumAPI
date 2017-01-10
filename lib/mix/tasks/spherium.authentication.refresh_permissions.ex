@@ -108,21 +108,12 @@ defmodule Mix.Tasks.Spherium.Authentication.RefreshPermissions do
       user = Repo.insert!(changeset)
 
       changeset =
-        OneTimeCode.changeset(
-          %OneTimeCode{},
-          %{code: Code.generate(),
-            user_id: user.id,
-            device: Ecto.UUID.generate(),
-            user_agent: "Migration service"}
-        )
-
-      otc = Repo.insert!(changeset)
-
-      changeset =
         Passphrase.changeset(
           %Passphrase{},
           %{passkey: Spherium.Passkey.generate(),
-            one_time_code_id: otc.id}
+            user_id: user.id,
+            device: Ecto.UUID.generate(),
+            user_agent: "Migration service"}
         )
 
       _passphrase = Repo.insert!(changeset)
@@ -163,21 +154,12 @@ defmodule Mix.Tasks.Spherium.Authentication.RefreshPermissions do
       user = Repo.insert!(changeset)
 
       changeset =
-        OneTimeCode.changeset(
-          %OneTimeCode{},
-          %{code: Code.generate(),
-            user_id: user.id,
-            device: Ecto.UUID.generate(),
-            user_agent: "Migration service"}
-        )
-
-      otc = Repo.insert!(changeset)
-
-      changeset =
         Passphrase.changeset(
           %Passphrase{},
           %{passkey: Spherium.Passkey.generate(),
-            one_time_code_id: otc.id}
+            user_id: user.id,
+            device: Ecto.UUID.generate(),
+            user_agent: "Migration service"}
         )
 
       _passphrase = Repo.insert!(changeset)
