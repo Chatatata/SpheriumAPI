@@ -12,6 +12,8 @@ defmodule Spherium.User do
     field :authentication_scheme, Spherium.AuthenticationScheme, default: :insecure
 
     field :password, :string, virtual: true
+    field :device, Ecto.UUID, virtual: true
+    field :user_agent, :string, virtual: true
 
     timestamps
 
