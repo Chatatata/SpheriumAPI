@@ -19,14 +19,14 @@ defmodule Spherium.AuthenticationControllerTest do
 
     data = json_response(conn, 201)["data"]
 
-    assert data["user_id"] == user.id
+    assert data
     assert data["authentication_scheme"] == "insecure"
     assert data["passphrase_id"]
     assert data["passkey"]
   end
 
-  test "returns user identifier with two factor authentication over SMS scheme", %{conn: conn} do
-    user = Factory.insert(:user, password: "123456", authentication_scheme: :two_factor_over_sms)
+  test "returns user identifier with two factor authentication over OTC scheme", %{conn: conn} do
+    user = Factory.insert(:user, password: "123456", authentication_scheme: :two_factor_over_otc)
 
     conn = post conn,
                 authentication_path(conn, :create),
@@ -40,7 +40,7 @@ defmodule Spherium.AuthenticationControllerTest do
     data = json_response(conn, 201)["data"]
 
     assert data["user_id"] == user.id
-    assert data["authentication_scheme"] == "two_factor_over_sms"
+    assert data["authentication_scheme"] == "two_factor_over_otc"
     refute data["passphrase_id"]
     refute data["passkey"]
   end
@@ -57,12 +57,14 @@ defmodule Spherium.AuthenticationControllerTest do
                   user_agent: "Test user agent"
                 }
 
-    data = json_response(conn, 201)["data"]
+    # data = json_response(conn, 201)["data"]
+    #
+    # assert data["user_id"] == user.id
+    # assert data["authentication_scheme"] == "two_factor_over_tbc"
+    # refute data["passphrase_id"]
+    # refute data["passkey"]
 
-    assert data["user_id"] == user.id
-    assert data["authentication_scheme"] == "two_factor_over_tbc"
-    refute data["passphrase_id"]
-    refute data["passkey"]
+    assert text_response(conn, :not_implemented) =~ "TBC is not available currently."
   end
 
   test "returns 422 on invalid credentials", %{conn: conn} do
@@ -95,8 +97,7 @@ defmodule Spherium.AuthenticationControllerTest do
   test "returns 409 when passphrase quota exceeded", %{conn: conn} do
     user = Factory.insert(:user, password: "123456")
 
-    otcs = Factory.insert_list(5, :one_time_code, user_id: user.id)
-    Enum.each(otcs, &Factory.insert(:passphrase, one_time_code_id: &1.id))
+    Factory.insert_list(5, :passphrase, user: user)
 
     conn = post conn,
                 authentication_path(conn, :create),
@@ -111,7 +112,7 @@ defmodule Spherium.AuthenticationControllerTest do
   end
 
   test "returns 429 when OTC quota exceeded", %{conn: conn} do
-    user = Factory.insert(:user, password: "123456")
+    user = Factory.insert(:user, password: "123456", authentication_scheme: :two_factor_over_otc)
 
     Factory.insert_list(2, :one_time_code, user_id: user.id)
 

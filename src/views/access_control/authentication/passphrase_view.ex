@@ -19,6 +19,6 @@ defmodule Spherium.PassphraseView do
 
   def render("passphrase.private.json", %{passphrase: passphrase}) do
     %{passphrase_id: passphrase.id,
-      passkey: passphrase.passkey,}
+      passkey: passphrase.passkey}
   end
 end

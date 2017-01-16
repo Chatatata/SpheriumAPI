@@ -49,8 +49,7 @@ defmodule Spherium.ConnCase do
     cond do
       tags[:attach_to_one_permissions] == true ->
         user = Repo.get_by!(User, username: "onesadmin")
-        otc = Repo.get_by!(OneTimeCode, user_id: user.id)
-        passphrase = Repo.get_by!(Passphrase, one_time_code_id: otc.id)
+        passphrase = Repo.get_by!(Passphrase, user_id: user.id)
 
         conn =
           conn
@@ -61,8 +60,7 @@ defmodule Spherium.ConnCase do
         {:ok, conn: conn}
       tags[:super_cow_powers] != false ->
         user = Repo.get_by!(User, username: "superadmin")
-        otc = Repo.get_by!(OneTimeCode, user_id: user.id)
-        passphrase = Repo.get_by!(Passphrase, one_time_code_id: otc.id)
+        passphrase = Repo.get_by!(Passphrase, user_id: user.id)
 
         conn =
           conn

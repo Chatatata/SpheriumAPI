@@ -65,10 +65,8 @@ defmodule Spherium.AuthenticationController do
     end
   end
 
-  @doc """
-  Checks existing valid passphrases of the user, rollbacks transaction if quota exceeded.
-  """
   defp check_passphrase_quota(user) do
+    # CAVEAT: This query needs to work in a read committed transaction in order to prevent race conditions.
     query = from p in Passphrase,
             left_join: pi in PassphraseInvalidation, on: pi.target_passphrase_id == p.id,
             where: p.user_id == ^user.id and
@@ -144,8 +142,8 @@ defmodule Spherium.AuthenticationController do
   Performs concrete authentication instantiation on user with two-factor authentication over
   time-based-code scheme.
   """
-  def apply_authentication_scheme(user, :two_factor_over_tbs) do
-    # TODO: Implementation.
+  def apply_authentication_scheme(_user, :two_factor_over_tbc) do
+    Repo.rollback(:tbc_not_available)
   end
 
   defp persist_attempt(result, username, ip_addr) do
@@ -168,16 +166,16 @@ defmodule Spherium.AuthenticationController do
   defp respond_with_success(conn, :passphrase, passphrase) do
     conn
     |> put_status(:created)
-    |> render(Spherium.PassphraseView,
-              "passphrase.private.json",
+    |> render(Spherium.AuthenticationResultView,
+              "show.insecure.json",
               passphrase: passphrase)
   end
 
   defp respond_with_success(conn, :one_time_code, one_time_code) do
     conn
     |> put_status(:created)
-    |> render(Spherium.OneTimeCodeView,
-              "one_time_code.json",
+    |> render(Spherium.AuthenticationResultView,
+              "show.two_factor_over_otc.json",
               one_time_code: one_time_code)
   end
 
@@ -197,5 +195,11 @@ defmodule Spherium.AuthenticationController do
     conn
     |> put_resp_content_type("text/plain")
     |> send_resp(:forbidden, "Invalid username/password combination.")
+  end
+
+  defp respond_with_failure(conn, :tbc_not_available) do
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(:not_implemented, "TBC is not available currently.")
   end
 end
