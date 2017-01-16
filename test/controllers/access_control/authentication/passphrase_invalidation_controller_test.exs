@@ -9,21 +9,33 @@ defmodule Spherium.PassphraseInvalidationControllerTest do
     passphrase = Factory.insert(:passphrase, one_time_code: otc)
 
     conn = post conn,
-                passphrase_invalidation_path(conn,
-                                             :create,
-                                             passphrase_invalidation: %{target_passphrase_id: passphrase.id})
+                authentication_passphrase_invalidation_path(
+                  conn,
+                  :create,
+                  passphrase_invalidation: %{target_passphrase_id: passphrase.id}
+                )
 
     assert conn.status == 201
   end
 
   test "returns 404 when passphrase does not exist", %{conn: conn} do
-    conn = post conn, passphrase_invalidation_path(conn, :create, passphrase_invalidation: %{target_passphrase_id: -1})
+    conn = post conn,
+                authentication_passphrase_invalidation_path(
+                  conn,
+                  :create,
+                  passphrase_invalidation: %{target_passphrase_id: -1}
+                )
 
     assert conn.status == 404
   end
 
   test "returns 422 when target_passphrase_id is incorrect", %{conn: conn} do
-    conn = post conn, passphrase_invalidation_path(conn, :create, passphrase_invalidation: %{target_passphrase_id: nil})
+    conn = post conn,
+                authentication_passphrase_invalidation_path(
+                  conn,
+                  :create,
+                  passphrase_invalidation: %{target_passphrase_id: nil}
+                )
 
     assert conn.status == 422
   end

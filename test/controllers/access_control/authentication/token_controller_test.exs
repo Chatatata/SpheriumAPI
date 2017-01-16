@@ -11,7 +11,7 @@ defmodule Spherium.TokenControllerTest do
     otc = Factory.insert(:one_time_code, user: user)
     passphrase = Factory.insert(:passphrase, one_time_code: otc)
 
-    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
 
     data = json_response(conn, 201)["data"]
 
@@ -22,7 +22,7 @@ defmodule Spherium.TokenControllerTest do
   end
 
   test "responds with 403 if passkey does not exist", %{conn: conn} do
-    conn = post conn, token_path(conn, :create), passkey: Passkey.generate()
+    conn = post conn, authentication_token_path(conn, :create), passkey: Passkey.generate()
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -39,7 +39,7 @@ defmodule Spherium.TokenControllerTest do
 
     _passphrase_invalidation = Factory.insert(:passphrase_invalidation, passphrase: passphrase, target_passphrase: invalidated_passphrase)
 
-    conn = post conn, token_path(conn, :create), passkey: invalidated_passphrase.passkey
+    conn = post conn, authentication_token_path(conn, :create), passkey: invalidated_passphrase.passkey
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -50,7 +50,7 @@ defmodule Spherium.TokenControllerTest do
     otc = Factory.insert(:one_time_code, user: user)
     passphrase = Factory.insert(:passphrase, one_time_code: otc, inserted_at: NaiveDateTime.from_iso8601!("1970-01-01 00:00:00"))
 
-    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -62,7 +62,7 @@ defmodule Spherium.TokenControllerTest do
     passphrase = Factory.insert(:passphrase, one_time_code: otc)
     _password_reset = Factory.insert(:password_reset, user: user)
 
-    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -74,7 +74,7 @@ defmodule Spherium.TokenControllerTest do
     otc = Factory.insert(:one_time_code, user: user)
     passphrase = Factory.insert(:passphrase, one_time_code: otc, inserted_at: NaiveDateTime.from_erl!(:calendar.universal_time()))
 
-    conn = post conn, token_path(conn, :create), passkey: passphrase.passkey
+    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
 
     data = json_response(conn, 201)["data"]
 

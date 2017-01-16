@@ -10,7 +10,7 @@ defmodule Spherium.PassphraseControllerTest do
     otc = Factory.insert(:one_time_code, user: user)
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: otc.code,
                                                  user_id: user.id}
 
@@ -28,7 +28,7 @@ defmodule Spherium.PassphraseControllerTest do
                          inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: otc.code,
                                                  user_id: user.id}
 
@@ -39,7 +39,7 @@ defmodule Spherium.PassphraseControllerTest do
     user = Factory.insert(:user, password: "123456")
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: 123456,
                                                  user_id: user.id}
 
@@ -53,7 +53,7 @@ defmodule Spherium.PassphraseControllerTest do
                           inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: 1000000,
                                                  user_id: user.id}
 
@@ -66,7 +66,7 @@ defmodule Spherium.PassphraseControllerTest do
                           user: user)
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: 100001,
                                                  user_id: user.id}
 
@@ -81,7 +81,7 @@ defmodule Spherium.PassphraseControllerTest do
                                  one_time_code: otc)
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: otc.code,
                                                  user_id: user.id}
 
@@ -95,7 +95,7 @@ defmodule Spherium.PassphraseControllerTest do
     Factory.insert(:one_time_code_invalidation, one_time_code_id: otc.id)
 
     conn = post conn,
-                passphrase_path(conn, :create),
+                authentication_passphrase_path(conn, :create),
                 passphrase_generation_attempt: %{code: otc.code,
                                                  user_id: user.id}
 

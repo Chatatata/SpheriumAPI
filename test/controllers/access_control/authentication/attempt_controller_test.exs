@@ -8,7 +8,7 @@ defmodule Spherium.AttemptControllerTest do
   end
 
   test "lists all entries on index", %{conn: conn} do
-    conn = get conn, attempt_path(conn, :index)
+    conn = get conn, authentication_attempt_path(conn, :index)
     assert json_response(conn, 200)["data"] == []
   end
 
@@ -16,7 +16,7 @@ defmodule Spherium.AttemptControllerTest do
     user = conn.assigns[:setup_user]
     attempt = Factory.insert(:attempt, username: user.username)
 
-    conn = get conn, attempt_path(conn, :show, attempt)
+    conn = get conn, authentication_attempt_path(conn, :show, attempt)
     assert json_response(conn, 200)["data"] == %{"id" => attempt.id,
                                                  "username" => attempt.username,
                                                  "success" => attempt.success,
@@ -25,7 +25,7 @@ defmodule Spherium.AttemptControllerTest do
 
   test "renders page not found when id is nonexistent", %{conn: conn} do
     assert_error_sent 404, fn ->
-      get conn, attempt_path(conn, :show, -1)
+      get conn, authentication_attempt_path(conn, :show, -1)
     end
   end
 end
