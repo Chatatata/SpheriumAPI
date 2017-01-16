@@ -7,7 +7,7 @@ defmodule Spherium.AuthenticationService do
   alias Spherium.PassphraseView
   alias Spherium.Code
 
-  def send_one_time_code(phone_number) do
+  def send_one_time_code(_phone_number) do
     post!(
       "http://localhost:3001/tasks",
       encode!(%{code: Code.generate()}, []),
