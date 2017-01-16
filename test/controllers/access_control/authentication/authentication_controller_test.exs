@@ -21,9 +21,11 @@ defmodule Spherium.AuthenticationControllerTest do
       data = json_response(conn, 201)["data"]
 
       assert data
-      assert data["authentication_scheme"] == "insecure"
-      assert data["passphrase_id"]
+      assert data["authentication_scheme"] =~ "insecure"
+      assert data["user_id"] =~ user.id
       assert data["passkey"]
+      refute data["passphrase_id"]
+      refute data["passkey"]
     end
 
     test "returns user identifier with two factor authentication over OTC scheme", %{conn: conn} do
@@ -40,8 +42,8 @@ defmodule Spherium.AuthenticationControllerTest do
 
       data = json_response(conn, 201)["data"]
 
-      assert data["user_id"] == user.id
-      assert data["authentication_scheme"] == "two_factor_over_otc"
+      assert data["user_id"] =~ user.id
+      assert data["authentication_scheme"] =~ "two_factor_over_otc"
       refute data["passphrase_id"]
       refute data["passkey"]
     end
