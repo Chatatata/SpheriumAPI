@@ -31,15 +31,17 @@ defmodule Spherium.TokenControllerTest do
   test "responds with 403 if underlying passphrase of passkey is invalidated", %{conn: conn} do
     user = Factory.insert(:user)
 
-    otc = Factory.insert(:one_time_code, user: user)
-    passphrase = Factory.insert(:passphrase, one_time_code: otc)
+    passphrase = Factory.insert(:passphrase, user_id: user.id)
+    invalidated_passphrase = Factory.insert(:passphrase, user_id: user.id)
 
-    invalidated_otc = Factory.insert(:one_time_code, user: user)
-    invalidated_passphrase = Factory.insert(:passphrase, one_time_code: invalidated_otc)
+    Factory.insert(:passphrase_invalidation,
+                   passphrase: passphrase,
+                   target_passphrase: invalidated_passphrase)
 
-    _passphrase_invalidation = Factory.insert(:passphrase_invalidation, passphrase: passphrase, target_passphrase: invalidated_passphrase)
-
-    conn = post conn, authentication_token_path(conn, :create), passkey: invalidated_passphrase.passkey
+    conn =
+      post conn,
+           authentication_token_path(conn, :create),
+           passkey: invalidated_passphrase.passkey
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -47,10 +49,15 @@ defmodule Spherium.TokenControllerTest do
 
   test "responds with 403 if underlying passphrase of passkey is expired", %{conn: conn} do
     user = Factory.insert(:user)
-    otc = Factory.insert(:one_time_code, user: user)
-    passphrase = Factory.insert(:passphrase, one_time_code: otc, inserted_at: NaiveDateTime.from_iso8601!("1970-01-01 00:00:00"))
+    passphrase =
+      Factory.insert(:passphrase,
+                     user: user,
+                     inserted_at: NaiveDateTime.from_iso8601!("1970-01-01 00:00:00"))
 
-    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
+    conn =
+      post conn,
+           authentication_token_path(conn, :create),
+           passkey: passphrase.passkey
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -58,11 +65,13 @@ defmodule Spherium.TokenControllerTest do
 
   test "responds with 403 if user has a newer password reset than recent passphrase", %{conn: conn} do
     user = Factory.insert(:user)
-    otc = Factory.insert(:one_time_code, user: user)
-    passphrase = Factory.insert(:passphrase, one_time_code: otc)
-    _password_reset = Factory.insert(:password_reset, user: user)
+    passphrase = Factory.insert(:passphrase, user: user)
+    Factory.insert(:password_reset, user: user)
 
-    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
+    conn =
+      post conn,
+           authentication_token_path(conn, :create),
+           passkey: passphrase.passkey
 
     data = response(conn, 403)
     assert data =~ "Authentication not available."
@@ -70,11 +79,20 @@ defmodule Spherium.TokenControllerTest do
 
   test "generates token if the given passphrase is newer than last password reset", %{conn: conn} do
     user = Factory.insert(:user)
-    _password_reset = Factory.insert(:password_reset, user: user, inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
-    otc = Factory.insert(:one_time_code, user: user)
-    passphrase = Factory.insert(:passphrase, one_time_code: otc, inserted_at: NaiveDateTime.from_erl!(:calendar.universal_time()))
 
-    conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
+    Factory.insert(:password_reset,
+                   user: user,
+                   inserted_at: NaiveDateTime.from_erl!({{2000, 1, 1}, {13, 30, 15}}))
+
+    passphrase =
+      Factory.insert(:passphrase,
+                     user: user,
+                     inserted_at: NaiveDateTime.from_erl!(:calendar.universal_time()))
+
+    conn =
+      post conn,
+           authentication_token_path(conn, :create),
+           passkey: passphrase.passkey
 
     data = json_response(conn, 201)["data"]
 
