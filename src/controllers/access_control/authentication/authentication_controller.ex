@@ -14,6 +14,8 @@ defmodule Spherium.AuthenticationController do
   alias Spherium.Code
   alias Spherium.Passkey
   alias Spherium.User
+  alias Spherium.InsecureAuthenticationSubmission
+  alias Spherium.InsecureAuthenticationHandle
 
   def create(conn, %{"credentials" => credentials}) do
     credentials_changeset = Credentials.changeset(%Credentials{}, credentials)
@@ -41,6 +43,25 @@ defmodule Spherium.AuthenticationController do
     end
   end
 
+  def create(conn, %{"insecure_authentication_submission" => insecure_authentication_submission}) do
+    submission_changeset =
+      InsecureAuthenticationSubmission.changeset(%InsecureAuthenticationSubmission{},
+                                                 insecure_authentication_submission)
+
+    if submission_changeset.valid? do
+      passkey = get_field(submission_changeset, :passkey)
+      user_id = get_field(submission_changeset, :user_id)
+
+      result = Repo.transaction(fn -> find_handle_pair(passkey, user_id) end)
+
+      respond(conn, result)
+    else
+      conn
+      |> put_status(:unprocessable_entity)
+      |> render(Spherium.ChangesetView, "error.json", changeset: submission_changeset)
+    end
+  end
+
   def create(conn, %{"one_time_code_submission" => one_time_code_submission}) do
     one_time_code_submission_changeset =
       OneTimeCodeSubmission.changeset(
@@ -61,6 +82,30 @@ defmodule Spherium.AuthenticationController do
       |> render(Spherium.ChangesetView,
                 "error.json",
                 changeset: one_time_code_submission_changeset)
+    end
+  end
+
+  defp find_handle_pair(passkey, user_id) do
+    query = from iah in InsecureAuthenticationHandle,
+            where: iah.user_id == ^user_id and
+                   iah.passkey == ^passkey and
+                   iah.inserted_at == fragment("(SELECT max(inserted_at)
+                                                 FROM insecure_authentication_handles
+                                                 WHERE user_id = ?)", ^user_id) and
+                   iah.inserted_at > ago(3, "minute"),
+            select: iah
+
+    if Repo.aggregate(query, :count, :id) do
+      passphrase_changeset =
+        Passphrase.changeset(
+          %Passphrase{},
+          %{passkey: Passkey.generate(),
+            user_id: user_id}
+        )
+
+      {:passphrase, Repo.insert!(passphrase_changeset)}
+    else
+      Repo.rollback(:not_found)
     end
   end
 
@@ -161,16 +206,12 @@ defmodule Spherium.AuthenticationController do
   Performs concrete authentication instantiation on user with insecure authentication scheme.
   """
   def apply_authentication_scheme(user, :insecure) do
-    passphrase_changeset =
-      Passphrase.changeset(
-        %Passphrase{},
-        %{passkey: Passkey.generate(),
-          user_id: user.id,
-          device: user.device,
-          user_agent: user.user_agent}
-      )
+    insecure_authentication_handle_changeset =
+      InsecureAuthenticationHandle.changeset(%InsecureAuthenticationHandle{},
+                                             %{passkey: Passkey.generate(),
+                                               user_id: user.id})
 
-    {:passphrase, Repo.insert!(passphrase_changeset)}
+    {:insecure_authentication_handle, Repo.insert!(insecure_authentication_handle_changeset)}
   end
 
   @doc """
@@ -225,11 +266,21 @@ defmodule Spherium.AuthenticationController do
     respond_with_failure(conn, element)
   end
 
+  defp respond_with_success(conn,
+                            :insecure_authentication_handle,
+                            insecure_authentication_handle) do
+    conn
+    |> put_status(:created)
+    |> render(Spherium.AuthenticationResultView,
+              "show.insecure_authentication_handle.json",
+              insecure_authentication_handle: insecure_authentication_handle)
+  end
+
   defp respond_with_success(conn, :passphrase, passphrase) do
     conn
     |> put_status(:created)
     |> render(Spherium.AuthenticationResultView,
-              "show.insecure.json",
+              "show.passphrase.json",
               passphrase: passphrase)
   end
 
