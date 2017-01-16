@@ -6,8 +6,6 @@ defmodule Mix.Tasks.Spherium.Authentication.RefreshPermissions do
   alias Spherium.Permission
   alias Spherium.PermissionSet
   alias Spherium.Passphrase
-  alias Spherium.OneTimeCode
-  alias Spherium.Code
 
   import Ecto.Query
   import Mix.Ecto
