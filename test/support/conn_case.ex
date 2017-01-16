@@ -16,7 +16,6 @@ defmodule Spherium.ConnCase do
   alias Spherium.User
   alias Spherium.Passphrase
   alias Spherium.AuthHelper
-  alias Spherium.OneTimeCode
 
   use ExUnit.CaseTemplate
 
