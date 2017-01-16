@@ -10,11 +10,10 @@ defmodule Spherium.AuthenticationController do
   alias Spherium.PassphraseInvalidation
   alias Spherium.OneTimeCode
   alias Spherium.OneTimeCodeInvalidation
+  alias Spherium.OneTimeCodeSubmission
   alias Spherium.Code
   alias Spherium.Passkey
   alias Spherium.User
-
-  plug :scrub_params, "credentials"
 
   def create(conn, %{"credentials" => credentials}) do
     credentials_changeset = Credentials.changeset(%Credentials{}, credentials)
@@ -39,6 +38,69 @@ defmodule Spherium.AuthenticationController do
       conn
       |> put_status(:unprocessable_entity)
       |> render(Spherium.ChangesetView, "error.json", changeset: credentials_changeset)
+    end
+  end
+
+  def create(conn, %{"one_time_code_submission" => one_time_code_submission}) do
+    one_time_code_submission_changeset =
+      OneTimeCodeSubmission.changeset(
+        %OneTimeCodeSubmission{},
+        one_time_code_submission
+      )
+
+    if one_time_code_submission_changeset.valid? do
+      user_id = get_field(one_time_code_submission_changeset, :user_id)
+      code = get_field(one_time_code_submission_changeset, :code)
+
+      result = Repo.transaction(fn -> challenge_user_with_otc(user_id, code) end)
+
+      respond(conn, result)
+    else
+      conn
+      |> put_status(:unprocessable_entity)
+      |> render(Spherium.ChangesetView,
+                "error.json",
+                changeset: one_time_code_submission_changeset)
+    end
+  end
+
+  defp challenge_user_with_otc(user_id, code) do
+    query = from u in User,
+            join: otc in OneTimeCode, on: otc.user_id == u.id,
+            left_join: otci in OneTimeCodeInvalidation, on: otc.id == otci.one_time_code_id,
+            left_join: p in Passphrase, on: otc.id == p.one_time_code_id,
+            where: u.id == ^user_id and
+                   is_nil(otci.inserted_at) and
+                   is_nil(p.inserted_at) and
+                   otc.inserted_at == fragment("(SELECT max(inserted_at)
+                                                FROM one_time_codes
+                                                WHERE user_id = ?)", ^user_id) and
+                   otc.inserted_at > ago(3, "minute"),
+            select: otc
+
+    case Repo.one(query) do
+      nil -> Repo.rollback(:not_found)
+      otc ->
+        if otc.code == code do
+          passphrase_changeset =
+            Passphrase.changeset(
+              %Passphrase{},
+              %{passkey: Passkey.generate(),
+                one_time_code_id: otc.id}
+            )
+
+          {:passphrase, Repo.insert!(passphrase_changeset)}
+        else
+          one_time_code_invalidation_changeset =
+            OneTimeCodeInvalidation.changeset(
+              %OneTimeCodeInvalidation{},
+              %{one_time_code_id: otc.id}
+            )
+
+          Repo.insert!(one_time_code_invalidation_changeset)
+
+          {:error, :mismatch}
+        end
     end
   end
 
@@ -201,5 +263,11 @@ defmodule Spherium.AuthenticationController do
     conn
     |> put_resp_content_type("text/plain")
     |> send_resp(:not_implemented, "TBC is not available currently.")
+  end
+
+  defp respond_with_failure(conn, :not_found) do
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(:not_found, "Pair not found.")
   end
 end

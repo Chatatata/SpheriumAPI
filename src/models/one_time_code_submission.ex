@@ -1,9 +1,9 @@
-defmodule Spherium.PassphraseGenerationAttempt do
+defmodule Spherium.OneTimeCodeSubmission do
   use Spherium.Web, :model
 
-  schema "passphrase_generation_attempts" do
+  schema "one_time_code_submissions" do
     field :code, :integer
-    field :user_id, :integer
+    belongs_to :user, Spherium.User
   end
 
   @doc """
@@ -14,5 +14,6 @@ defmodule Spherium.PassphraseGenerationAttempt do
     |> cast(params, [:code, :user_id])
     |> validate_required([:code, :user_id])
     |> validate_inclusion(:code, 100000..999999)
+    |> foreign_key_constraint(:user_id)
   end
 end
