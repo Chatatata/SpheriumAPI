@@ -1,4 +1,4 @@
-defmodule Spherium.AuthenticationTest do
+defmodule Spherium.AuthenticationPlugTest do
   use Spherium.PlugCase
 
   alias Spherium.AuthenticationPlug
@@ -9,8 +9,7 @@ defmodule Spherium.AuthenticationTest do
 
   test "authenticates user with valid token" do
     user = Factory.insert(:user, username: "test", password: "123456")
-    otc = Factory.insert(:one_time_code, user_id: user.id)
-    passphrase = Factory.insert(:passphrase, one_time_code_id: otc.id)
+    passphrase = Factory.insert(:passphrase, user_id: user.id)
 
     conn = Phoenix.ConnTest.build_conn()
            |> AuthHelper.issue_token(user, passphrase)
