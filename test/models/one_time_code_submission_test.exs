@@ -59,7 +59,7 @@ defmodule Spherium.OneTimeCodeSubmissionTest do
   test "changeset with a code on lower bound", %{user: user} do
     changeset =
       OneTimeCodeSubmission.changeset(%OneTimeCodeSubmission{},
-                                      %{code: @lower_bound,
+                                      %{code: @lower_bound - 1,
                                         user_id: user.id})
 
     refute changeset.valid?
@@ -68,7 +68,7 @@ defmodule Spherium.OneTimeCodeSubmissionTest do
   test "changeset with a code on upper bound", %{user: user} do
     changeset =
       OneTimeCodeSubmission.changeset(%OneTimeCodeSubmission{},
-                                      %{code: @upper_bound,
+                                      %{code: @upper_bound + 1,
                                         user_id: user.id})
 
     refute changeset.valid?
