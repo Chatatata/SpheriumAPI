@@ -10,6 +10,7 @@ defmodule Spherium.InsecureAuthenticationSubmission do
     struct
     |> cast(params, [:passkey, :user_id])
     |> validate_required([:passkey, :user_id])
-    |> unique_constraint(:passkey)
+    |> validate_length(:passkey, is: 88)
+    |> foreign_key_constraint(:user_id)
   end
 end

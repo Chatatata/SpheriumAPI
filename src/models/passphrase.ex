@@ -17,7 +17,6 @@ defmodule Spherium.Passphrase do
     |> cast(params, [:passkey, :user_id, :device, :user_agent, :one_time_code_id])
     |> validate_required([:passkey, :user_id, :device, :user_agent])
     |> validate_format(:device, @uuid_regex)
-    |> unique_constraint(:passkey)
     |> unique_constraint(:one_time_code_id)
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:one_time_code_id)

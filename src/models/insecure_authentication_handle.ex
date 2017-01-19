@@ -11,6 +11,7 @@ defmodule Spherium.InsecureAuthenticationHandle do
     struct
     |> cast(params, [:user_id, :passkey])
     |> validate_required([:user_id, :passkey])
+    |> validate_length(:passkey, is: 88)
     |> foreign_key_constraint(:user_id)
   end
 end
