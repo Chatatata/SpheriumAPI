@@ -16,6 +16,7 @@ defmodule Spherium.AuthenticationController do
   alias Spherium.User
   alias Spherium.InsecureAuthenticationSubmission
   alias Spherium.InsecureAuthenticationHandle
+  alias Spherium.DeviceInformation
 
   def create(conn, %{"credentials" => credentials}) do
     credentials_changeset = Credentials.changeset(%Credentials{}, credentials)
@@ -27,8 +28,6 @@ defmodule Spherium.AuthenticationController do
       result =
         Repo.transaction(fn ->
           fetch_user_with_username(username)
-          |> Map.put(:device, get_field(credentials_changeset, :device))
-          |> Map.put(:user_agent, get_field(credentials_changeset, :user_agent))
           |> validate_credentials(get_field(credentials_changeset, :password))
           |> check_passphrase_quota()
           |> apply_authentication_scheme()
@@ -43,45 +42,68 @@ defmodule Spherium.AuthenticationController do
     end
   end
 
-  def create(conn, %{"insecure_authentication_submission" => insecure_authentication_submission}) do
+  def create(conn,
+             %{"insecure_authentication_submission" => insecure_authentication_submission,
+               "device_information" => device_information}) do
     submission_changeset =
       InsecureAuthenticationSubmission.changeset(%InsecureAuthenticationSubmission{},
                                                  insecure_authentication_submission)
 
-    if submission_changeset.valid? do
-      passkey = get_field(submission_changeset, :passkey)
-      user_id = get_field(submission_changeset, :user_id)
+    device_information_changeset =
+      DeviceInformation.changeset(%DeviceInformation{},
+                                  device_information)
 
-      result = Repo.transaction(fn -> find_handle_pair(passkey, user_id) end)
+    cond do
+      submission_changeset.valid? and device_information_changeset.valid? ->
+        passkey = get_field(submission_changeset, :passkey)
+        user_id = get_field(submission_changeset, :user_id)
 
-      respond(conn, result)
-    else
-      conn
-      |> put_status(:unprocessable_entity)
-      |> render(Spherium.ChangesetView, "error.json", changeset: submission_changeset)
+        result = Repo.transaction(fn -> find_handle_pair(passkey, user_id) end)
+
+        respond(conn, result)
+      not submission_changeset.valid? ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Spherium.ChangesetView, "error.json", changeset: submission_changeset)
+      not device_information_changeset.valid? ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Spherium.ChangesetView, "error.json", changeset: device_information_changeset)
     end
   end
 
-  def create(conn, %{"one_time_code_submission" => one_time_code_submission}) do
+  def create(conn, %{"one_time_code_submission" => one_time_code_submission,
+                     "device_information" => device_information}) do
     one_time_code_submission_changeset =
       OneTimeCodeSubmission.changeset(
         %OneTimeCodeSubmission{},
         one_time_code_submission
       )
 
-    if one_time_code_submission_changeset.valid? do
-      user_id = get_field(one_time_code_submission_changeset, :user_id)
-      code = get_field(one_time_code_submission_changeset, :code)
+    device_information_changeset =
+      DeviceInformation.changeset(%DeviceInformation{},
+                                  device_information)
 
-      result = Repo.transaction(fn -> challenge_user_with_otc(user_id, code) end)
+    cond do
+      one_time_code_submission_changeset.valid? and device_information_changeset.valid? ->
+        user_id = get_field(one_time_code_submission_changeset, :user_id)
+        code = get_field(one_time_code_submission_changeset, :code)
 
-      respond(conn, result)
-    else
-      conn
-      |> put_status(:unprocessable_entity)
-      |> render(Spherium.ChangesetView,
-                "error.json",
-                changeset: one_time_code_submission_changeset)
+        result = Repo.transaction(fn -> challenge_user_with_otc(user_id, code) end)
+
+        respond(conn, result)
+      not one_time_code_submission_changeset.valid? ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Spherium.ChangesetView,
+                  "error.json",
+                  changeset: one_time_code_submission_changeset)
+      not device_information_changeset.valid? ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Spherium.ChangesetView,
+                  "error.json",
+                  changeset: device_information_changeset)
     end
   end
 
