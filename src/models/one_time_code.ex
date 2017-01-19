@@ -11,6 +11,7 @@ defmodule Spherium.OneTimeCode do
     struct
     |> cast(params, [:user_id, :code])
     |> validate_required([:user_id, :code])
+    |> validate_inclusion(:code, 100000..999999)
     |> foreign_key_constraint(:user_id)
   end
 end
