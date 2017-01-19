@@ -6,7 +6,7 @@ defmodule Spherium.AuthenticationControllerTest do
   alias Spherium.Factory
 
   describe "instantiation of concrete authentication" do
-    test "returns passphrase if user preferred insecure authentication scheme", %{conn: conn} do
+    test "returns handle if user preferred insecure authentication scheme", %{conn: conn} do
       user = Factory.insert(:user, password: "123456", authentication_scheme: :insecure)
 
       conn = post conn,
@@ -23,9 +23,8 @@ defmodule Spherium.AuthenticationControllerTest do
       assert data
       assert data["authentication_scheme"] =~ "insecure"
       assert data["user_id"] =~ user.id
-      assert data["passkey"]
       refute data["passphrase_id"]
-      refute data["passkey"]
+      assert data["passkey"]
     end
 
     test "returns user identifier with two factor authentication over OTC scheme", %{conn: conn} do
@@ -48,7 +47,7 @@ defmodule Spherium.AuthenticationControllerTest do
       refute data["passkey"]
     end
 
-    test "returns user identifier with two factor authentication over TBC scheme", %{conn: conn} do
+    test "returns not implemented on TBC scheme", %{conn: conn} do
       user = Factory.insert(:user, password: "123456", authentication_scheme: :two_factor_over_tbc)
 
       conn = post conn,
@@ -59,13 +58,6 @@ defmodule Spherium.AuthenticationControllerTest do
                     device: Ecto.UUID.generate(),
                     user_agent: "Test user agent"
                   }
-
-      # data = json_response(conn, 201)["data"]
-      #
-      # assert data["user_id"] == user.id
-      # assert data["authentication_scheme"] == "two_factor_over_tbc"
-      # refute data["passphrase_id"]
-      # refute data["passkey"]
 
       assert text_response(conn, :not_implemented) =~ "TBC is not available currently."
     end
