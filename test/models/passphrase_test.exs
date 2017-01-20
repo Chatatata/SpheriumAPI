@@ -26,30 +26,6 @@ defmodule Spherium.PassphraseTest do
     refute changeset.valid?
   end
 
-  test "changeset without device identifier" do
-    user = Factory.insert(:user)
-
-    changeset =
-      Passphrase.changeset(%Passphrase{},
-                           %{passkey: Passkey.generate(),
-                           user_agent: "ExUnit",
-                           user_id: user.id})
-
-    refute changeset.valid?
-  end
-
-  test "changeset without user agent" do
-    user = Factory.insert(:user)
-
-    changeset =
-      Passphrase.changeset(%Passphrase{},
-                           %{passkey: Passkey.generate(),
-                           device: Ecto.UUID.generate(),
-                           user_id: user.id})
-
-    refute changeset.valid?
-  end
-
   test "changeset without passkey" do
     user = Factory.insert(:user)
     otc = Factory.insert(:one_time_code, user_id: user.id)
