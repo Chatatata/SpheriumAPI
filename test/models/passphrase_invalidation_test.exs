@@ -37,10 +37,8 @@ defmodule Spherium.PassphraseInvalidationTest do
 
   test "changeset with valid attributes (regression)" do
     user = Factory.insert(:user, authentication_scheme: :two_factor_over_otc)
-    target_otc = Factory.insert(:one_time_code, user_id: user.id)
-    target = Factory.insert(:passphrase, user_id: user.id, one_time_code_id: target_otc.id)
-    source_otc = Factory.insert(:one_time_code, user_id: user.id)
-    source = Factory.insert(:passphrase, user_id: user.id, one_time_code_id: source_otc.id)
+    target = Factory.insert(:passphrase, user_id: user.id)
+    source = Factory.insert(:passphrase, user_id: user.id)
 
     changeset =
       PassphraseInvalidation.changeset(
@@ -55,10 +53,8 @@ defmodule Spherium.PassphraseInvalidationTest do
 
   test "changeset without ip address (regression)" do
     user = Factory.insert(:user, authentication_scheme: :two_factor_over_otc)
-    target_otc = Factory.insert(:one_time_code, user_id: user.id)
-    target = Factory.insert(:passphrase, user_id: user.id, one_time_code_id: target_otc.id)
-    source_otc = Factory.insert(:one_time_code, user_id: user.id)
-    source = Factory.insert(:passphrase, user_id: user.id, one_time_code_id: source_otc.id)
+    target = Factory.insert(:passphrase, user_id: user.id)
+    source = Factory.insert(:passphrase, user_id: user.id)
 
     changeset =
       PassphraseInvalidation.changeset(

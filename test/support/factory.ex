@@ -76,7 +76,7 @@ defmodule Spherium.Factory do
       user_id: build(:user).id,
       passkey: Spherium.Passkey.generate(),
       device: Ecto.UUID.generate(),
-      user_agent: "Some user agent.",
+      user_agent: "Some user agent."
     }
   end
 

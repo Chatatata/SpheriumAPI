@@ -135,7 +135,7 @@ defmodule Spherium.AuthenticationController do
     query = from u in User,
             join: otc in OneTimeCode, on: otc.user_id == u.id,
             left_join: otci in OneTimeCodeInvalidation, on: otc.id == otci.one_time_code_id,
-            left_join: p in Passphrase, on: otc.id == p.one_time_code_id,
+            left_join: p in Passphrase, on: p.inserted_at > otc.inserted_at,
             where: u.id == ^user_id and
                    is_nil(otci.inserted_at) and
                    is_nil(p.inserted_at) and
@@ -152,8 +152,7 @@ defmodule Spherium.AuthenticationController do
           passphrase_changeset =
             Passphrase.changeset(
               %Passphrase{},
-              %{passkey: Passkey.generate(),
-                one_time_code_id: otc.id}
+              %{passkey: Passkey.generate()}
             )
 
           {:passphrase, Repo.insert!(passphrase_changeset)}
