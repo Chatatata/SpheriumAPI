@@ -26,6 +26,9 @@ config :comeonin,
   bcrypt_log_rounds: 4,
   pbkdf2_rounds: 1_000
 
+config :mix_test_watch,
+  clear: true
+
 # Configure your database
 config :spherium, Spherium.Repo,
   adapter: Ecto.Adapters.Postgres,
