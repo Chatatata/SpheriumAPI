@@ -74,7 +74,9 @@ defmodule Spherium.Factory do
   def passphrase_factory do
     %Spherium.Passphrase{
       user_id: build(:user).id,
-      passkey: Spherium.Passkey.generate()
+      passkey: Spherium.Passkey.generate(),
+      device: Ecto.UUID.generate(),
+      user_agent: "Some user agent."
     }
   end
 
