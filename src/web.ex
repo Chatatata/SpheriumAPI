@@ -26,6 +26,14 @@ defmodule Spherium.Web do
     end
   end
 
+  def virtual do
+    quote do
+      use Ecto.Schema
+
+      import Ecto.Changeset
+    end
+  end
+
   def controller do
     quote do
       use Phoenix.Controller
