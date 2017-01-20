@@ -8,8 +8,7 @@ defmodule Spherium.TokenControllerTest do
 
   test "generates token if passkey exists", %{conn: conn} do
     user = Factory.insert(:user)
-    otc = Factory.insert(:one_time_code, user: user)
-    passphrase = Factory.insert(:passphrase, one_time_code: otc)
+    passphrase = Factory.insert(:passphrase, user_id: user.id)
 
     conn = post conn, authentication_token_path(conn, :create), passkey: passphrase.passkey
 
@@ -17,7 +16,7 @@ defmodule Spherium.TokenControllerTest do
 
     assert data["jwt"]
     assert data["exp"]
-    assert data["user_id"]
+    assert data["user_id"] == user.id
     assert data["timestamp"]
   end
 
