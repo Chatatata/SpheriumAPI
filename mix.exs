@@ -10,7 +10,11 @@ defmodule Spherium.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
-     test_coverage: [tool: Coverex.Task, console_log: false],
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test,
+                         "coveralls.detail": :test,
+                         "coveralls.post": :test,
+                         "coveralls.html": :test],
      deps: deps,
 
      # Docs
@@ -51,7 +55,7 @@ defmodule Spherium.Mixfile do
      {:jose, "~> 1.8"},
      {:credo, "~> 0.4", only: [:dev, :test]},
      {:timex, "~> 3.0"},
-     {:coverex, "~> 1.4.10", only: :test},
+     {:excoveralls, "~> 0.6.1", only: :test},
      {:cors_plug, "~> 1.1"},
      {:httpoison, "~> 0.10.0"},
      {:poison, "~> 3.0", override: true},
