@@ -1,7 +1,7 @@
 defmodule Spherium.AuthenticationResultView do
   use Spherium.Web, :view
 
-  def render("show.insecure.json",
+  def render("show.insecure_authentication_handle.json",
              %{insecure_authentication_handle: insecure_authentication_handle}) do
     insecure_authentication_handle_view =
       render_one(insecure_authentication_handle,
@@ -18,9 +18,5 @@ defmodule Spherium.AuthenticationResultView do
       |> Map.merge(%{"authentication_scheme" => "two_factor_over_otc"})
 
     %{data: one_time_code_view}
-  end
-
-  def render("show.passphrase.json", %{passphrase: passphrase}) do
-    %{data: render_one(passphrase, Spherium.PassphraseView, "show.private.json")}
   end
 end
