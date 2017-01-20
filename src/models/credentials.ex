@@ -1,11 +1,7 @@
 defmodule Spherium.Credentials do
-  use Spherium.Web, :model
+  use Spherium.Web, :virtual
 
-  @primary_key false
-
-  @uuid_regex ~r([0-9,a-z,A-Z]{8}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{12})
-
-  schema "credentials" do
+  embedded_schema do
     field :username, :string
     field :password, :string
   end
