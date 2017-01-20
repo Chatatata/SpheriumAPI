@@ -1,24 +1,21 @@
 defmodule Spherium.AuthenticationController do
   use Spherium.Web, :controller
 
-  import Ecto.Changeset, only: [get_field: 2]
+  import Ecto.Changeset, only: [get_field: 2, apply_changes: 1]
   import Comeonin.Bcrypt, only: [checkpw: 2]
+  import Spherium.AuthenticationProvider
 
   alias Spherium.Credentials
   alias Spherium.Attempt
   alias Spherium.Passphrase
   alias Spherium.PassphraseInvalidation
-  alias Spherium.OneTimeCode
-  alias Spherium.OneTimeCodeInvalidation
   alias Spherium.OneTimeCodeSubmission
-  alias Spherium.Code
-  alias Spherium.Passkey
   alias Spherium.User
   alias Spherium.InsecureAuthenticationSubmission
-  alias Spherium.InsecureAuthenticationHandle
   alias Spherium.DeviceInformation
 
-  def create(conn, %{"credentials" => credentials}) do
+  def create(conn,
+             %{"credentials" => credentials}) do
     credentials_changeset = Credentials.changeset(%Credentials{}, credentials)
     ip_addr = get_remote_ip_string(conn)
 
@@ -44,129 +41,69 @@ defmodule Spherium.AuthenticationController do
 
   def create(conn,
              %{"insecure_authentication_submission" => insecure_authentication_submission,
-               "device_information" => device_information}) do
-    submission_changeset =
-      InsecureAuthenticationSubmission.changeset(%InsecureAuthenticationSubmission{},
-                                                 insecure_authentication_submission)
+               "device_information" => device_information_params}) do
+    validate_device_params conn, device_information_params, fn (device_information) ->
+      submission_changeset =
+        InsecureAuthenticationSubmission.changeset(%InsecureAuthenticationSubmission{},
+                                                   insecure_authentication_submission)
 
-    device_information_changeset =
-      DeviceInformation.changeset(%DeviceInformation{},
-                                  device_information)
-
-    cond do
-      submission_changeset.valid? and device_information_changeset.valid? ->
+      if submission_changeset.valid? do
         passkey = get_field(submission_changeset, :passkey)
-        user_id = get_field(submission_changeset, :user_id)
 
-        result = Repo.transaction(fn -> find_handle_pair(passkey, user_id) end)
+        result = Repo.transaction(fn ->
+          challenge_with_handle passkey, device_information
+        end)
 
         respond(conn, result)
-      not submission_changeset.valid? ->
+      else
         conn
         |> put_status(:unprocessable_entity)
         |> render(Spherium.ChangesetView, "error.json", changeset: submission_changeset)
-      not device_information_changeset.valid? ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(Spherium.ChangesetView, "error.json", changeset: device_information_changeset)
+      end
     end
   end
 
   def create(conn, %{"one_time_code_submission" => one_time_code_submission,
-                     "device_information" => device_information}) do
-    one_time_code_submission_changeset =
-      OneTimeCodeSubmission.changeset(
-        %OneTimeCodeSubmission{},
-        one_time_code_submission
-      )
+                     "device_information" => device_information_params}) do
+    validate_device_params conn, device_information_params, fn (device_information) ->
+      one_time_code_submission_changeset =
+        OneTimeCodeSubmission.changeset(
+          %OneTimeCodeSubmission{},
+          one_time_code_submission
+        )
 
-    device_information_changeset =
-      DeviceInformation.changeset(%DeviceInformation{},
-                                  device_information)
-
-    cond do
-      one_time_code_submission_changeset.valid? and device_information_changeset.valid? ->
+      if one_time_code_submission_changeset.valid? do
         user_id = get_field(one_time_code_submission_changeset, :user_id)
         code = get_field(one_time_code_submission_changeset, :code)
 
-        result = Repo.transaction(fn -> challenge_user_with_otc(user_id, code) end)
+        result = Repo.transaction(fn ->
+          challenge_user_with_otc user_id, code, device_information
+        end)
 
         respond(conn, result)
-      not one_time_code_submission_changeset.valid? ->
+      else
         conn
         |> put_status(:unprocessable_entity)
         |> render(Spherium.ChangesetView,
                   "error.json",
                   changeset: one_time_code_submission_changeset)
-      not device_information_changeset.valid? ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(Spherium.ChangesetView,
-                  "error.json",
-                  changeset: device_information_changeset)
+      end
     end
   end
 
-  defp find_handle_pair(passkey, user_id) do
-    query = from iah in InsecureAuthenticationHandle,
-            where: iah.user_id == ^user_id and
-                   iah.passkey == ^passkey and
-                   iah.inserted_at == fragment("(SELECT max(inserted_at)
-                                                 FROM insecure_authentication_handles
-                                                 WHERE user_id = ?)", ^user_id) and
-                   iah.inserted_at > ago(3, "minute"),
-            select: iah
+  defp validate_device_params(conn, params, function) do
+    device_information_changeset =
+      DeviceInformation.changeset(%DeviceInformation{},
+                                  params)
 
-    if Repo.aggregate(query, :count, :id) do
-      passphrase_changeset =
-        Passphrase.changeset(
-          %Passphrase{},
-          %{passkey: Passkey.generate(),
-            user_id: user_id}
-        )
-
-      {:passphrase, Repo.insert!(passphrase_changeset)}
+    if device_information_changeset.valid? do
+      function.(apply_changes(device_information_changeset))
     else
-      Repo.rollback(:not_found)
-    end
-  end
-
-  defp challenge_user_with_otc(user_id, code) do
-    query = from u in User,
-            join: otc in OneTimeCode, on: otc.user_id == u.id,
-            left_join: otci in OneTimeCodeInvalidation, on: otc.id == otci.one_time_code_id,
-            left_join: p in Passphrase, on: p.inserted_at > otc.inserted_at,
-            where: u.id == ^user_id and
-                   is_nil(otci.inserted_at) and
-                   is_nil(p.inserted_at) and
-                   otc.inserted_at == fragment("(SELECT max(inserted_at)
-                                                FROM one_time_codes
-                                                WHERE user_id = ?)", ^user_id) and
-                   otc.inserted_at > ago(3, "minute"),
-            select: otc
-
-    case Repo.one(query) do
-      nil -> Repo.rollback(:not_found)
-      otc ->
-        if otc.code == code do
-          passphrase_changeset =
-            Passphrase.changeset(
-              %Passphrase{},
-              %{passkey: Passkey.generate()}
-            )
-
-          {:passphrase, Repo.insert!(passphrase_changeset)}
-        else
-          one_time_code_invalidation_changeset =
-            OneTimeCodeInvalidation.changeset(
-              %OneTimeCodeInvalidation{},
-              %{one_time_code_id: otc.id}
-            )
-
-          Repo.insert!(one_time_code_invalidation_changeset)
-
-          {:error, :mismatch}
-        end
+      conn
+      |> put_status(:unprocessable_entity)
+      |> render(Spherium.ChangesetView,
+                "error.json",
+                changeset: device_information_changeset)
     end
   end
 
@@ -215,61 +152,6 @@ defmodule Spherium.AuthenticationController do
     end
   end
 
-  @doc """
-  Performs concrete authentication instantiation on user with corresponding authentication
-  scheme.
-  """
-  def apply_authentication_scheme(user) do
-    apply_authentication_scheme(user, user.authentication_scheme)
-  end
-
-  @doc """
-  Performs concrete authentication instantiation on user with insecure authentication scheme.
-  """
-  def apply_authentication_scheme(user, :insecure) do
-    insecure_authentication_handle_changeset =
-      InsecureAuthenticationHandle.changeset(%InsecureAuthenticationHandle{},
-                                             %{passkey: Passkey.generate(),
-                                               user_id: user.id})
-
-    {:insecure_authentication_handle, Repo.insert!(insecure_authentication_handle_changeset)}
-  end
-
-  @doc """
-  Performs concrete authentication instantiation on user with two-factor authentication over
-  one-time-code scheme.
-  """
-  def apply_authentication_scheme(user, :two_factor_over_otc) do
-    query = from otc in OneTimeCode,
-            left_join: otci in OneTimeCodeInvalidation, on: otci.one_time_code_id == otc.id,
-            left_join: p in Passphrase, on: p.one_time_code_id == otc.id,
-            where: otc.user_id == ^user.id and
-                   otc.inserted_at > ago(15, "minute") and
-                   is_nil(otci.inserted_at) and
-                   is_nil(p.inserted_at)
-
-    if Repo.aggregate(query, :count, :id) == 2, do: Repo.rollback(:otc_quota_reached)
-
-    one_time_code_changeset =
-      OneTimeCode.changeset(
-        %OneTimeCode{},
-        %{user_id: user.id,
-          code: Code.generate(),
-          device: user.device,
-          user_agent: user.user_agent}
-      )
-
-    {:one_time_code, Repo.insert!(one_time_code_changeset)}
-  end
-
-  @doc """
-  Performs concrete authentication instantiation on user with two-factor authentication over
-  time-based-code scheme.
-  """
-  def apply_authentication_scheme(_user, :two_factor_over_tbc) do
-    Repo.rollback(:tbc_not_available)
-  end
-
   defp persist_attempt(result, username, ip_addr) do
     changeset = Attempt.changeset(%Attempt{},
                                   %{username: username,
@@ -300,8 +182,8 @@ defmodule Spherium.AuthenticationController do
   defp respond_with_success(conn, :passphrase, passphrase) do
     conn
     |> put_status(:created)
-    |> render(Spherium.AuthenticationResultView,
-              "show.passphrase.json",
+    |> render(Spherium.PassphraseView,
+              "show.private.json",
               passphrase: passphrase)
   end
 
