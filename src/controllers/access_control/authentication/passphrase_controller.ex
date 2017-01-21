@@ -15,7 +15,7 @@ defmodule Spherium.PassphraseController do
   def show(conn, %{"id" => id}) do
     passphrase = Repo.get!(Passphrase, id)
 
-    if conn.assigns[:permission_type] == :one and
+    if conn.assigns[:permission_type] == :self and
        passphrase.user_id != conn.assigns[:user].id,
       do: raise InsufficientScopeError
 

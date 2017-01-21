@@ -33,7 +33,7 @@ defmodule Spherium.PassphraseInvalidationController do
         {:ok, passphrase_invalidation} ->
           conn
           |> put_status(:created)
-          |> render("show.min.json", passphrase_invalidation: passphrase_invalidation)
+          |> render("show.json", passphrase_invalidation: passphrase_invalidation)
         {:error, :unauthorized} ->
           conn
           |> put_status(:unauthorized)
