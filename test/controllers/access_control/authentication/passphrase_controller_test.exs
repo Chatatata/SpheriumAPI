@@ -35,4 +35,20 @@ defmodule Spherium.PassphraseControllerTest do
     assert data["inserted_at"]
     refute data["passkey"]
   end
+
+  test "throws 404 if passphrase with given identifier does not exist", %{conn: conn} do
+    assert_error_sent 404, fn ->
+      get conn, authentication_passphrase_path(conn, :show, -1)
+    end
+  end
+
+  @tag attach_to_one_permissions: true
+  test "does not show :one user if he/she is not owner of the passphrase", %{conn: conn} do
+    user = Factory.insert(:user)
+    passphrase = Factory.insert(:passphrase, user_id: user.id)
+
+    assert_error_sent 401, fn ->
+      get conn, authentication_passphrase_path(conn, :show, passphrase.id)
+    end
+  end
 end
