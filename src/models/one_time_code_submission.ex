@@ -1,7 +1,7 @@
 defmodule Spherium.OneTimeCodeSubmission do
-  use Spherium.Web, :model
+  use Spherium.Web, :virtual
 
-  schema "one_time_code_submissions" do
+  embedded_schema do
     field :code, :integer
     belongs_to :user, Spherium.User
   end
@@ -14,6 +14,5 @@ defmodule Spherium.OneTimeCodeSubmission do
     |> cast(params, [:code, :user_id])
     |> validate_required([:code, :user_id])
     |> validate_inclusion(:code, 100000..999999)
-    |> foreign_key_constraint(:user_id)
   end
 end

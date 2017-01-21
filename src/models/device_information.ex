@@ -1,11 +1,9 @@
 defmodule Spherium.DeviceInformation do
-  use Spherium.Web, :model
-
-  @primary_key false
+  use Spherium.Web, :virtual
 
   @uuid_regex ~r([0-9,a-z,A-Z]{8}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{4}-[0-9,a-z,A-Z]{12})
 
-  schema "device_informations" do
+  embedded_schema do
     field :device, Ecto.UUID
     field :user_agent, :string
   end

@@ -1,7 +1,7 @@
 defmodule Spherium.InsecureAuthenticationSubmission do
-  use Spherium.Web, :model
+  use Spherium.Web, :virtual
 
-  schema "insecure_authentication_submissions" do
+  embedded_schema do
     field :passkey, :string
   end
 
