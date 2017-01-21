@@ -129,7 +129,7 @@ defmodule Spherium.AuthenticationControllerTest do
 
       assert data
       assert data["passkey"]
-      assert data["passphrase_id"]
+      assert data["id"]
     end
 
     test "returns 404 with non-existing insecure authentication handle", %{conn: conn} do
