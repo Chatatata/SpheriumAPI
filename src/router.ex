@@ -20,7 +20,7 @@ defmodule Spherium.Router do
       resources "/subscribers", SubscriberController, except: [:new, :edit]
 
       resources "/authentication", AuthenticationController, only: [:create], singleton: true do
-        resources "/passphrases", PassphraseController, only: [:create]
+        resources "/passphrases", PassphraseController, only: [:index, :show]
         resources "/passphrase_invalidations", PassphraseInvalidationController, only: [:create]
         resources "/tokens", TokenController, only: [:create], singleton: true
         resources "/attempts", AttemptController, only: [:index, :show]

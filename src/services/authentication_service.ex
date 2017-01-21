@@ -18,7 +18,10 @@ defmodule Spherium.AuthenticationService do
 
   def issue_token(conn, user, passphrase) do
     user_view = UserView.render("user.private.json", user: user)
-    passphrase_view = PassphraseView.render("passphrase.json", passphrase: passphrase) |> Map.drop([:inserted_at])
+
+    passphrase_view =
+      PassphraseView.render("passphrase.jwt.json", passphrase: passphrase)
+      |> Map.drop([:inserted_at])
 
     jwk = %{
       "kty" => "oct",
@@ -39,8 +42,9 @@ defmodule Spherium.AuthenticationService do
       |> Map.merge(user_view)
       |> Map.merge(passphrase_view)
 
-    {_, token} = JOSE.JWT.sign(jwk, jws, jwt)
-                 |> JOSE.JWS.compact()
+    {_, token} =
+      JOSE.JWT.sign(jwk, jws, jwt)
+      |> JOSE.JWS.compact()
 
     conn
     |> put_resp_header("authorization", "Bearer #{token}")
