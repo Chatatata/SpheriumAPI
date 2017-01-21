@@ -8,7 +8,9 @@ defmodule Spherium.PassphraseInvalidationController do
   plug :authorize_user, [:all, :self]
   plug :scrub_params, "passphrase_invalidation" when action in [:create]
 
-  def create(conn, %{"passphrase_invalidation" => %{"target_passphrase_id" => target_passphrase_id}}) do
+  def create(conn,
+             %{"passphrase_invalidation" =>
+               %{"target_passphrase_id" => target_passphrase_id}}) do
     # Check if user owns target passphrase
     ip_addr =
       conn.remote_ip
@@ -22,13 +24,13 @@ defmodule Spherium.PassphraseInvalidationController do
 
     try do
       case Repo.transaction(fn ->
-        if conn.assigns[:permission_type] == :one do
+        if conn.assigns[:permission_type] == :self do
           passphrase = Repo.get!(Passphrase, target_passphrase_id)
 
-          if passphrase.user_id == conn.assigns[:user].id, do: Repo.insert!(changeset), else: Repo.rollback(:unauthorized)
-        else
-          Repo.insert!(changeset)
+          if passphrase.user_id == conn.assigns[:user].id, do: Repo.rollback(:unauthorized)
         end
+
+        Repo.insert!(changeset)
       end) do
         {:ok, passphrase_invalidation} ->
           conn
@@ -41,20 +43,18 @@ defmodule Spherium.PassphraseInvalidationController do
       end
     rescue
       Ecto.NoResultsError ->
-        send_not_found(conn)
+        conn
+        |> send_resp(:not_found, "")
       ice in Ecto.InvalidChangesetError ->
         case List.keyfind(ice.changeset.errors, :target_passphrase_id, 0) do
-          {:target_passphrase_id, {"does not exist", []}} -> send_not_found(conn)
+          {:target_passphrase_id, {"does not exist", []}} ->
+            conn
+            |> send_resp(:not_found, "")
           _ ->
             conn
             |> put_status(:unprocessable_entity)
             |> render(Spherium.ChangesetView, "error.json", changeset: ice.changeset)
         end
     end
-  end
-
-  defp send_not_found(conn) do
-    conn
-    |> send_resp(:not_found, "")
   end
 end
