@@ -1,6 +1,11 @@
 {
   "custom_stop_words": [
-    "embedded_schema"
+    "embedded_schema",
+    "schema",
+    "defmacro",
+    "defenum",
+    "using",
+    "setup"
   ],
 
   "coverage_options": {
@@ -9,6 +14,12 @@
   },
 
   "terminal_options": {
-    "file_column_width": 70
-  }
+    "file_column_width": 120
+  },
+
+  "skip_files": [
+    "lib",
+    "test/support",
+    "src/views/auxillary/error_helpers.ex"
+  ]
 }
