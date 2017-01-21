@@ -1,6 +1,10 @@
 defmodule Spherium.ErrorView do
   use Spherium.Web, :view
 
+  def render("401.json", _assigns) do
+    %{errors: %{name: "Unauthorized", detail: "Authorization is refused due to insufficient privileges."}}
+  end
+
   def render("404.json", _assigns) do
     %{errors: %{name: "Not Found", detail: "Requested property does not exist."}}
   end
