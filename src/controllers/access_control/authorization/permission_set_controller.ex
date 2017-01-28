@@ -13,25 +13,19 @@ defmodule Spherium.PermissionSetController do
   end
 
   def create(conn, %{"permission_set" => permission_set_params}) do
-    unless Map.has_key?(permission_set_params, "user_id") do
-      permission_set_params = Map.put(permission_set_params, "user_id", conn.assigns[:user].id)
-      changeset = PermissionSet.changeset(%PermissionSet{}, permission_set_params)
+    permission_set_params = Map.merge(permission_set_params, %{"user_id" => conn.assigns[:user].id})
+    changeset = PermissionSet.changeset(%PermissionSet{}, permission_set_params)
 
-      case Repo.insert(changeset) do
-        {:ok, permission_set} ->
-          conn
-          |> put_status(:created)
-          |> put_resp_header("location", permission_set_path(conn, :show, permission_set))
-          |> render("show.json", permission_set: permission_set)
-        {:error, changeset} ->
-          conn
-          |> put_status(:unprocessable_entity)
-          |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
-      end
-    else
-      conn
-      |> send_resp(:unprocessable_entity, "User identifier field is not allowed.")
-    end
+    case Repo.insert(changeset) do
+      {:ok, permission_set} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", permission_set_path(conn, :show, permission_set))
+        |> render("show.json", permission_set: permission_set)
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Spherium.ChangesetView, "error.json", changeset: changeset)
   end
 
   def show(conn, %{"id" => id}) do
