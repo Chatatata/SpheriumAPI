@@ -34,17 +34,17 @@ defmodule Spherium.PermissionSetControllerTest do
     permission_set = Factory.insert(:permission_set, permissions: permissions, user_id: user.id)
     conn = get conn, permission_set_path(conn, :show, permission_set)
 
-    assert json_response(conn, 200)["data"] == %{"id" => permission_set.id,
-                                                 "name" => permission_set.name,
-                                                 "description" => permission_set.description,
-                                                 "grant_power" => permission_set.grant_power,
-                                                 "user_id" => permission_set.user_id,
-                                                 "permissions" => Phoenix.View.render_many(permissions, Spherium.PermissionView, "permission.json")
-                                                                  |> Enum.map(&Enum.reduce(&1, %{}, fn {key, val}, acc ->
-                                                                                                      Map.put(acc, Atom.to_string(key), val)
-                                                                                                    end))}
-
-
+    assert
+      json_response(conn, 200)["data"] ==
+      %{"id" => permission_set.id,
+        "name" => permission_set.name,
+        "description" => permission_set.description,
+        "grant_power" => permission_set.grant_power,
+        "user_id" => permission_set.user_id,
+        "permissions" => Phoenix.View.render_many(permissions, Spherium.PermissionView, "permission.json")
+        |> Enum.map(&Enum.reduce(&1, %{}, fn {key, val}, acc ->
+          Map.put(acc, Atom.to_string(key), val)
+        end))}
   end
 
   test "renders page not found when permission_set with given id is nonexistent", %{conn: conn} do
@@ -57,10 +57,12 @@ defmodule Spherium.PermissionSetControllerTest do
     permissions = Repo.all(Permission)
     permission_ids = Enum.map(permissions, &(&1.id))
 
-    conn = post conn, permission_set_path(conn, :create), permission_set: %{name: "on_create",
-                                                                            description: "on_create description",
-                                                                            grant_power: 200,
-                                                                            permission_ids: permission_ids}
+    conn = post conn,
+                permission_set_path(conn, :create),
+                permission_set: %{name: "on_create",
+                                  description: "on_create description",
+                                  grant_power: 200,
+                                  permission_ids: permission_ids}
 
     data = json_response(conn, 201)["data"]
 
@@ -68,10 +70,11 @@ defmodule Spherium.PermissionSetControllerTest do
     assert data["name"] == "on_create"
     assert data["description"] == "on_create description"
     assert data["grant_power"] == 200
-    assert data["permissions"] == Phoenix.View.render_many(permissions, Spherium.PermissionView, "permission.json")
-                                  |> Enum.map(&Enum.reduce(&1, %{}, fn {key, val}, acc ->
-                                                                      Map.put(acc, Atom.to_string(key), val)
-                                                                    end))
+    assert data["permissions"] ==
+      Phoenix.View.render_many(permissions, Spherium.PermissionView, "permission.json")
+      |> Enum.map(&Enum.reduce(&1, %{}, fn {key, val}, acc ->
+        Map.put(acc, Atom.to_string(key), val)
+      end))
   end
 
   test "does not create resource and returns 422 when user identifier is given", %{conn: conn} do
@@ -79,24 +82,27 @@ defmodule Spherium.PermissionSetControllerTest do
     permissions = Factory.insert_list(12, :permission)
     permission_ids = Enum.map(permissions, &(&1.id))
 
-    conn = post conn, permission_set_path(conn, :create), permission_set: %{name: "on_create",
-                                                                            description: "on_create description",
-                                                                            grant_power: 200,
-                                                                            user_id: user.id,
-                                                                            permission_ids: permission_ids}
+    conn = post conn,
+                permission_set_path(conn, :create),
+                permission_set: %{name: "on_create",
+                                  description: "on_create description",
+                                  grant_power: 200,
+                                  user_id: user.id,
+                                  permission_ids: permission_ids}
 
     assert conn.status == 422
-    assert conn.resp_body =~ "User identifier field is not allowed."
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
     user = Factory.insert(:user)
 
-    conn = post conn, permission_set_path(conn, :create), permission_set: %{name: "default",
-                                                                            description: "default description",
-                                                                            grant_power: 1001,
-                                                                            user_id: user.id,
-                                                                            permission_ids: []}
+    conn = post conn,
+                permission_set_path(conn, :create),
+                permission_set: %{name: "default",
+                                  description: "default description",
+                                  grant_power: 1001,
+                                  user_id: user.id,
+                                  permission_ids: []}
 
     assert conn.status == 422
   end
