@@ -80,6 +80,17 @@ defmodule Spherium.AuthenticationControllerTest do
       assert text_response(conn, :forbidden) =~ "Invalid username/password combination."
     end
 
+    test "returns 403 on if user with given username does not exist", %{conn: conn} do
+      conn = post conn,
+                  authentication_path(conn, :create),
+                  credentials: %{
+                    username: "some_username",
+                    password: "1234567"
+                  }
+
+      assert text_response(conn, :forbidden) =~ "Invalid username/password combination."
+    end
+
     test "returns 409 when passphrase quota exceeded", %{conn: conn} do
       user = Factory.insert(:user, password: "123456")
 
@@ -132,6 +143,36 @@ defmodule Spherium.AuthenticationControllerTest do
       assert data["id"]
     end
 
+    test "throws when device information has no user agent", %{conn: conn} do
+      handle = Factory.insert(:insecure_authentication_handle)
+
+      conn = post conn,
+                  authentication_path(conn, :create),
+                  insecure_authentication_submission: %{
+                    passkey: handle.passkey
+                  },
+                  device_information: %{
+                    device: Ecto.UUID.generate()
+                  }
+
+      assert conn.status == 422
+    end
+
+    test "throws when device information has device identifier", %{conn: conn} do
+      handle = Factory.insert(:insecure_authentication_handle)
+
+      conn = post conn,
+                  authentication_path(conn, :create),
+                  insecure_authentication_submission: %{
+                    passkey: handle.passkey
+                  },
+                  device_information: %{
+                    user_agent: "Test user agent"
+                  }
+
+      assert conn.status == 422
+    end
+
     test "returns 404 with non-existing insecure authentication handle", %{conn: conn} do
       conn = post conn,
                   authentication_path(conn, :create),
@@ -180,6 +221,40 @@ defmodule Spherium.AuthenticationControllerTest do
       assert data
       assert data["passkey"]
       assert data["id"]
+    end
+
+    test "throws when device information has no user agent", %{conn: conn} do
+      user = Factory.insert(:user, password: "123456")
+      otc = Factory.insert(:one_time_code, user: user)
+
+      conn = post conn,
+                  authentication_path(conn, :create),
+                  one_time_code_submission: %{
+                    code: otc.code,
+                    user_id: user.id
+                  },
+                  device_information: %{
+                    device: Ecto.UUID.generate()
+                  }
+
+      assert conn.status == 422
+    end
+
+    test "throws when device information has device identifier", %{conn: conn} do
+      user = Factory.insert(:user, password: "123456")
+      otc = Factory.insert(:one_time_code, user: user)
+
+      conn = post conn,
+                  authentication_path(conn, :create),
+                  one_time_code_submission: %{
+                    code: otc.code,
+                    user_id: user.id
+                  },
+                  device_information: %{
+                    user_agent: "Test user agent"
+                  }
+
+      assert conn.status == 422
     end
 
     test "does not create a passphrase with expired one time code", %{conn: conn} do
