@@ -18,7 +18,6 @@ defmodule Spherium.User do
     timestamps
 
     has_one :image, Spherium.ProfileImage
-    has_many :publishers, Spherium.Publisher
     belongs_to :permission_set, Spherium.PermissionSet
   end
 

@@ -32,10 +32,5 @@ defmodule Spherium.Router do
         resources "/permission_set_grants", PermissionSetGrantController, only: [:index, :show]
       end
     end
-
-    scope "/data" do
-      resources "/publishers", PublisherController, except: [:new, :edit]
-      resources "/questions", QuestionController, except: [:new, :edit]
-    end
   end
 end

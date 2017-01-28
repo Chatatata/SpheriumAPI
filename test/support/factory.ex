@@ -25,22 +25,6 @@ defmodule Spherium.Factory do
     }
   end
 
-  def publisher_factory do
-    %Spherium.Publisher{
-      name: "Test publisher",
-      image: "some test data",
-      description: "Test publisher's description...",
-      user: build(:user)
-    }
-  end
-
-  def question_factory do
-    %Spherium.Question{
-      user: build(:user),
-      publisher: build(:publisher)
-    }
-  end
-
   def attempt_factory do
     %Spherium.Attempt{
       ip_addr: "#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}.#{:rand.uniform(256)}",
