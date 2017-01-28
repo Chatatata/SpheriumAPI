@@ -28,4 +28,11 @@ defmodule Spherium.PasswordControllerTest do
       put conn, user_password_path(conn, :update, -1), password: "456789"
     end
   end
+
+  test "rejects when invalid password change information is given", %{conn: conn} do
+    user = Factory.insert(:user)
+    conn = put conn, user_password_path(conn, :update, user), password: 12345
+
+    assert conn.status == 422
+  end
 end
