@@ -39,8 +39,8 @@ defmodule Spherium.AuthorizationPlug do
     end
   end
 
-  def apply_policy(conn, policy_name) do
-    policy_module = fetch_policy_module(conn, policy_name)
+  def apply_policy(conn) do
+    policy_module = fetch_policy_module(conn)
 
     unless conn.assigns[:permission_type] == :all or
            Kernel.apply(policy_module, conn.private.phoenix_action, [conn, conn.params, conn.assigns[:permission_type]]) do
@@ -53,15 +53,8 @@ defmodule Spherium.AuthorizationPlug do
     end
   end
 
-  defp fetch_policy_module(conn, policy_name) do
-    case policy_name do
-      policy_module when is_atom(policy_name) ->
-        policy_module
-      policy_module when is_binary(policy_name) ->
-        String.to_atom(policy_module)
-      _ ->
-        controller_name = Atom.to_string conn.private.phoenix_controller
-        String.to_atom(controller_name <> "Policy")
-    end
+  defp fetch_policy_module(conn) do
+    controller_name = Atom.to_string conn.private.phoenix_controller
+    String.to_atom(controller_name <> "Policy")
   end
 end
