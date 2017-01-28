@@ -39,7 +39,7 @@ defmodule Spherium.AuthorizationPlug do
     end
   end
 
-  def apply_policy(conn) do
+  def apply_policy(conn, _params) do
     policy_module = fetch_policy_module(conn)
 
     unless conn.assigns[:permission_type] == :all or
