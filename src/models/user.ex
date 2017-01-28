@@ -41,12 +41,6 @@ defmodule Spherium.User do
     |> foreign_key_constraint(:permission_set_id)
   end
 
-  def permissions_set_changeset(model, params \\ %{}) do
-    model
-    |> cast(params, [:permission_set_id])
-    |> foreign_key_constraint(:permission_set_id)
-  end
-
   defp hash_password(changeset) do
     if password = get_change(changeset, :password) do
       changeset
