@@ -195,6 +195,10 @@ defmodule Spherium.AuthenticationController do
               one_time_code: one_time_code)
   end
 
+  defp respond_with_success(conn, :error, :mismatch) do
+    respond_with_failure(conn, :not_found)
+  end
+
   defp respond_with_failure(conn, :max_passphrases_reached) do
     conn
     |> put_resp_content_type("text/plain")

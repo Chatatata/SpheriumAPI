@@ -24,7 +24,7 @@ defmodule Spherium.AuthenticationProvider do
   def challenge_with_handle(passkey, device_information) do
     query = from iah in InsecureAuthenticationHandle,
             join: u in User, on: iah.user_id == u.id,
-            left_join: p in Passphrase, on: p.inserted_at > iah.inserted_at,
+            left_join: p in Passphrase, on: p.inserted_at >= iah.inserted_at,
             where: iah.passkey == ^passkey and
                    iah.inserted_at > ago(3, "minute") and
                    is_nil(p.id),
@@ -58,10 +58,10 @@ defmodule Spherium.AuthenticationProvider do
     query = from u in User,
             join: otc in OneTimeCode, on: otc.user_id == u.id,
             left_join: otci in OneTimeCodeInvalidation, on: otc.id == otci.one_time_code_id,
-            left_join: p in Passphrase, on: p.inserted_at > otc.inserted_at,
+            left_join: p in Passphrase, on: p.inserted_at >= otc.inserted_at,
             where: u.id == ^user_id and
-                   is_nil(otci.inserted_at) and
-                   is_nil(p.inserted_at) and
+                   is_nil(otci.id) and
+                   is_nil(p.id) and
                    otc.inserted_at == fragment("(SELECT max(inserted_at)
                                                 FROM one_time_codes
                                                 WHERE user_id = ?)", ^user_id) and
@@ -116,7 +116,7 @@ defmodule Spherium.AuthenticationProvider do
   defp apply_authentication_scheme(user, :two_factor_over_otc) do
     query = from otc in OneTimeCode,
             left_join: otci in OneTimeCodeInvalidation, on: otci.one_time_code_id == otc.id,
-            left_join: p in Passphrase, on: p.inserted_at > otc.inserted_at,
+            left_join: p in Passphrase, on: p.inserted_at >= otc.inserted_at,
             where: otc.user_id == ^user.id and
                    otc.inserted_at > ago(15, "minute") and
                    is_nil(otci.id) and
