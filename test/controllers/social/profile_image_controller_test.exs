@@ -20,6 +20,12 @@ defmodule Spherium.ProfileImageControllerTest do
     assert data["data"]
   end
 
+  test "throws 404 if given user does not exist", %{conn: conn} do
+    assert_error_sent 404, fn ->
+      get conn, user_profile_image_path(conn, :update, -1)
+    end
+  end
+
   test "creates and renders resource when data is valid", %{conn: conn} do
     user = Factory.insert(:user)
     conn = post conn, user_profile_image_path(conn, :create, user), profile_image: @valid_attrs
@@ -45,6 +51,22 @@ defmodule Spherium.ProfileImageControllerTest do
 
     assert data["id"]
     assert Repo.get_by(ProfileImage, @valid_attrs)
+  end
+
+  test "returns 422 if given data is invalid to update", %{conn: conn} do
+    profile_image = Factory.insert(:profile_image)
+
+    conn = put conn,
+               user_profile_image_path(conn, :update, profile_image.user),
+               profile_image: %{data: nil}
+
+    assert json_response(conn, 422)["errors"] != %{}
+  end
+
+  test "throws 404 if given user does not exist to update", %{conn: conn} do
+    assert_error_sent 404, fn ->
+      put conn, user_profile_image_path(conn, :update, -1), profile_image: @valid_attrs
+    end
   end
 
   test "deletes chosen resource", %{conn: conn} do
