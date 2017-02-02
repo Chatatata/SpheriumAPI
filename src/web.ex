@@ -39,6 +39,7 @@ defmodule Spherium.Web do
       use Phoenix.Controller
 
       alias Spherium.Repo
+      alias Spherium.Cache
       import Ecto
       import Ecto.Query, only: [from: 1, from: 2]
 
@@ -75,6 +76,7 @@ defmodule Spherium.Web do
       use Phoenix.Channel
 
       alias Spherium.Repo
+      alias Spherium.Cache
       import Ecto
       import Ecto.Query, only: [from: 1, from: 2]
       import Spherium.Gettext
@@ -84,6 +86,7 @@ defmodule Spherium.Web do
   def service do
     quote do
       alias Spherium.Repo
+      alias Spherium.Cache
       import Ecto
       import Ecto.Query, only: [from: 1, from: 2]
     end

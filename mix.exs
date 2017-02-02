@@ -34,7 +34,7 @@ defmodule Spherium.Mixfile do
      applications: [:phoenix, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin,
                     :jose, :timex, :crypto, :httpoison,
-                    :poison]]
+                    :poison, :redix]]
   end
 
   # Specifies which paths to compile per environment.
@@ -60,7 +60,8 @@ defmodule Spherium.Mixfile do
      {:httpoison, "~> 0.10.0"},
      {:poison, "~> 3.0", override: true},
      {:ex_doc, "~> 0.14.5"},
-     {:ecto_enum, "~> 1.0"}]
+     {:ecto_enum, "~> 1.0"},
+     {:redix, "~> 0.5.1"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
