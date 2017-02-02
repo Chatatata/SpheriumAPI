@@ -18,7 +18,7 @@ config :spherium, Spherium.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-  # Comeonin hashing algorithms round quantities
-  config :comeonin,
-    bcrypt_log_rounds: 4,
-    pbkdf2_rounds: 1_000
+# Comeonin hashing algorithms round quantities
+config :comeonin,
+  bcrypt_log_rounds: 4,
+  pbkdf2_rounds: 1_000
