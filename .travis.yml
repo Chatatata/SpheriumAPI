@@ -8,6 +8,7 @@ addons:
   postgresql: "9.6"
 services:
   - postgresql
+  - redis-server
 sudo: required
 before_script:
   - MIX_ENV=test mix ecto.setup
