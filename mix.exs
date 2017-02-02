@@ -60,8 +60,7 @@ defmodule Spherium.Mixfile do
      {:httpoison, "~> 0.10.0"},
      {:poison, "~> 3.0", override: true},
      {:ex_doc, "~> 0.14.5"},
-     {:ecto_enum, "~> 1.0"},
-     {:mix_test_watch, "~> 0.2.6", only: :dev}]
+     {:ecto_enum, "~> 1.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
