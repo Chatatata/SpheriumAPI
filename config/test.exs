@@ -18,6 +18,12 @@ config :spherium, Spherium.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+# Configure your cache
+config :spherium, Spherium.Cache,
+  database: 1,
+  hostname: "localhost",
+  pool_size: 8
+
 # Comeonin hashing algorithms round quantities
 config :comeonin,
   bcrypt_log_rounds: 4,

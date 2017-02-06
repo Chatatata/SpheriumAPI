@@ -34,3 +34,9 @@ config :spherium, Spherium.Repo,
   database: "ExSWS_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Configure your cache
+config :spherium, Spherium.Cache,
+  database: 0,
+  hostname: "localhost",
+  pool_size: 8
