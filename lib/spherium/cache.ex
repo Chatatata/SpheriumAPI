@@ -7,6 +7,9 @@ defmodule Spherium.Cache do
 
   @type command :: [binary]
 
+  @otp_app :spherium
+  @default_pool_size 8
+
   @doc """
   Starts the cache supervisor.
   """
@@ -18,10 +21,17 @@ defmodule Spherium.Cache do
   Initializes the cache supervisor.
   """
   def init(_) do
-    pool_size = 8
+    config = Application.get_env(@otp_app, Spherium.Cache, [])
+    pool_size = config[:pool_size] || @default_pool_size
+    database = config[:database] || nil
+    password = config[:password] || nil
+    hostname = config[:host] || "localhost"
 
     children = for n <- 1..pool_size do
-      worker(Redix, [[], [name: String.to_atom("Redix.Worker.#{n}")]], id: {Redix, n})
+      worker(Redix,
+             [[host: hostname, database: database, password: password],
+              [name: String.to_atom("Redix.Worker.#{n}")]],
+             id: {Redix, n})
     end
 
     supervise(children, strategy: :one_for_one)
@@ -34,7 +44,9 @@ defmodule Spherium.Cache do
     {:ok, Redix.Protocol.redis_value} |
     {:error, atom | Redix.Error.t}
   def execute(command, opts \\ []) do
-    Redix.command(String.to_atom("Redix.Worker.#{random_index()}"), command, opts)
+    worker = opts[:worker] || random_index()
+
+    Redix.command(String.to_atom("Redix.Worker.#{worker}"), command, opts)
   end
 
   @doc """
@@ -44,10 +56,15 @@ defmodule Spherium.Cache do
     Redix.Protocol.redis_value |
     no_return
   def execute!(command, opts \\ []) do
-    Redix.command!(String.to_atom("Redix.Worker.#{random_index()}"), command, opts)
+    worker = opts[:worker] || random_index()
+
+    Redix.command!(String.to_atom("Redix.Worker.#{worker}"), command, opts)
   end
 
   defp random_index() do
-    rem(System.unique_integer([:positive]), 8) + 1
+    config = Application.get_env(@otp_app, Spherium.Cache, [])
+    pool_size = config[:pool_size] || @default_pool_size
+
+    rem(System.unique_integer([:positive]), pool_size) + 1
   end
 end
