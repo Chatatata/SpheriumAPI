@@ -11,16 +11,9 @@ defmodule Spherium do
       supervisor(Spherium.Endpoint, []),
       # Start the Ecto repository
       supervisor(Spherium.Repo, []),
-      # Start the Redix as a worker
-      worker(Redix, [[], [name: :redix]])
+      # Start the Redix cache layer
+      supervisor(Spherium.Cache, [])
     ]
-
-    pool_size = 5
-    redix_workers = for i <- 0..(pool_size - 1) do
-      worker(Redix, [[], [name: :"redix_#{i}"]], id: {Redix, i})
-    end
-
-    children = Enum.concat(children, redix_workers)
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
