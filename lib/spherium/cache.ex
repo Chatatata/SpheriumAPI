@@ -11,17 +11,17 @@ defmodule Spherium.Cache do
   Starts the cache supervisor.
   """
   def start_link() do
-    Supervisor.start_link(__MODULE__, [])
+    Supervisor.start_link(__MODULE__, [], name: Spherium.Cache)
   end
 
   @doc """
   Initializes the cache supervisor.
   """
-  def init([]) do
-    pool_size = 5
+  def init(_) do
+    pool_size = 8
 
     children = for n <- 1..pool_size do
-      worker(Redix, [[], [name: String.to_atom("redix_#{n}")]], id: {Redix, n})
+      worker(Redix, [[], [name: String.to_atom("Redix.Worker.#{n}")]], id: {Redix, n})
     end
 
     supervise(children, strategy: :one_for_one)
@@ -34,7 +34,7 @@ defmodule Spherium.Cache do
     {:ok, Redix.Protocol.redis_value} |
     {:error, atom | Redix.Error.t}
   def execute(command, opts \\ []) do
-    Redix.command(String.to_atom("redix_#{random_index()}"), command, opts)
+    Redix.command(String.to_atom("Redix.Worker.#{random_index()}"), command, opts)
   end
 
   @doc """
@@ -44,10 +44,10 @@ defmodule Spherium.Cache do
     Redix.Protocol.redis_value |
     no_return
   def execute!(command, opts \\ []) do
-    Redix.command!(String.to_atom("redix_#{random_index()}"), command, opts)
+    Redix.command!(String.to_atom("Redix.Worker.#{random_index()}"), command, opts)
   end
 
   defp random_index() do
-    rem(System.unique_integer([:positive]), 5) + 1
+    rem(System.unique_integer([:positive]), 8) + 1
   end
 end
