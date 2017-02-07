@@ -20,6 +20,7 @@
   "skip_files": [
     "lib",
     "test/support",
-    "src/views/auxillary/error_helpers.ex"
+    "src/views/auxillary/error_helpers.ex",
+    "src/web.ex"
   ]
 }
