@@ -1,4 +1,4 @@
-defmodule Spherium.UserControllerPolicyTests do
+defmodule Spherium.UserControllerPolicyTest do
   use Spherium.PolicyCase
 
   alias Spherium.Factory

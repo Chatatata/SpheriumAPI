@@ -7,6 +7,7 @@ defmodule Spherium.UserPermissionSetController do
 
   plug :authenticate_user
   plug :authorize_user, [:all, :self]
+  plug :apply_policy
   plug :put_view, Spherium.PermissionSetView
 
   def show(conn, %{"user_id" => user_id}) do

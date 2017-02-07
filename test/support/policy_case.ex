@@ -6,7 +6,10 @@ defmodule Spherium.PolicyCase do
 
   use ExUnit.CaseTemplate
 
-  alias Spherium.Factory
+  alias Spherium.Repo
+  alias Spherium.User
+  alias Spherium.Passphrase
+  alias Spherium.AuthHelper
 
   using do
     quote do
@@ -33,12 +36,32 @@ defmodule Spherium.PolicyCase do
       Ecto.Adapters.SQL.Sandbox.mode(Spherium.Repo, {:shared, self()})
     end
 
-    user = Factory.insert(:user)
+    conn = Phoenix.ConnTest.build_conn()
+
+    cond do
+      tags[:attach_to_one_permissions] == true ->
+        {conn, user} = fetch_and_assign_token(conn, "onesadmin")
+
+        {:ok, conn: conn, user: user}
+      tags[:super_cow_powers] != false ->
+        {conn, user} = fetch_and_assign_token(conn, "superadmin")
+
+        {:ok, conn: conn, user: user}
+      true ->
+        {:ok, conn: conn}
+    end
+  end
+
+  defp fetch_and_assign_token(conn, name) do
+    user = Repo.get_by!(User, username: name)
+    passphrase = Repo.get_by!(Passphrase, user_id: user.id)
 
     conn =
-      Phoenix.ConnTest.build_conn()
+      conn
+      |> Plug.Conn.put_req_header("accept", "application/json")
+      |> AuthHelper.issue_token(user, passphrase)
       |> Plug.Conn.assign(:user, user)
 
-    {:ok, conn: conn}
+    {conn, user}
   end
 end

@@ -4,7 +4,8 @@ defmodule Spherium.PasswordController do
   alias Spherium.User
 
   plug :authenticate_user
-  plug :authorize_user, [:all]
+  plug :authorize_user, [:self]
+  plug :apply_policy
   plug :scrub_params, "password"
   plug :put_view, Spherium.PasswordChangeView
 

@@ -47,29 +47,28 @@ defmodule Spherium.ConnCase do
 
     cond do
       tags[:attach_to_one_permissions] == true ->
-        user = Repo.get_by!(User, username: "onesadmin")
-        passphrase = Repo.get_by!(Passphrase, user_id: user.id)
+        {conn, user} = fetch_and_assign_token(conn, "onesadmin")
 
-        conn =
-          conn
-          |> Plug.Conn.put_req_header("accept", "application/json")
-          |> AuthHelper.issue_token(user, passphrase)
-          |> Plug.Conn.assign(:setup_user, user)
-
-        {:ok, conn: conn}
+        {:ok, conn: conn, user: user}
       tags[:super_cow_powers] != false ->
-        user = Repo.get_by!(User, username: "superadmin")
-        passphrase = Repo.get_by!(Passphrase, user_id: user.id)
+        {conn, user} = fetch_and_assign_token(conn, "superadmin")
 
-        conn =
-          conn
-          |> Plug.Conn.put_req_header("accept", "application/json")
-          |> AuthHelper.issue_token(user, passphrase)
-          |> Plug.Conn.assign(:setup_user, user)
-
-        {:ok, conn: conn}
+        {:ok, conn: conn, user: user}
       true ->
         {:ok, conn: conn}
     end
+  end
+
+  defp fetch_and_assign_token(conn, name) do
+    user = Repo.get_by!(User, username: name)
+    passphrase = Repo.get_by!(Passphrase, user_id: user.id)
+
+    conn =
+      conn
+      |> Plug.Conn.put_req_header("accept", "application/json")
+      |> AuthHelper.issue_token(user, passphrase)
+      |> Plug.Conn.assign(:setup_user, user)
+
+    {conn, user}
   end
 end
