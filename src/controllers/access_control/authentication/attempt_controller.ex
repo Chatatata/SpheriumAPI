@@ -7,7 +7,7 @@ defmodule Spherium.AttemptController do
 
   plug :authenticate_user
   plug :authorize_user, [:all, :self]
-  plug :apply_policy
+  plug :apply_policy when action in [:index]
 
   def index(conn, _params) do
     filters =
@@ -27,8 +27,8 @@ defmodule Spherium.AttemptController do
   def show(conn, %{"id" => id}) do
     attempt = Repo.get!(Attempt, id)
 
-    if attempt.username =~ conn.assigns[:user].username and
-       conn.assigns[:permission_type] == :one,
+    if attempt.username != conn.assigns[:user].username and
+       conn.assigns[:permission_type] == :self,
        do: raise InsufficientScopeError
 
     render(conn, "show.json", attempt: attempt)
