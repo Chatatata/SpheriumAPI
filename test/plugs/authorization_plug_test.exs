@@ -38,12 +38,11 @@ defmodule Spherium.AuthorizationPlugTest do
     user = Factory.insert(:user)
 
     assert_raise InsufficientScopeError, fn ->
-      conn =
-        Phoenix.ConnTest.build_conn()
-        |> put_private(:phoenix_controller, :"Elixir.Spherium.UserController")
-        |> put_private(:phoenix_action, :show)
-        |> assign(:user, user)
-        |> AuthorizationPlug.authorize_user([:all, :self])
+      Phoenix.ConnTest.build_conn()
+      |> put_private(:phoenix_controller, :"Elixir.Spherium.UserController")
+      |> put_private(:phoenix_action, :show)
+      |> assign(:user, user)
+      |> AuthorizationPlug.authorize_user([:all, :self])
     end
   end
 
@@ -82,14 +81,13 @@ defmodule Spherium.AuthorizationPlugTest do
     other_user = Factory.insert(:user)
 
     assert_raise InsufficientScopeError, fn ->
-      conn =
-        Phoenix.ConnTest.build_conn(:get, "/users?username=" <> other_user.username)
-        |> put_private(:phoenix_controller, :"Elixir.Spherium.AttemptController")
-        |> put_private(:phoenix_action, :index)
-        |> assign(:user, user)
-        |> fetch_query_params()
-        |> AuthorizationPlug.authorize_user([:all, :self])
-        |> AuthorizationPlug.apply_policy([])
+      Phoenix.ConnTest.build_conn(:get, "/users?username=" <> other_user.username)
+      |> put_private(:phoenix_controller, :"Elixir.Spherium.AttemptController")
+      |> put_private(:phoenix_action, :index)
+      |> assign(:user, user)
+      |> fetch_query_params()
+      |> AuthorizationPlug.authorize_user([:all, :self])
+      |> AuthorizationPlug.apply_policy([])
     end
   end
 end
