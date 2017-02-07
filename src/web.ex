@@ -45,6 +45,7 @@ defmodule Spherium.Web do
 
       alias Spherium.InsufficientScopeError
 
+      import Spherium.Authorization.Helpers
       import Spherium.Router.Helpers
       import Spherium.Gettext
       import Spherium.AuthenticationPlug
