@@ -5,6 +5,7 @@ defmodule Spherium.AuthorizationPlug do
   alias Spherium.PermissionSet
   alias Spherium.Permission
   alias Spherium.Repo
+  alias Spherium.InsufficientScopeError
 
   import Ecto.Query
 
@@ -32,10 +33,7 @@ defmodule Spherium.AuthorizationPlug do
       conn
       |> assign(:permission_type, String.to_atom(permission_type))
     else
-      conn
-      |> put_status(:unauthorized)
-      |> Phoenix.Controller.render(Spherium.PermissionErrorView, "unauthorized.json")
-      |> halt()
+      raise InsufficientScopeError
     end
   end
 
@@ -44,10 +42,7 @@ defmodule Spherium.AuthorizationPlug do
 
     unless conn.assigns[:permission_type] == :all or
            Kernel.apply(policy_module, conn.private.phoenix_action, [conn, conn.params, conn.assigns[:permission_type]]) do
-      conn
-      |> put_status(:unauthorized)
-      |> Phoenix.Controller.render(Spherium.PermissionErrorView, "unauthorized.json")
-      |> halt()
+      raise InsufficientScopeError
     else
       conn
     end

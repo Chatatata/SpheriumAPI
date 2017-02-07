@@ -4,6 +4,7 @@ defmodule Spherium.AuthorizationPlugTest do
   alias Spherium.AuthorizationPlug
   alias Spherium.User
   alias Spherium.Factory
+  alias Spherium.InsufficientScopeError
 
   test "accepts a user with non-selective permission" do
     user = Repo.get_by!(User, username: "superadmin")
@@ -36,16 +37,14 @@ defmodule Spherium.AuthorizationPlugTest do
   test "refutes a user without permission" do
     user = Factory.insert(:user)
 
-    conn =
-      Phoenix.ConnTest.build_conn()
-      |> put_private(:phoenix_controller, :"Elixir.Spherium.UserController")
-      |> put_private(:phoenix_action, :show)
-      |> assign(:user, user)
-      |> AuthorizationPlug.authorize_user([:all, :self])
-
-    refute conn.assigns[:permission_type]
-    assert conn.halted
-    assert conn.status == 401
+    assert_raise InsufficientScopeError, fn ->
+      conn =
+        Phoenix.ConnTest.build_conn()
+        |> put_private(:phoenix_controller, :"Elixir.Spherium.UserController")
+        |> put_private(:phoenix_action, :show)
+        |> assign(:user, user)
+        |> AuthorizationPlug.authorize_user([:all, :self])
+    end
   end
 
   test "policy is not triggered in all permission" do
@@ -82,16 +81,15 @@ defmodule Spherium.AuthorizationPlugTest do
     user = Repo.get_by!(User, username: "onesadmin")
     other_user = Factory.insert(:user)
 
-    conn =
-      Phoenix.ConnTest.build_conn(:get, "/users?username=" <> other_user.username)
-      |> put_private(:phoenix_controller, :"Elixir.Spherium.AttemptController")
-      |> put_private(:phoenix_action, :index)
-      |> assign(:user, user)
-      |> fetch_query_params()
-      |> AuthorizationPlug.authorize_user([:all, :self])
-      |> AuthorizationPlug.apply_policy([])
-
-    assert conn.halted
-    assert conn.status == 401
+    assert_raise InsufficientScopeError, fn ->
+      conn =
+        Phoenix.ConnTest.build_conn(:get, "/users?username=" <> other_user.username)
+        |> put_private(:phoenix_controller, :"Elixir.Spherium.AttemptController")
+        |> put_private(:phoenix_action, :index)
+        |> assign(:user, user)
+        |> fetch_query_params()
+        |> AuthorizationPlug.authorize_user([:all, :self])
+        |> AuthorizationPlug.apply_policy([])
+    end
   end
 end

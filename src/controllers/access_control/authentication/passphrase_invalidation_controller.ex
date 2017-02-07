@@ -37,9 +37,7 @@ defmodule Spherium.PassphraseInvalidationController do
           |> put_status(:created)
           |> render("show.json", passphrase_invalidation: passphrase_invalidation)
         {:error, :unauthorized} ->
-          conn
-          |> put_status(:unauthorized)
-          |> render(Spherium.PermissionErrorView, "unauthorized.json")
+          raise InsufficientScopeError
       end
     rescue
       Ecto.NoResultsError ->
