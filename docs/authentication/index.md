@@ -98,15 +98,29 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
   {
     "credentials": {
       "username": "exampleaccount",
-      "password": "cleartext-password",
-      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
-      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
+      "password": "cleartext-password"
     }
   }
   ```
 
   This will return `201 Created` in normal circumstances.
-  Server will respond with a passphrase.
+  Server will respond with a insecure authentication handle.
+  
+2. The server is requested to generate a passphrase.
+
+  ```
+  POST /api/access_control/authentication
+  
+  {
+    "insecure_authentication_submission": {
+      "passkey": "HLaan+8HTy6RAnv4IopuasNKDaJLXkhdhlqJCDjw+eEh/TZgDlBOOIKAisfHkeQK00qbV0+3Tj600YdlPVnKOA"
+    },
+    "device_information": {
+      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
+      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
+    }
+  }
+  ```
 
 ##### Two-factor authentication over SMS
 1. The server is challenged with user credentials, since device (or particular front-end application) is either
@@ -119,9 +133,7 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
   {
     "credentials": {
       "username": "exampleaccount",
-      "password": "cleartext-password",
-      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
-      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
+      "password": "cleartext-password"
     }
   }
   ```
@@ -135,9 +147,13 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
   POST /api/access_control/authentication/passphrases
 
   {
-    "one_time_code_pair": {
+    "one_time_code_submission": {
       "code": 422765,
       "user_id": 3
+    },
+    "device_information": {
+      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
+      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
     }
   }
   ```
@@ -155,15 +171,13 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
   {
     "credentials": {
       "username": "exampleaccount",
-      "password": "cleartext-password",
-      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
-      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
+      "password": "cleartext-password"
     }
   }
   ```
 
   This will return `201 Created` in normal circumstances.
-  The user will be soon get an text message (SMS) including the OTC.
+  Afterwards, client is awaited to send a request containing a TBC in payload.
 
 2. The server is requested to generate a passphrase.
 
@@ -171,9 +185,13 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
   POST /api/access_control/authentication/passphrases
 
   {
-    "time_based_code_pair": {
+    "time_based_code_submission": {
       "code": 422765,
       "user_id": 3
+    },
+    "device_information": {
+      "device": "2c7f3302-e807-487c-93e4-54be7c1132bd",
+      "user_agent": "Spherium iOS, iPhone 6S, iOS v8.1.1"
     }
   }
   ```
@@ -197,7 +215,7 @@ There are three ways to authenticate to the API, who are interfaced via a unifie
 
   ```
   GET /api/access_control/authentication/attempts
-  ..
+  ..(request headers)
   Authorization: Bearer HLaan+8HTy6RAnv4IopuasNKDaJLXkhdhlqJCDjw+eEh/TZgDlBOOIKAisfHkeQK00qbV0+3Tj600YdlPVnKOA
   ..
 
