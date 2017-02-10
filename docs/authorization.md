@@ -6,7 +6,7 @@ Lead maintainer: **Buğra Ekuklu (Chatatata)**.
 
 #### Motivation
 Authorization principles manage users correspondence in access of server resources.
-It provides a granular control over resources without losing optimization opportunities and performance.
+It provides a granular control over resources via specific DSL without losing optimization opportunities and performance.
 
 #### Implementation
 Authorization stage of the pipeline consists of two substages. 
@@ -24,5 +24,26 @@ Before a connection reaches to the dedicated controller handler, it is assessed 
 
 ### Permission sets
 Permissions and users are bind to each other, but not directly. 
-Instead, permission sets define set of permissions, hence might be aliased as *user groups*, and users are bind to those permission sets. User entity has *cardinality* of **nothing or one** to the permission set.
-If user has no attached permission set, that means the user has not activated yet.
+Instead, permission sets define set of permissions, hence might be aliased as *user groups*, and users are bind to those permission sets. 
+User entity has *cardinality* of **nothing or one** to the permission set.
+
+### Activation of a user
+Initially, users are created without any permission sets assigned to them.
+Upon a successful activation action of a user, it becomes an assignee of the default permission set.
+
+## Managing permission sets
+Users who have control over permission sets may define (or redefine) permission sets with API endpoints using *AIM (Authorization Infrastructure Management)* language.
+It is refined to work with authorization artifacts in a straightforward way.
+For example, if we are ought to define a new permission set, which controls authentication attempts, it would be done like so:
+
+```
+CREATE PERMISSION SET attempt_manager
+WITH DESCRIPTION "Reviews authentication attempts."
+USING DEFINITION
+  INCLUDE ENDPOINT SET Spherium.AttemptsController (
+    REGISTER INDEX AS all
+    REGISTER SHOW AS all
+  )
+  
+  INCLUDE PERMISSION SET default
+```

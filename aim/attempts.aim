@@ -1,0 +1,9 @@
+CREATE PERMISSION SET attempt_manager
+WITH DESCRIPTION "Reviews authentication attempts."
+USING DEFINITION
+  INCLUDE ENDPOINT SET Spherium.AttemptsController (
+    REGISTER INDEX AS all
+    REGISTER SHOW AS all
+  )
+
+  INCLUDE PERMISSION SET default
