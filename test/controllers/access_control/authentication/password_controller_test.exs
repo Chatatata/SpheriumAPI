@@ -12,7 +12,7 @@ defmodule Spherium.PasswordControllerTest do
 
     user = Repo.get!(User, user.id)
 
-    assert json_response(conn, 200)["result"] =~ "ok"
+    assert json_response(conn, 200)["result"] == "ok"
     assert json_response(conn, 200)["user_id"] == "#{user.id}"
     assert checkpw(@fake_pw, user.password_digest)
   end

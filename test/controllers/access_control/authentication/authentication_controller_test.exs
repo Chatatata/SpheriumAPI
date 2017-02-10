@@ -20,7 +20,7 @@ defmodule Spherium.AuthenticationControllerTest do
       data = json_response(conn, 201)["data"]
 
       assert data
-      assert data["authentication_scheme"] =~ "insecure"
+      assert data["authentication_scheme"] == "insecure"
       assert data["user_id"] == user.id
       refute data["passphrase_id"]
       assert data["passkey"]
@@ -39,7 +39,7 @@ defmodule Spherium.AuthenticationControllerTest do
       data = json_response(conn, 201)["data"]
 
       assert data["user_id"] == user.id
-      assert data["authentication_scheme"] =~ "two_factor_over_otc"
+      assert data["authentication_scheme"] == "two_factor_over_otc"
       refute data["passphrase_id"]
       refute data["passkey"]
     end
@@ -54,7 +54,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     password: "123456"
                   }
 
-      assert text_response(conn, :not_implemented) =~ "TBC is not available currently."
+      assert text_response(conn, :not_implemented) == "TBC is not available currently."
     end
 
     test "returns 422 on invalid credentials", %{conn: conn} do
@@ -77,7 +77,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     password: "1234567"
                   }
 
-      assert text_response(conn, :forbidden) =~ "Invalid username/password combination."
+      assert text_response(conn, :forbidden) == "Invalid username/password combination."
     end
 
     test "returns 403 on if user with given username does not exist", %{conn: conn} do
@@ -88,7 +88,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     password: "1234567"
                   }
 
-      assert text_response(conn, :forbidden) =~ "Invalid username/password combination."
+      assert text_response(conn, :forbidden) == "Invalid username/password combination."
     end
 
     test "returns 409 when passphrase quota exceeded", %{conn: conn} do
@@ -103,7 +103,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     password: "123456"
                   }
 
-      assert text_response(conn, :conflict) =~ "Maximum number of passphrases available is reached (5)."
+      assert text_response(conn, :conflict) == "Maximum number of passphrases available is reached (5)."
     end
 
     test "returns 429 when OTC quota exceeded", %{conn: conn} do
@@ -118,7 +118,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     password: "123456"
                   }
 
-      assert text_response(conn, :too_many_requests) =~ "OTC quota per 15 minutes is reached (2)."
+      assert text_response(conn, :too_many_requests) == "OTC quota per 15 minutes is reached (2)."
     end
   end
 
@@ -184,7 +184,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     user_agent: "Test user agent"
                   }
 
-      assert text_response(conn, 404) =~ "Pair not found."
+      assert text_response(conn, 404) == "Pair not found."
     end
 
     test "returns 422 with invalid insecure authentication handle", %{conn: conn} do
@@ -274,7 +274,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     user_agent: "Test user agent"
                   }
 
-      assert text_response(conn, 404) =~ "Pair not found."
+      assert text_response(conn, 404) == "Pair not found."
     end
 
     test "does not create a passphrase with no one time code generated", %{conn: conn} do
@@ -291,7 +291,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     user_agent: "Test user agent"
                   }
 
-      assert text_response(conn, 404) =~ "Pair not found."
+      assert text_response(conn, 404) == "Pair not found."
     end
 
     test "rejects request if given code is invalid", %{conn: conn} do
@@ -330,7 +330,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     user_agent: "Test user agent"
                   }
 
-      assert text_response(conn, 404) =~ "Pair not found."
+      assert text_response(conn, 404) == "Pair not found."
     end
 
     test "checks for already satisfied one time code", %{conn: conn} do
@@ -352,7 +352,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     user_agent: "Test user agent"
                   }
 
-      assert text_response(conn, 404) =~ "Pair not found."
+      assert text_response(conn, 404) == "Pair not found."
     end
 
     test "checks for already invalidated one time code", %{conn: conn} do
@@ -374,7 +374,7 @@ defmodule Spherium.AuthenticationControllerTest do
                     user_agent: "Test user agent"
                   }
 
-      assert text_response(conn, 404) =~ "Pair not found."
+      assert text_response(conn, 404) == "Pair not found."
     end
   end
 end

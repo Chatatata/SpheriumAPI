@@ -33,7 +33,7 @@ defmodule Spherium.PermissionSetGrantControllerPolicyTests do
   end
 
   @tag attach_to_one_permissions: true
-  test "throws when self user wants to access others permission set grants", %{user: user} do
+  test "rejects when self user wants to access others permission set grants", %{user: user} do
     other_user = Factory.insert(:user)
 
     conn =

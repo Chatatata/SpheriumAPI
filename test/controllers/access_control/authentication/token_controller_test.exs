@@ -24,7 +24,7 @@ defmodule Spherium.TokenControllerTest do
     conn = post conn, authentication_token_path(conn, :create), passkey: Passkey.generate()
 
     data = response(conn, 403)
-    assert data =~ "Authentication not available."
+    assert data == "Authentication not available."
   end
 
   test "responds with 403 if underlying passphrase of passkey is invalidated", %{conn: conn} do
@@ -43,7 +43,7 @@ defmodule Spherium.TokenControllerTest do
            passkey: invalidated_passphrase.passkey
 
     data = response(conn, 403)
-    assert data =~ "Authentication not available."
+    assert data == "Authentication not available."
   end
 
   test "responds with 403 if underlying passphrase of passkey is expired", %{conn: conn} do
@@ -59,7 +59,7 @@ defmodule Spherium.TokenControllerTest do
            passkey: passphrase.passkey
 
     data = response(conn, 403)
-    assert data =~ "Authentication not available."
+    assert data == "Authentication not available."
   end
 
   test "responds with 403 if user has a newer password reset than recent passphrase", %{conn: conn} do
@@ -73,7 +73,7 @@ defmodule Spherium.TokenControllerTest do
            passkey: passphrase.passkey
 
     data = response(conn, 403)
-    assert data =~ "Authentication not available."
+    assert data == "Authentication not available."
   end
 
   test "generates token if the given passphrase is newer than last password reset", %{conn: conn} do

@@ -30,8 +30,8 @@ defmodule Spherium.PassphraseControllerTest do
     assert data
     assert data["id"] == passphrase.id
     assert data["user_id"] == passphrase.user_id
-    assert data["device"] =~ passphrase.device
-    assert data["user_agent"] =~ passphrase.user_agent
+    assert data["device"] == passphrase.device
+    assert data["user_agent"] == passphrase.user_agent
     assert data["inserted_at"]
     refute data["passkey"]
   end

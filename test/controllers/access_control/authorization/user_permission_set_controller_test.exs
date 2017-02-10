@@ -81,7 +81,7 @@ defmodule Spherium.UserPermissionSetControllerTest do
     conn = put conn, user_user_permission_set_path(conn, :update, tight_user), permission_set_id: -1
 
     assert conn.status == 404
-    assert conn.resp_body =~ "Permission set with given identifier not found."
+    assert conn.resp_body == "Permission set with given identifier not found."
     refute Repo.get_by(PermissionSetGrant, %{target_user_id: tight_user.id, user_id: user.id, permission_set_id: permission_set.id})
   end
 
@@ -92,7 +92,7 @@ defmodule Spherium.UserPermissionSetControllerTest do
     conn = put conn, user_user_permission_set_path(conn, :update, -1), permission_set_id: permission_set.id
 
     assert conn.status == 404
-    assert conn.resp_body =~ "User not found."
+    assert conn.resp_body == "User not found."
   end
 
   test "unassigns user's permission set", %{conn: conn} do
@@ -111,6 +111,6 @@ defmodule Spherium.UserPermissionSetControllerTest do
     conn = delete conn, user_user_permission_set_path(conn, :delete, -1)
 
     assert conn.status == 404
-    assert conn.resp_body =~ "User not found."
+    assert conn.resp_body == "User not found."
   end
 end
